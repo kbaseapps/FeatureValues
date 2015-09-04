@@ -57,22 +57,31 @@ public class ExpressionDownloader {
     
     public static void generate(String wsUrl, String wsName, String objName, Integer version,
             AuthToken token, PrintWriter pw) throws Exception {
+        BioMatrix matrix = null;
         try {
             WorkspaceClient client = getWsClient(wsUrl, token);
             String ref = wsName + "/" + objName;
             if (version != null)
                 ref += "/" + version;
-            BioMatrix matrix = client.getObjects(Arrays.asList(new ObjectIdentity().withRef(ref)))
+            matrix = client.getObjects(Arrays.asList(new ObjectIdentity().withRef(ref)))
                     .get(0).getData().asClassInstance(BioMatrix.class);
-            FloatMatrix2D data = matrix.getData();
+        } finally {
+            pw.close();
+        }
+        if (matrix != null)
+            generate(matrix.getData(), matrix.getFeatureMapping(), pw);
+    }
+
+    public static void generate(FloatMatrix2D data, Map<String, String> featureMapping, PrintWriter pw) throws Exception {
+        try {
             pw.print("feature_ids");
             for (String condId : data.getColIds())
                 pw.print("\t" + condId);
             pw.println();
             for (int rowPos = 0; rowPos < data.getRowIds().size(); rowPos++) {
                 String rowId = data.getRowIds().get(rowPos);
-                String featureId = matrix.getFeatureMapping() == null ? null :
-                    matrix.getFeatureMapping().get(rowId);
+                String featureId = featureMapping == null ? null :
+                    featureMapping.get(rowId);
                 if (featureId == null)
                     featureId = rowId;
                 pw.print(featureId);
