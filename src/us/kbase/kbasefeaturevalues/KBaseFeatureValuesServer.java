@@ -103,7 +103,7 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
         args.put("jobid", jobId);
         String argsHex = TextUtils.stringToHex(UObject.getMapper().writeValueAsString(args));
         AweUtils.runTask(getAweUrl(), SERVICE_NAME, methodName, argsHex, 
-                AWE_CLIENT_SCRIPT_NAME, authPart.toString());
+                AWE_CLIENT_SCRIPT_NAME, authPart);
         //System.out.println("AWE job id: " + aweJobId);
         return jobId;
     }

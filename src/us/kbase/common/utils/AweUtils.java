@@ -15,13 +15,15 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+import us.kbase.auth.AuthToken;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class AweUtils {
     
     @SuppressWarnings("unchecked")
     public static String runTask(String aweServerUrl, String pipeline, 
-            String jobName, String args, String scriptName, String token) throws Exception {
+            String jobName, String args, String scriptName, AuthToken auth) throws Exception {
         if (!aweServerUrl.endsWith("/"))
             aweServerUrl += "/";
         Map<String, Object> job = new LinkedHashMap<String, Object>();   // AwfTemplate
@@ -29,7 +31,7 @@ public class AweUtils {
         info.put("pipeline", pipeline);
         info.put("name", jobName);
         info.put("project", "default");
-        info.put("user", "default");
+        info.put("user", auth.getClientId());
         info.put("clientgroups", "");
         job.put("info", info);
         Map<String, Object> task = new LinkedHashMap<String, Object>();  // AwfTask
@@ -37,12 +39,11 @@ public class AweUtils {
         cmd.put("args", args);
         cmd.put("name", scriptName);
         Map<String, Object> env = new LinkedHashMap<String, Object>();   // AwfEnviron
-        if (token != null) {
-            env.put("public", new LinkedHashMap<String, Object>());
-            Map<String, Object> priv = new LinkedHashMap<String, Object>();
-            priv.put("KB_AUTH_TOKEN", token);
-            env.put("private", priv);
-        }
+        String token = auth.toString();
+        env.put("public", new LinkedHashMap<String, Object>());
+        Map<String, Object> priv = new LinkedHashMap<String, Object>();
+        priv.put("KB_AUTH_TOKEN", token);
+        env.put("private", priv);
         cmd.put("environ", env);
         cmd.put("description", "");
         task.put("cmd", cmd);
