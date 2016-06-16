@@ -14,9 +14,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 /**
  * <p>Original spec-file type: MatrixDescriptor</p>
  * <pre>
- * ******************************************
- * 	* data API: data transfer objects (DTOs) *
- * 	*****************************************
+ * General info about matrix, including genome name that needs to be extracted from the genome object
  * </pre>
  * 
  */

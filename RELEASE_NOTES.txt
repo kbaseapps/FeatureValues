@@ -7,7 +7,7 @@ dimention and to different sorts conditions on second dimention.
 
 
 
-VERSION: 0.8 (Released 8/26/2015)
+VERSION: 0.0.8 (Released 8/26/2015)
 ------------------------------------------
 NEW FEATURES:
 - none
@@ -20,7 +20,7 @@ aliases in expression matrix uploader.
 
 
 
-VERSION: 0.7 (Released 8/21/2015)
+VERSION: 0.0.7 (Released 8/21/2015)
 ------------------------------------------
 NEW FEATURES:
 - none
@@ -39,7 +39,7 @@ more than 2.
 
 
 
-VERSION: 0.6 (Released 8/18/2015)
+VERSION: 0.0.6 (Released 8/18/2015)
 ------------------------------------------
 NEW FEATURES:
 - none
@@ -51,7 +51,7 @@ from saving in workspace.
 
 
 
-VERSION: 0.5 (Released 8/17/2015)
+VERSION: 0.0.5 (Released 8/17/2015)
 ------------------------------------------
 NEW FEATURES:
 - none
@@ -63,7 +63,7 @@ instead of rows in sub-matrix
 
 
 
-VERSION: 0.4 (Released 8/12/2015)
+VERSION: 0.0.4 (Released 8/12/2015)
 ------------------------------------------
 NEW FEATURES:
 - none
@@ -75,7 +75,7 @@ request
 
 
 
-VERSION: 0.3a (Released 8/11/2015)
+VERSION: 0.0.3a (Released 8/11/2015)
 ------------------------------------------
 NEW FEATURES:
 - Downloaders for expression matrix and cluster set objects were 
@@ -90,7 +90,7 @@ UPDATED FEATURES / MAJOR BUG FIXES:
 
 
 
-VERSION: 0.3 (Released 7/31/2015)
+VERSION: 0.0.3 (Released 7/31/2015)
 ------------------------------------------
 NEW FEATURES:
 - Iteration over data in data API was redesigned
@@ -107,7 +107,7 @@ more than max_items
 
 
 
-VERSION: 0.2 (Released 7/28/2015)
+VERSION: 0.0.2 (Released 7/28/2015)
 ------------------------------------------
 NEW FEATURES:
 - More parameters were added for cluster_k_means and estimate_k 
@@ -135,7 +135,7 @@ values and quoted values
 
 
 
-VERSION: 0.1 (Released 7/21/2015)
+VERSION: 0.0.1 (Released 7/21/2015)
 ------------------------------------------
 NEW FEATURES:
 - Spec-file with service module and types was designed

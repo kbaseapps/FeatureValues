@@ -1,25 +1,22 @@
 package us.kbase.kbasefeaturevalues;
 
+import java.io.File;
 import java.util.List;
 import us.kbase.auth.AuthToken;
 import us.kbase.common.service.JsonServerMethod;
 import us.kbase.common.service.JsonServerServlet;
+import us.kbase.common.service.JsonServerSyslog;
+import us.kbase.common.service.RpcContext;
 
 //BEGIN_HEADER
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import us.kbase.common.service.UObject;
-import us.kbase.common.utils.AweUtils;
-import us.kbase.common.utils.TextUtils;
-import us.kbase.userandjobstate.InitProgress;
-import us.kbase.userandjobstate.UserAndJobStateClient;
 import us.kbase.workspace.WorkspaceClient;
 //END_HEADER
 
@@ -39,6 +36,9 @@ import us.kbase.workspace.WorkspaceClient;
  */
 public class KBaseFeatureValuesServer extends JsonServerServlet {
     private static final long serialVersionUID = 1L;
+    private static final String version = "0.0.8";
+    private static final String gitUrl = "https://github.com/rsutormin/feature_values";
+    private static final String gitCommitHash = "04f66d38c9f4a139ff7d17a142bfb6f25ee603dc";
 
     //BEGIN_CLASS_HEADER
     public static final String SERVICE_NAME = "KBaseFeatureValues";
@@ -52,16 +52,6 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
     public static final String AWE_CLIENT_SCRIPT_NAME = "awe_" + SERVICE_NAME + "_run_job.sh";
     public static final String SERVICE_VERSION = "0.8";
     
-    private UserAndJobStateClient getUjsClient(AuthToken auth) throws Exception {
-        String ujsUrl = config.get(CONFIG_PARAM_UJS_URL);
-        if (ujsUrl == null)
-            throw new IllegalStateException("Parameter '" + CONFIG_PARAM_UJS_URL +
-                    "' is not defined in configuration");
-        UserAndJobStateClient ret = new UserAndJobStateClient(new URL(ujsUrl), auth);
-        ret.setIsInsecureHttpConnectionAllowed(true);
-        return ret;
-    }
-    
     public WorkspaceClient getWsClient(AuthToken authPart) throws Exception {
         String wsUrl = config.get(CONFIG_PARAM_WS_URL);
         if (wsUrl == null)
@@ -72,42 +62,6 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
         return wsClient;
     }
 
-    private String getAweUrl() throws Exception {
-        String aweUrl = config.get(CONFIG_PARAM_AWE_URL);
-        if (aweUrl == null)
-            throw new IllegalStateException("Parameter '" + CONFIG_PARAM_AWE_URL +
-                    "' is not defined in configuration");
-        return aweUrl;
-    }
-    
-    private String runAweJob(AuthToken authPart, Object... params) throws Exception {
-        StackTraceElement[] st = new Exception().getStackTrace();
-        String methodName = null;
-        String className = getClass().getName();
-        for (int firstPos = 0; firstPos < st.length; firstPos++) {
-            if (st[firstPos].getMethodName().equals("runAweJob") || 
-                    !st[firstPos].getClassName().equals(className))
-                continue;
-            methodName = st[firstPos].getMethodName();
-            break;
-        }
-        Map<String, Object> args = new LinkedHashMap<String, Object>();
-        UserAndJobStateClient ujsClient = getUjsClient(authPart);
-        //String jobId = ujsClient.createAndStartJob(authPart.toString(), "queued", 
-        //        "AWE job for " + SERVICE_NAME + "." + methodName, 
-        //        new InitProgress().withPtype("none"), null);
-        String jobId = ujsClient.createJob();
-        args.put("method", methodName);
-        args.put("params", Arrays.asList(params));
-        args.put("config", config);
-        args.put("jobid", jobId);
-        String argsHex = TextUtils.stringToHex(UObject.getMapper().writeValueAsString(args));
-        AweUtils.runTask(getAweUrl(), SERVICE_NAME, methodName, argsHex, 
-                AWE_CLIENT_SCRIPT_NAME, authPart);
-        //System.out.println("AWE job id: " + aweJobId);
-        return jobId;
-    }
-    
     private KBaseFeatureValuesImpl impl(AuthToken authPart) throws Exception {
         return new KBaseFeatureValuesImpl(null, authPart.toString(), config, null);
     }
@@ -128,11 +82,11 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.EstimateKParams EstimateKParams}
      * @return   parameter "job_id" of String
      */
-    @JsonServerMethod(rpc = "KBaseFeatureValues.estimate_k")
-    public String estimateK(EstimateKParams params, AuthToken authPart) throws Exception {
+    @JsonServerMethod(rpc = "KBaseFeatureValues.estimate_k", async=true)
+    public String estimateK(EstimateKParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         String returnVal = null;
         //BEGIN estimate_k
-        returnVal = runAweJob(authPart, params);
+        returnVal = impl(authPart).estimateK(params);
         //END estimate_k
         return returnVal;
     }
@@ -146,11 +100,11 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.EstimateKParamsNew EstimateKParamsNew}
      * @return   parameter "job_id" of String
      */
-    @JsonServerMethod(rpc = "KBaseFeatureValues.estimate_k_new")
-    public String estimateKNew(EstimateKParamsNew params, AuthToken authPart) throws Exception {
+    @JsonServerMethod(rpc = "KBaseFeatureValues.estimate_k_new", async=true)
+    public String estimateKNew(EstimateKParamsNew params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         String returnVal = null;
         //BEGIN estimate_k_new
-        returnVal = runAweJob(authPart, params);
+        returnVal = impl(authPart).estimateKNew(params);
         //END estimate_k_new
         return returnVal;
     }
@@ -163,16 +117,11 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ClusterKMeansParams ClusterKMeansParams}
      * @return   parameter "job_id" of String
      */
-    @JsonServerMethod(rpc = "KBaseFeatureValues.cluster_k_means")
-    public String clusterKMeans(ClusterKMeansParams params, AuthToken authPart) throws Exception {
+    @JsonServerMethod(rpc = "KBaseFeatureValues.cluster_k_means", async=true)
+    public String clusterKMeans(ClusterKMeansParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         String returnVal = null;
         //BEGIN cluster_k_means
-        try {
-            returnVal = runAweJob(authPart, params);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            throw ex;
-        }
+        returnVal = impl(authPart).clusterKMeans(params);
         //END cluster_k_means
         return returnVal;
     }
@@ -185,11 +134,11 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ClusterHierarchicalParams ClusterHierarchicalParams}
      * @return   parameter "job_id" of String
      */
-    @JsonServerMethod(rpc = "KBaseFeatureValues.cluster_hierarchical")
-    public String clusterHierarchical(ClusterHierarchicalParams params, AuthToken authPart) throws Exception {
+    @JsonServerMethod(rpc = "KBaseFeatureValues.cluster_hierarchical", async=true)
+    public String clusterHierarchical(ClusterHierarchicalParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         String returnVal = null;
         //BEGIN cluster_hierarchical
-        returnVal = runAweJob(authPart, params);
+        returnVal = impl(authPart).clusterHierarchical(params);
         //END cluster_hierarchical
         return returnVal;
     }
@@ -204,11 +153,11 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ClustersFromDendrogramParams ClustersFromDendrogramParams}
      * @return   parameter "job_id" of String
      */
-    @JsonServerMethod(rpc = "KBaseFeatureValues.clusters_from_dendrogram")
-    public String clustersFromDendrogram(ClustersFromDendrogramParams params, AuthToken authPart) throws Exception {
+    @JsonServerMethod(rpc = "KBaseFeatureValues.clusters_from_dendrogram", async=true)
+    public String clustersFromDendrogram(ClustersFromDendrogramParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         String returnVal = null;
         //BEGIN clusters_from_dendrogram
-        returnVal = runAweJob(authPart, params);
+        returnVal = impl(authPart).clustersFromDendrogram(params);
         //END clusters_from_dendrogram
         return returnVal;
     }
@@ -223,11 +172,11 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.EvaluateClustersetQualityParams EvaluateClustersetQualityParams}
      * @return   parameter "job_id" of String
      */
-    @JsonServerMethod(rpc = "KBaseFeatureValues.evaluate_clusterset_quality")
-    public String evaluateClustersetQuality(EvaluateClustersetQualityParams params, AuthToken authPart) throws Exception {
+    @JsonServerMethod(rpc = "KBaseFeatureValues.evaluate_clusterset_quality", async=true)
+    public String evaluateClustersetQuality(EvaluateClustersetQualityParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         String returnVal = null;
         //BEGIN evaluate_clusterset_quality
-        returnVal = runAweJob(authPart, params);
+        impl(authPart).evaluateClustersetQuality(params);
         //END evaluate_clusterset_quality
         return returnVal;
     }
@@ -239,11 +188,11 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ValidateMatrixParams ValidateMatrixParams}
      * @return   parameter "job_id" of String
      */
-    @JsonServerMethod(rpc = "KBaseFeatureValues.validate_matrix", authOptional=true)
-    public String validateMatrix(ValidateMatrixParams params, AuthToken authPart) throws Exception {
+    @JsonServerMethod(rpc = "KBaseFeatureValues.validate_matrix", authOptional=true, async=true)
+    public String validateMatrix(ValidateMatrixParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         String returnVal = null;
         //BEGIN validate_matrix
-        returnVal = runAweJob(authPart, params);
+        impl(authPart).validateMatrix(params);
         //END validate_matrix
         return returnVal;
     }
@@ -255,11 +204,11 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.CorrectMatrixParams CorrectMatrixParams}
      * @return   parameter "job_id" of String
      */
-    @JsonServerMethod(rpc = "KBaseFeatureValues.correct_matrix")
-    public String correctMatrix(CorrectMatrixParams params, AuthToken authPart) throws Exception {
+    @JsonServerMethod(rpc = "KBaseFeatureValues.correct_matrix", async=true)
+    public String correctMatrix(CorrectMatrixParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         String returnVal = null;
         //BEGIN correct_matrix
-        returnVal = runAweJob(authPart, params);
+        returnVal = impl(authPart).correctMatrix(params);
         //END correct_matrix
         return returnVal;
     }
@@ -270,8 +219,8 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * </pre>
      * @return   instance of type {@link us.kbase.kbasefeaturevalues.ServiceStatus ServiceStatus}
      */
-    @JsonServerMethod(rpc = "KBaseFeatureValues.status")
-    public ServiceStatus status() throws Exception {
+    @JsonServerMethod(rpc = "KBaseFeatureValues.status", async=true)
+    public ServiceStatus status(RpcContext jsonRpcContext) throws Exception {
         ServiceStatus returnVal = null;
         //BEGIN status
         String status = "OK";
@@ -326,11 +275,11 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ReconnectMatrixToGenomeParams ReconnectMatrixToGenomeParams}
      * @return   parameter "job_id" of String
      */
-    @JsonServerMethod(rpc = "KBaseFeatureValues.reconnect_matrix_to_genome")
-    public String reconnectMatrixToGenome(ReconnectMatrixToGenomeParams params, AuthToken authPart) throws Exception {
+    @JsonServerMethod(rpc = "KBaseFeatureValues.reconnect_matrix_to_genome", async=true)
+    public String reconnectMatrixToGenome(ReconnectMatrixToGenomeParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         String returnVal = null;
         //BEGIN reconnect_matrix_to_genome
-        returnVal = runAweJob(authPart, params);
+        returnVal = impl(authPart).reconnectMatrixToGenome(params);
         //END reconnect_matrix_to_genome
         return returnVal;
     }
@@ -342,11 +291,11 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.BuildFeatureSetParams BuildFeatureSetParams}
      * @return   parameter "job_id" of String
      */
-    @JsonServerMethod(rpc = "KBaseFeatureValues.build_feature_set")
-    public String buildFeatureSet(BuildFeatureSetParams params, AuthToken authPart) throws Exception {
+    @JsonServerMethod(rpc = "KBaseFeatureValues.build_feature_set", async=true)
+    public String buildFeatureSet(BuildFeatureSetParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         String returnVal = null;
         //BEGIN build_feature_set
-        returnVal = runAweJob(authPart, params);
+        returnVal = impl(authPart).buildFeatureSet(params);
         //END build_feature_set
         return returnVal;
     }
@@ -358,8 +307,8 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * @param   arg1   instance of type {@link us.kbase.kbasefeaturevalues.GetMatrixDescriptorParams GetMatrixDescriptorParams}
      * @return   instance of type {@link us.kbase.kbasefeaturevalues.MatrixDescriptor MatrixDescriptor}
      */
-    @JsonServerMethod(rpc = "KBaseFeatureValues.get_matrix_descriptor")
-    public MatrixDescriptor getMatrixDescriptor(GetMatrixDescriptorParams arg1, AuthToken authPart) throws Exception {
+    @JsonServerMethod(rpc = "KBaseFeatureValues.get_matrix_descriptor", async=true)
+    public MatrixDescriptor getMatrixDescriptor(GetMatrixDescriptorParams arg1, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         MatrixDescriptor returnVal = null;
         //BEGIN get_matrix_descriptor
         returnVal = impl(authPart).getMatrixDescriptor(arg1);
@@ -374,8 +323,8 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * @param   arg1   instance of type {@link us.kbase.kbasefeaturevalues.GetMatrixItemDescriptorsParams GetMatrixItemDescriptorsParams}
      * @return   instance of list of type {@link us.kbase.kbasefeaturevalues.ItemDescriptor ItemDescriptor}
      */
-    @JsonServerMethod(rpc = "KBaseFeatureValues.get_matrix_row_descriptors")
-    public List<ItemDescriptor> getMatrixRowDescriptors(GetMatrixItemDescriptorsParams arg1, AuthToken authPart) throws Exception {
+    @JsonServerMethod(rpc = "KBaseFeatureValues.get_matrix_row_descriptors", async=true)
+    public List<ItemDescriptor> getMatrixRowDescriptors(GetMatrixItemDescriptorsParams arg1, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         List<ItemDescriptor> returnVal = null;
         //BEGIN get_matrix_row_descriptors
         //END get_matrix_row_descriptors
@@ -389,8 +338,8 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * @param   arg1   instance of type {@link us.kbase.kbasefeaturevalues.GetMatrixItemDescriptorsParams GetMatrixItemDescriptorsParams}
      * @return   instance of list of type {@link us.kbase.kbasefeaturevalues.ItemDescriptor ItemDescriptor}
      */
-    @JsonServerMethod(rpc = "KBaseFeatureValues.get_matrix_column_descriptors")
-    public List<ItemDescriptor> getMatrixColumnDescriptors(GetMatrixItemDescriptorsParams arg1, AuthToken authPart) throws Exception {
+    @JsonServerMethod(rpc = "KBaseFeatureValues.get_matrix_column_descriptors", async=true)
+    public List<ItemDescriptor> getMatrixColumnDescriptors(GetMatrixItemDescriptorsParams arg1, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         List<ItemDescriptor> returnVal = null;
         //BEGIN get_matrix_column_descriptors
         //END get_matrix_column_descriptors
@@ -404,8 +353,8 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * @param   arg1   instance of type {@link us.kbase.kbasefeaturevalues.GetMatrixItemsStatParams GetMatrixItemsStatParams}
      * @return   instance of list of type {@link us.kbase.kbasefeaturevalues.ItemStat ItemStat}
      */
-    @JsonServerMethod(rpc = "KBaseFeatureValues.get_matrix_rows_stat")
-    public List<ItemStat> getMatrixRowsStat(GetMatrixItemsStatParams arg1, AuthToken authPart) throws Exception {
+    @JsonServerMethod(rpc = "KBaseFeatureValues.get_matrix_rows_stat", async=true)
+    public List<ItemStat> getMatrixRowsStat(GetMatrixItemsStatParams arg1, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         List<ItemStat> returnVal = null;
         //BEGIN get_matrix_rows_stat
         returnVal = impl(authPart).getMatrixRowsStat(arg1);
@@ -420,8 +369,8 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * @param   arg1   instance of type {@link us.kbase.kbasefeaturevalues.GetMatrixItemsStatParams GetMatrixItemsStatParams}
      * @return   instance of list of type {@link us.kbase.kbasefeaturevalues.ItemStat ItemStat}
      */
-    @JsonServerMethod(rpc = "KBaseFeatureValues.get_matrix_columns_stat")
-    public List<ItemStat> getMatrixColumnsStat(GetMatrixItemsStatParams arg1, AuthToken authPart) throws Exception {
+    @JsonServerMethod(rpc = "KBaseFeatureValues.get_matrix_columns_stat", async=true)
+    public List<ItemStat> getMatrixColumnsStat(GetMatrixItemsStatParams arg1, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         List<ItemStat> returnVal = null;
         //BEGIN get_matrix_columns_stat
         returnVal = impl(authPart).getMatrixColumnsStat(arg1);
@@ -436,8 +385,8 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * @param   arg1   instance of type {@link us.kbase.kbasefeaturevalues.GetMatrixSetsStatParams GetMatrixSetsStatParams}
      * @return   instance of list of type {@link us.kbase.kbasefeaturevalues.ItemSetStat ItemSetStat}
      */
-    @JsonServerMethod(rpc = "KBaseFeatureValues.get_matrix_row_sets_stat")
-    public List<ItemSetStat> getMatrixRowSetsStat(GetMatrixSetsStatParams arg1, AuthToken authPart) throws Exception {
+    @JsonServerMethod(rpc = "KBaseFeatureValues.get_matrix_row_sets_stat", async=true)
+    public List<ItemSetStat> getMatrixRowSetsStat(GetMatrixSetsStatParams arg1, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         List<ItemSetStat> returnVal = null;
         //BEGIN get_matrix_row_sets_stat
         returnVal = impl(authPart).getMatrixRowSetsStat(arg1);
@@ -452,8 +401,8 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * @param   arg1   instance of type {@link us.kbase.kbasefeaturevalues.GetMatrixSetsStatParams GetMatrixSetsStatParams}
      * @return   instance of list of type {@link us.kbase.kbasefeaturevalues.ItemSetStat ItemSetStat}
      */
-    @JsonServerMethod(rpc = "KBaseFeatureValues.get_matrix_column_sets_stat")
-    public List<ItemSetStat> getMatrixColumnSetsStat(GetMatrixSetsStatParams arg1, AuthToken authPart) throws Exception {
+    @JsonServerMethod(rpc = "KBaseFeatureValues.get_matrix_column_sets_stat", async=true)
+    public List<ItemSetStat> getMatrixColumnSetsStat(GetMatrixSetsStatParams arg1, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         List<ItemSetStat> returnVal = null;
         //BEGIN get_matrix_column_sets_stat
         returnVal = impl(authPart).getMatrixColumnSetsStat(arg1);
@@ -468,8 +417,8 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * @param   arg1   instance of type {@link us.kbase.kbasefeaturevalues.GetMatrixStatParams GetMatrixStatParams}
      * @return   instance of type {@link us.kbase.kbasefeaturevalues.MatrixStat MatrixStat}
      */
-    @JsonServerMethod(rpc = "KBaseFeatureValues.get_matrix_stat")
-    public MatrixStat getMatrixStat(GetMatrixStatParams arg1, AuthToken authPart) throws Exception {
+    @JsonServerMethod(rpc = "KBaseFeatureValues.get_matrix_stat", async=true)
+    public MatrixStat getMatrixStat(GetMatrixStatParams arg1, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         MatrixStat returnVal = null;
         //BEGIN get_matrix_stat
         returnVal = impl(authPart).getMatrixStat(arg1);
@@ -484,8 +433,8 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * @param   arg1   instance of type {@link us.kbase.kbasefeaturevalues.GetSubmatrixStatParams GetSubmatrixStatParams}
      * @return   instance of type {@link us.kbase.kbasefeaturevalues.SubmatrixStat SubmatrixStat}
      */
-    @JsonServerMethod(rpc = "KBaseFeatureValues.get_submatrix_stat")
-    public SubmatrixStat getSubmatrixStat(GetSubmatrixStatParams arg1, AuthToken authPart) throws Exception {
+    @JsonServerMethod(rpc = "KBaseFeatureValues.get_submatrix_stat", async=true)
+    public SubmatrixStat getSubmatrixStat(GetSubmatrixStatParams arg1, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         SubmatrixStat returnVal = null;
         //BEGIN get_submatrix_stat
         returnVal = impl(authPart).getSubmatrixStat(arg1);
@@ -494,10 +443,16 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
     }
 
     public static void main(String[] args) throws Exception {
-        if (args.length != 1) {
+        if (args.length == 1) {
+            new KBaseFeatureValuesServer().startupServer(Integer.parseInt(args[0]));
+        } else if (args.length == 3) {
+            JsonServerSyslog.setStaticUseSyslog(false);
+            JsonServerSyslog.setStaticMlogFile(args[1] + ".log");
+            new KBaseFeatureValuesServer().processRpcCall(new File(args[0]), new File(args[1]), args[2]);
+        } else {
             System.out.println("Usage: <program> <server_port>");
+            System.out.println("   or: <program> <context_json_file> <output_json_file> <token>");
             return;
         }
-        new KBaseFeatureValuesServer().startupServer(Integer.parseInt(args[0]));
     }
 }
