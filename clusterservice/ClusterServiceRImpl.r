@@ -71,8 +71,8 @@ calc_cluster_props = function(logratios_median, cluster, ret) {
 
 clusters_from_dendrogram = function(values, dendrogram, height_cutoff) {
     hcout <- as.hclust.phylo(read.tree(text=dendrogram))
-    #pdf("hcout.pdf", width=8.5, height=11)
-    #plot(hcout)
+    pdf("/kb/module/work/hcout.pdf", width=8.5, height=11)
+    plot(hcout)
     groups <- cutree(hcout, h=height_cutoff)
     names <- names(groups)
     cluster_labels <- numeric(nrow(values))
@@ -196,7 +196,7 @@ methods[["ClusterServiceR.cluster_hierarchical"]] <- function(matrix,
         hcout <- flashClust::hclust(dd, method = "complete")
     }
     phylo <- as.phylo(hcout)
-    phylo$edge.length <- phylo$edge.length * 2 / max(hcout$height)
+    phylo$edge.length <- phylo$edge.length / max(hcout$height)
     newick <- write.tree(phylo, file = "")
     #print(is.ultrametric(tree))
     #print(is.binary.tree(tree))

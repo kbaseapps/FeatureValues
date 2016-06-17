@@ -10,7 +10,6 @@ import junit.framework.Assert;
 
 import org.junit.After;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import us.kbase.clusterservice.ClusterResults;
@@ -18,16 +17,12 @@ import us.kbase.clusterservice.ClusterServicePyLocalClient;
 import us.kbase.clusterservice.ClusterServiceRLocalClient;
 import us.kbase.common.service.ServerException;
 import us.kbase.common.service.Tuple2;
-import us.kbase.common.service.UObject;
 import us.kbase.kbasefeaturevalues.EstimateKResult;
-import us.kbase.kbasefeaturevalues.ExpressionMatrix;
 import us.kbase.kbasefeaturevalues.FloatMatrix2D;
-import us.kbase.kbasefeaturevalues.transform.ExpressionUploader;
 
 public class ClusterServiceTest {
     private static File rootTempDir = null;
 
-    @Ignore
     @Test
     public void pyTest() throws Exception {
         String osName = System.getProperty("os.name");
@@ -45,10 +40,8 @@ public class ClusterServiceTest {
                     matrix, 3L, null, null, null, null).getClusterLabels();
             for (int pos = 0; pos < clusterLabels.size(); pos++)
                 clusterLabels.set(pos, 1 + (long)clusterLabels.get(pos));
-            System.out.println(clusterLabels);
             checkClusterLabels(clusterLabels);
             ClusterResults cr2 = cl2.calcClusterQualities(matrix, clusterLabels);
-            System.out.println("Python+R: " + cr2);
             Assert.assertEquals(3, cr2.getMeancor().size());
             Assert.assertEquals(3, cr2.getMsecs().size());
         } catch (ServerException ex) {
@@ -112,57 +105,12 @@ public class ClusterServiceTest {
         }
     }
 
-    @Ignore
-    @Test
-    public void rCorrTest() throws Exception {
-        ClusterServiceRLocalClient cl = getRClient("r_corr");
-        File inputFile = new File("test/data/upload6/E_coli_v4_Build_6_subdata.tsv");
-        ExpressionMatrix data = ExpressionUploader.parse(null, null, inputFile, "Simple", 
-                null, true, null, null, null);
-        FloatMatrix2D matrix = data.getData();
-        try {
-            ClusterResults cr = cl.clusterHierarchical(matrix, "", "", 0.5, null, "flashClust");
-            System.out.println(cr);
-        } catch (ServerException ex) {
-            System.out.println(ex.getData());
-            throw ex;
-        }
-    }
-    
     private ClusterServiceRLocalClient getRClient(String testType) {
         File workDir = generateTempDir(rootTempDir, "test_clusterservice_" + testType + "_", "");
         workDir.mkdirs();
         ClusterServiceRLocalClient cl = new ClusterServiceRLocalClient(workDir);
         cl.setBinDir(new File("bin"));
         return cl;
-    }
-
-    @Ignore
-    @Test
-    public void r2Test() throws Exception {
-        ClusterServiceRLocalClient cl = getRClient("r2");
-        File inputFile = new File("test/data/upload2/Desulfovibrio_vulgaris_Hildenborough_microarray_log_level_data.tsv");
-        ExpressionMatrix data = ExpressionUploader.parse(null, null, inputFile, "Simple", 
-                null, true, null, null, null);
-        ClusterResults res = cl.clusterKMeans(data.getData(), 100L, 1000L, 1000L, 123L, "Lloyd");
-        System.out.println(res);
-    }
-
-    @Ignore
-    @Test
-    public void r3Test() throws Exception {
-        ClusterServiceRLocalClient cl = getRClient("r3");
-        File inputFile = new File("test/data/upload2/Desulfovibrio_vulgaris_Hildenborough_microarray_log_level_data.tsv");
-        ExpressionMatrix data = ExpressionUploader.parse(null, null, inputFile, "Simple", 
-                null, true, null, null, null);
-        FloatMatrix2D matrix = data.getData();
-        try {
-            ClusterResults res = cl.clusterHierarchical(matrix, null, null, 0.5, null, null);
-            System.out.println(res);
-        } catch (ServerException ex) {
-            System.out.println(ex.getData());
-            throw ex;
-        }
     }
 
     private static void checkClusterLabels(List<Long> labels) throws Exception {
@@ -191,28 +139,11 @@ public class ClusterServiceTest {
                 .withColIds(Arrays.asList("c1", "c2", "c3"));
     }
 
-    private static FloatMatrix2D getLargeMatrix(File tempDir) throws Exception {
-        File tempFile = File.createTempFile("expression_output", ".json", tempDir);
-        ExpressionUploader.main(new String[] { 
-                "--input_directory", "test/data/upload2", 
-                "--fill_missing_values",
-                "--working_directory", tempFile.getParentFile().getAbsolutePath(), 
-                "--output_file_name", tempFile.getName(),
-                "--format_type", "Simple"
-        });
-        ExpressionMatrix data = UObject.getMapper().readValue(tempFile, ExpressionMatrix.class);
-        tempFile.delete();
-        return data.getData();
-    }
-    
     @BeforeClass
     public static void prepare() throws Exception {
-        rootTempDir = new File(getProp("test.temp-dir"));
+        rootTempDir = new File("work");
         if (!rootTempDir.exists())
             rootTempDir.mkdirs();
-        //token = AuthService.login(getProp("test.user"), getProp("test.password")).getToken();
-        //cleanup();
-        System.out.println("test.temp-dir: " + rootTempDir);
         for (File dir : rootTempDir.listFiles()) {
             if (dir.isDirectory() && dir.getName().startsWith("test_clusterservice_"))
                 try {
@@ -221,13 +152,6 @@ public class ClusterServiceTest {
                     System.out.println("Can not delete directory [" + dir.getName() + "]: " + e.getMessage());
                 }
         }
-    }
-
-    private static String getProp(String propName) {
-        String ret = System.getProperty(propName);
-        if (ret == null)
-            throw new IllegalStateException("Java system property " + propName + " is not defined");
-        return ret;
     }
 
     @After

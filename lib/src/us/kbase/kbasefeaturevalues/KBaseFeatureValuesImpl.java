@@ -25,7 +25,6 @@ import us.kbase.clusterservice.ClusterServiceRLocalClient;
 import us.kbase.common.service.Tuple11;
 import us.kbase.common.service.UObject;
 import us.kbase.kbasegenomes.Feature;
-import us.kbase.userandjobstate.UserAndJobStateClient;
 import us.kbase.workspace.ObjectData;
 import us.kbase.workspace.ObjectIdentity;
 import us.kbase.workspace.ObjectSaveData;
@@ -46,22 +45,14 @@ public class KBaseFeatureValuesImpl {
     private Map<String, String> config;
     private File workDir;
     private String wsUrl = null;
-    private WorkspaceClient wsClient;
-    private UserAndJobStateClient ujsClient;
+    private WorkspaceClient wsClient = null;
     
     public KBaseFeatureValuesImpl(String jobId, String token, Map<String, String> config,
             File workDir) throws Exception {
-        this(jobId, token, config, workDir, null, null);
-    }
-    
-    public KBaseFeatureValuesImpl(String jobId, String token, Map<String, String> config,
-            File workDir, WorkspaceClient wsClient, UserAndJobStateClient ujsClient) throws Exception {
         this.jobId = jobId;
         this.token = token;
         this.config = config;
         this.workDir = workDir == null ? new File(".").getCanonicalFile() : workDir;
-        this.wsClient = wsClient;
-        this.ujsClient = ujsClient;
     }
     
     public String getWsUrl() {
@@ -78,15 +69,6 @@ public class KBaseFeatureValuesImpl {
         return wsClient;
     }
     
-    public UserAndJobStateClient getUjsClient() throws Exception {
-        if (ujsClient != null)
-            return ujsClient;
-        String ujsUrl = config.get(KBaseFeatureValuesServer.CONFIG_PARAM_UJS_URL);
-        ujsClient = new UserAndJobStateClient(new URL(ujsUrl), new AuthToken(token));
-        ujsClient.setIsInsecureHttpConnectionAllowed(true);
-        return ujsClient;
-    }
-
     public ClusterServiceLocalClient getMathClient() throws Exception {
         ClusterServiceRLocalClient mathClient = new ClusterServiceRLocalClient(workDir);
         String binPath = config.get(KBaseFeatureValuesServer.CONFIG_PARAM_CLIENT_BIN_DIR);

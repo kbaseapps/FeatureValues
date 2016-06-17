@@ -1,3 +1,0 @@
-#!/bin/bash
-sudo port install py27-numpy py27-scipy py27-matplotlib py27-ipython +notebook py27-pandas py27-sympy py27-nose
-pip install scikit-learn

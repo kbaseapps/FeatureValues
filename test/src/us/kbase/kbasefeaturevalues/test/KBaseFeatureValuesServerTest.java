@@ -1,7 +1,10 @@
 package us.kbase.kbasefeaturevalues.test;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Arrays;
@@ -35,6 +38,7 @@ import us.kbase.kbasefeaturevalues.FloatMatrix2D;
 import us.kbase.kbasefeaturevalues.GetMatrixDescriptorParams;
 import us.kbase.kbasefeaturevalues.GetMatrixStatParams;
 import us.kbase.kbasefeaturevalues.GetSubmatrixStatParams;
+import us.kbase.kbasefeaturevalues.KBaseFeatureValuesImpl;
 import us.kbase.kbasefeaturevalues.KBaseFeatureValuesServer;
 import us.kbase.kbasefeaturevalues.LabeledCluster;
 import us.kbase.kbasefeaturevalues.MatrixDescriptor;
@@ -44,6 +48,7 @@ import us.kbase.kbasefeaturevalues.SubmatrixStat;
 import us.kbase.kbasefeaturevalues.transform.ExpressionUploader;
 import us.kbase.kbasefeaturevalues.transform.FeatureClustersDownloader;
 import us.kbase.auth.AuthToken;
+import us.kbase.clusterservice.ClusterResults;
 import us.kbase.common.service.JsonServerSyslog;
 import us.kbase.common.service.RpcContext;
 import us.kbase.common.service.ServerException;
@@ -62,6 +67,7 @@ public class KBaseFeatureValuesServerTest {
     private static AuthToken token = null;
     private static Map<String, String> config = null;
     private static WorkspaceClient wsClient = null;
+    private static String wsUrl = null;
     private static String wsName = null;
     private static KBaseFeatureValuesServer impl = null;
     
@@ -74,7 +80,8 @@ public class KBaseFeatureValuesServerTest {
         File deploy = new File(configFilePath);
         Ini ini = new Ini(deploy);
         config = ini.get("KBaseFeatureValues");
-        wsClient = new WorkspaceClient(new URL(config.get("ws.url")), token);
+        wsUrl = config.get("ws.url");
+        wsClient = new WorkspaceClient(new URL(wsUrl), token);
         wsClient.setAuthAllowedForHttp(true);
         // These lines are necessary because we don't want to start linux syslog bridge service
         JsonServerSyslog.setStaticUseSyslog(false);
@@ -104,12 +111,11 @@ public class KBaseFeatureValuesServerTest {
         wsClient.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(genomeObjName).withType("KBaseGenomes.Genome")
                 .withData(new UObject(genomeData)))));
-        ExpressionMatrix data = ExpressionUploader.parse(config.get("ws.url"), testWsName, inputFile, "MO", 
+        ExpressionMatrix data = ExpressionUploader.parse(wsUrl, testWsName, inputFile, "MO", 
                 genomeObjName, true, null, null, token);
         wsClient.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(commonExpressionObjectName)
                 .withType("KBaseFeatureValues.ExpressionMatrix").withData(new UObject(data)))));
-
     }
     
     private static String getWsName() throws Exception {
@@ -132,7 +138,7 @@ public class KBaseFeatureValuesServerTest {
         if (wsName != null) {
             try {
                 wsClient.deleteWorkspace(new WorkspaceIdentity().withWorkspace(wsName));
-                System.out.println("Test workspace was deleted");
+                System.out.println("Test workspace [" + wsName + "] was deleted");
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -142,7 +148,18 @@ public class KBaseFeatureValuesServerTest {
     private static WorkspaceClient getWsClient() {
         return wsClient;
     }
-    
+
+    @Test
+    public void testClustersFromLabels() throws Exception {
+        FloatMatrix2D matrixData = getSampleMatrix();
+        ClusterResults res = new ClusterResults().withClusterLabels(
+                Arrays.asList(1L, -1L, -1L, -1L, 2L, 2L, 2L))
+                .withMeancor(Arrays.asList(Double.NaN, 0.9999))
+                .withMsecs(Arrays.asList(Double.NaN, 0.0062));
+        List<LabeledCluster> clusters = KBaseFeatureValuesImpl.clustersFromLabels(matrixData, res);
+        Assert.assertEquals(2, clusters.size());
+    }
+
     @Test
     public void testMainPipeline() throws Exception {
         WorkspaceClient wscl = getWsClient();
@@ -195,10 +212,8 @@ public class KBaseFeatureValuesServerTest {
         ObjectData res2 = wscl.getObjects(Arrays.asList(new ObjectIdentity().withWorkspace(testWsName)
                 .withName(clustObj1Name))).get(0);
         FeatureClusters clSet2 = res2.getData().asClassInstance(FeatureClusters.class);
-        Assert.assertEquals(2, clSet2.getFeatureClusters().get(0).getIdToPos().size());
-        Assert.assertEquals(2, clSet2.getFeatureClusters().get(1).getIdToPos().size());
-        Assert.assertEquals(3, clSet2.getFeatureClusters().get(2).getIdToPos().size());
-        /////////////// Hierarchikal /////////////////
+        checkKMeansForSample(clSet2);
+        /////////////// Hierarchical /////////////////
         impl.clusterHierarchical(new ClusterHierarchicalParams().withInputData(testWsName + "/" + 
                 exprObjName).withFeatureHeightCutoff(0.5).withOutWorkspace(testWsName)
                 .withOutClustersetId(clustObj2Name), token, getContext());
@@ -206,10 +221,9 @@ public class KBaseFeatureValuesServerTest {
                 .withName(clustObj2Name))).get(0);
         FeatureClusters clSet3 = res3.getData().asClassInstance(FeatureClusters.class);
         // TODO: check why it's not different from clSet4 case
-        Assert.assertEquals(3, clSet3.getFeatureClusters().size());
-        Assert.assertEquals(2, clSet3.getFeatureClusters().get(0).getIdToPos().size());
+        Assert.assertEquals(2, clSet3.getFeatureClusters().size());
+        Assert.assertEquals(5, clSet3.getFeatureClusters().get(0).getIdToPos().size());
         Assert.assertEquals(2, clSet3.getFeatureClusters().get(1).getIdToPos().size());
-        Assert.assertEquals(3, clSet3.getFeatureClusters().get(2).getIdToPos().size());
         Assert.assertTrue(clSet3.getFeatureDendrogram().startsWith("("));
         Assert.assertTrue(clSet3.getFeatureDendrogram().endsWith(");"));
         /////////////// From dendrogram /////////////////
@@ -224,21 +238,42 @@ public class KBaseFeatureValuesServerTest {
         Assert.assertEquals(2, clSet4.getFeatureClusters().get(1).getIdToPos().size());
         Assert.assertEquals(3, clSet4.getFeatureClusters().get(2).getIdToPos().size());
         /////////////// Clusters download ///////////////
-        /*File tsvTempFile = new File(fvServiceDir, "clusters.tsv");
-        FeatureClustersDownloader.generate(getWsUrl(), testWsName, clustObj1Name, 1, "TSV", token,
-                new PrintWriter(tsvTempFile));
-        List<String> lines = readFileLines(tsvTempFile);
-        Assert.assertEquals(7, lines.size());
-        Set<String> clusterCodes = new TreeSet<String>();
-        for (String l : lines) {
-            String[] parts = l.split(Pattern.quote("\t"));
-            Assert.assertEquals(2, parts.length);
-            clusterCodes.add(parts[1]);
+        File tempDir = new File("test/temp");
+        File tsvTempFile = new File(tempDir, "clusters.tsv");
+        try {
+            FeatureClustersDownloader.generate(wsUrl, testWsName, clustObj1Name, 1, "TSV", token,
+                    new PrintWriter(tsvTempFile));
+            List<String> lines = readFileLines(tsvTempFile);
+            Assert.assertEquals(7, lines.size());
+            Set<String> clusterCodes = new TreeSet<String>();
+            for (String l : lines) {
+                String[] parts = l.split(Pattern.quote("\t"));
+                Assert.assertEquals(2, parts.length);
+                clusterCodes.add(parts[1]);
+            }
+            Assert.assertEquals("[0, 1, 2]", clusterCodes.toString());
+        } finally {
+            if (tsvTempFile.exists())
+                try {
+                    tsvTempFile.delete();
+                } catch (Exception ignore) {}
         }
-        Assert.assertEquals("[0, 1, 2]", clusterCodes.toString());*/
+    }
+
+    private static void checkKMeansForSample(FeatureClusters clSet) {
+        Assert.assertEquals(3, clSet.getFeatureClusters().size());
+        Assert.assertEquals(2, clSet.getFeatureClusters().get(0).getIdToPos().size());
+        Assert.assertEquals(0.9999, (double)clSet.getFeatureClusters().get(0).getMeancor(), 1e-4);
+        Assert.assertEquals(0.018, (double)clSet.getFeatureClusters().get(0).getMsec(), 1e-4);
+        Assert.assertEquals(2, clSet.getFeatureClusters().get(1).getIdToPos().size());
+        Assert.assertEquals(0.9982, (double)clSet.getFeatureClusters().get(1).getMeancor(), 1e-4);
+        Assert.assertEquals(0.0184, (double)clSet.getFeatureClusters().get(1).getMsec(), 1e-4);
+        Assert.assertEquals(3, clSet.getFeatureClusters().get(2).getIdToPos().size());
+        Assert.assertEquals(0.9999, (double)clSet.getFeatureClusters().get(2).getMeancor(), 1e-4);
+        Assert.assertEquals(0.0062, (double)clSet.getFeatureClusters().get(2).getMsec(), 1e-4);
     }
     
-    /*@Test
+    @Test
     public void testPyScikitKMeans() throws Exception {
         String testWsName = getWsName();
         String osName = System.getProperty("os.name");
@@ -252,13 +287,13 @@ public class KBaseFeatureValuesServerTest {
         wscl.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(exprObjName).withType("KBaseFeatureValues.ExpressionMatrix")
                 .withData(new UObject(data)))));
-        String jobId = client.clusterKMeans(new ClusterKMeansParams().withInputData(testWsName + "/" + 
-                exprObjName).withK(3L).withOutWorkspace(testWsName).withOutClustersetId(clustObj1Name));
-        waitForJob(jobId);
+        impl.clusterKMeans(new ClusterKMeansParams().withInputData(testWsName + "/" + 
+                exprObjName).withK(3L).withOutWorkspace(testWsName).withOutClustersetId(clustObj1Name),
+                token, getContext());
         ObjectData res = wscl.getObjects(Arrays.asList(new ObjectIdentity().withWorkspace(testWsName)
                 .withName(clustObj1Name))).get(0);
         FeatureClusters clSet = res.getData().asClassInstance(FeatureClusters.class);
-        System.out.println("Python Scikit K-means: " + clSet.getFeatureClusters());
+        checkKMeansForSample(clSet);
     }
     
     @Test
@@ -273,10 +308,9 @@ public class KBaseFeatureValuesServerTest {
                 new ObjectSaveData().withName(sourceMatrixId).withType("KBaseFeatureValues.ExpressionMatrix")
                 .withData(new UObject(data)))));
         String targetMatrixId = "corrected_matrix.1";
-        String jobId = client.correctMatrix(new CorrectMatrixParams().withInputData(
+        impl.correctMatrix(new CorrectMatrixParams().withInputData(
                 testWsName + "/" + sourceMatrixId).withOutWorkspace(testWsName)
-                .withOutMatrixId(targetMatrixId).withTransformType("missing"));
-        waitForJob(jobId);
+                .withOutMatrixId(targetMatrixId).withTransformType("missing"), token, getContext());
         ExpressionMatrix matrix = getWsClient().getObjects(Arrays.asList(
                 new ObjectIdentity().withWorkspace(testWsName).withName(targetMatrixId)))
                 .get(0).getData().asClassInstance(ExpressionMatrix.class);
@@ -296,10 +330,9 @@ public class KBaseFeatureValuesServerTest {
         getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(matrixId).withType("KBaseFeatureValues.ExpressionMatrix")
                 .withData(new UObject(data)))));
-        String jobId = client.reconnectMatrixToGenome(new ReconnectMatrixToGenomeParams().withInputData(
+        impl.reconnectMatrixToGenome(new ReconnectMatrixToGenomeParams().withInputData(
                 testWsName + "/" + matrixId).withOutWorkspace(testWsName).withGenomeRef(
-                        testWsName + "/" + genomeObjName));
-        waitForJob(jobId);
+                        testWsName + "/" + genomeObjName), token, getContext());
         ExpressionMatrix matrix = getWsClient().getObjects(Arrays.asList(
                 new ObjectIdentity().withWorkspace(testWsName).withName(matrixId)))
                 .get(0).getData().asClassInstance(ExpressionMatrix.class);
@@ -315,7 +348,8 @@ public class KBaseFeatureValuesServerTest {
                 new ObjectSaveData().withName(matrixId).withType("KBaseFeatureValues.ExpressionMatrix")
                 .withData(new UObject(data)))));
         try {
-            MatrixStat stat = client.getMatrixStat(new GetMatrixStatParams().withInputData(testWsName + "/" + matrixId));
+            MatrixStat stat = impl.getMatrixStat(new GetMatrixStatParams().withInputData(testWsName + "/" + matrixId),
+                    token, getContext());
             Assert.assertEquals(4999, stat.getRowStats().size());
         } catch (ServerException ex) {
             System.err.println(ex.getData());
@@ -335,11 +369,12 @@ public class KBaseFeatureValuesServerTest {
     @Test
     public void testDataAPI() throws Exception {
         String testWsName = getWsName();
-        MatrixDescriptor md1 = client.getMatrixDescriptor(new GetMatrixDescriptorParams().withInputData(
-                testWsName + "/" + commonExpressionObjectName));
+        MatrixDescriptor md1 = impl.getMatrixDescriptor(new GetMatrixDescriptorParams().withInputData(
+                testWsName + "/" + commonExpressionObjectName), token, getContext());
         Assert.assertEquals(2680L, (long)md1.getRowsCount());
     }
     
+    @SuppressWarnings("unchecked")
     @Test
     public void testBuildFeatureSet() throws Exception {
         String testWsName = getWsName();
@@ -358,20 +393,20 @@ public class KBaseFeatureValuesServerTest {
                 "featureset.1e", null, " DVUA0001 \nDVUA0075, DVUA0112").size());
         String outFeatureSetObj2 = "featureset.2";
         try {
-            String jobId2 = client.buildFeatureSet(new BuildFeatureSetParams().withDescription("Testing...")
+            impl.buildFeatureSet(new BuildFeatureSetParams().withDescription("Testing...")
                     .withBaseFeatureSet(testWsName + "/" + outFeatureSetObj1)
                     .withFeatureIds("DVUA1000").withGenome(testWsName + "/" + genomeObjName)
-                    .withOutWorkspace(testWsName).withOutputFeatureSet(outFeatureSetObj2));
-            waitForJob(jobId2);
+                    .withOutWorkspace(testWsName).withOutputFeatureSet(outFeatureSetObj2),
+                    token, getContext());
             Assert.fail("Method should fail");
         } catch (Exception ex) {
             Assert.assertTrue(ex.getMessage(), ex.getMessage().contains("Some features are not found: "));
         }
-        String jobId3 = client.buildFeatureSet(new BuildFeatureSetParams().withDescription("Testing...")
+        impl.buildFeatureSet(new BuildFeatureSetParams().withDescription("Testing...")
                 .withBaseFeatureSet(testWsName + "/" + outFeatureSetObj1)
                 .withFeatureIds("DVU1000").withGenome(testWsName + "/" + genomeObjName)
-                .withOutWorkspace(testWsName).withOutputFeatureSet(outFeatureSetObj2));
-        waitForJob(jobId3);
+                .withOutWorkspace(testWsName).withOutputFeatureSet(outFeatureSetObj2),
+                token, getContext());
         Map<String, Object> fs2 = getWsClient().getObjects(Arrays.asList(
                 new ObjectIdentity().withWorkspace(testWsName).withName(outFeatureSetObj2)))
                 .get(0).getData().asClassInstance(Map.class);
@@ -379,15 +414,16 @@ public class KBaseFeatureValuesServerTest {
         Assert.assertEquals(4, elements2.size());
     }
 
+    @SuppressWarnings("unchecked")
     public Map<String, List<String>> buildFeatureSetForTesting(
             String genomeObjName, String outFeatureSetObj1, String featureIds,
             String featureIdsCustom) throws Exception {
         String testWsName = getWsName();
-        String jobId1 = client.buildFeatureSet(new BuildFeatureSetParams().withDescription("Testing...")
+        impl.buildFeatureSet(new BuildFeatureSetParams().withDescription("Testing...")
                 .withFeatureIds(featureIds).withFeatureIdsCustom(featureIdsCustom)
                 .withGenome(testWsName + "/" + genomeObjName)
-                .withOutWorkspace(testWsName).withOutputFeatureSet(outFeatureSetObj1));
-        waitForJob(jobId1);
+                .withOutWorkspace(testWsName).withOutputFeatureSet(outFeatureSetObj1),
+                token, getContext());
         Map<String, Object> fs1 = getWsClient().getObjects(Arrays.asList(
                 new ObjectIdentity().withWorkspace(testWsName).withName(outFeatureSetObj1)))
                 .get(0).getData().asClassInstance(Map.class);
@@ -395,6 +431,7 @@ public class KBaseFeatureValuesServerTest {
         return elements1;
     }
     
+    @SuppressWarnings("unchecked")
     @Test
     public void testSubMatrixStat() throws Exception {
         String testWsName = getWsName();
@@ -421,9 +458,9 @@ public class KBaseFeatureValuesServerTest {
                 new ObjectSaveData().withName(matrixId).withType("KBaseFeatureValues.ExpressionMatrix")
                 .withData(new UObject(data)))));
         try {
-            SubmatrixStat stat = client.getSubmatrixStat(new GetSubmatrixStatParams().withInputData(testWsName + "/" + matrixId)
+            SubmatrixStat stat = impl.getSubmatrixStat(new GetSubmatrixStatParams().withInputData(testWsName + "/" + matrixId)
                     .withRowIds(Arrays.asList("RSP_0049", "RSP_1584", "RSP_1588")).withFlRowPairwiseCorrelation(1L)
-                    .withFlRowSetStats(1L));
+                    .withFlRowSetStats(1L), token, getContext());
             Assert.assertEquals(3, stat.getRowPairwiseCorrelation().getComparisonValues().size());
             Assert.assertEquals(3, stat.getRowPairwiseCorrelation().getComparisonValues().get(0).size());
         } catch (ServerException ex) {
@@ -443,20 +480,20 @@ public class KBaseFeatureValuesServerTest {
         getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(matrixId).withType("KBaseFeatureValues.ExpressionMatrix")
                 .withData(new UObject(data)))));
-        String jobId1 = client.clusterHierarchical(new ClusterHierarchicalParams().withInputData(testWsName + "/" + 
+        impl.clusterHierarchical(new ClusterHierarchicalParams().withInputData(testWsName + "/" + 
                 matrixId).withFeatureHeightCutoff(0.2).withAlgorithm("flashClust").withMaxItems(1000L)
-                .withOutWorkspace(testWsName).withOutClustersetId(clustObjName));
-        waitForJob(jobId1);
+                .withOutWorkspace(testWsName).withOutClustersetId(clustObjName), token, getContext());
         ObjectData res1 = getWsClient().getObjects(Arrays.asList(new ObjectIdentity().withWorkspace(testWsName)
                 .withName(clustObjName))).get(0);
         FeatureClusters clSet1 = res1.getData().asClassInstance(FeatureClusters.class);
+        Assert.assertEquals(108, clSet1.getFeatureClusters().size());
         int nullCount = 0;
         for (LabeledCluster lc : clSet1.getFeatureClusters()) {
             if (lc.getMeancor() == null || lc.getMsec() == null)
                 nullCount++;
         }
         Assert.assertEquals(10, nullCount);
-    }*/
+    }
     
     private static FloatMatrix2D getSampleMatrix() {
         List<List<Double>> values = new ArrayList<List<Double>>();
@@ -470,5 +507,18 @@ public class KBaseFeatureValuesServerTest {
         return new FloatMatrix2D().withValues(values)
                 .withRowIds(Arrays.asList("g1", "g2", "g3", "g4", "g5", "g6", "g7"))
                 .withColIds(Arrays.asList("c1", "c2", "c3"));
+    }
+    
+    private static List<String> readFileLines(File f) throws IOException {
+        List<String> ret = new ArrayList<String>();
+        BufferedReader br = new BufferedReader(new FileReader(f));
+        while (true) {
+            String l = br.readLine();
+            if (l == null)
+                break;
+            ret.add(l);
+        }
+        br.close();
+        return ret;
     }
 }

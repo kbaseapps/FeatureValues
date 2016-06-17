@@ -65,11 +65,10 @@ public class ExpressionDownloader {
                 ref += "/" + version;
             matrix = client.getObjects(Arrays.asList(new ObjectIdentity().withRef(ref)))
                     .get(0).getData().asClassInstance(BioMatrix.class);
+            generate(matrix.getData(), matrix.getFeatureMapping(), pw);
         } finally {
             pw.close();
         }
-        if (matrix != null)
-            generate(matrix.getData(), matrix.getFeatureMapping(), pw);
     }
 
     public static void generate(FloatMatrix2D data, Map<String, String> featureMapping, PrintWriter pw) throws Exception {
