@@ -11,8 +11,10 @@ service-language:
     java
 
 module-version:
-    0.0.8
+    0.0.9
 
 owners:
     [rsutormin, msneddon, psnovichkov, marcin, srividya22]
 
+service-config:
+    dynamic-service: true

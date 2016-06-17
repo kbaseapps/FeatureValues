@@ -1,7 +1,9 @@
 package us.kbase.kbasefeaturevalues;
 
 import java.io.File;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import us.kbase.auth.AuthToken;
 import us.kbase.common.service.JsonServerMethod;
 import us.kbase.common.service.JsonServerServlet;
@@ -9,15 +11,7 @@ import us.kbase.common.service.JsonServerSyslog;
 import us.kbase.common.service.RpcContext;
 
 //BEGIN_HEADER
-import java.io.InputStream;
-import java.lang.management.ManagementFactory;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Properties;
-
-import us.kbase.workspace.WorkspaceClient;
+import us.kbase.workspace.ProvenanceAction;
 //END_HEADER
 
 /**
@@ -36,34 +30,21 @@ import us.kbase.workspace.WorkspaceClient;
  */
 public class KBaseFeatureValuesServer extends JsonServerServlet {
     private static final long serialVersionUID = 1L;
-    private static final String version = "0.0.8";
+    private static final String version = "0.0.9";
     private static final String gitUrl = "https://github.com/rsutormin/feature_values";
-    private static final String gitCommitHash = "04f66d38c9f4a139ff7d17a142bfb6f25ee603dc";
+    private static final String gitCommitHash = "4723a79c84a355ba03d7e9666889379ee178ce1a";
 
     //BEGIN_CLASS_HEADER
-    public static final String SERVICE_NAME = "KBaseFeatureValues";
-    public static final String CONFIG_PARAM_SCRATCH = "scratch";
     public static final String CONFIG_PARAM_WS_URL = "ws.url";
-    public static final String CONFIG_PARAM_UJS_URL = "ujs.url";
-    public static final String CONFIG_PARAM_SHOCK_URL = "shock.url";
-    public static final String CONFIG_PARAM_AWE_URL = "awe.url";
     public static final String CONFIG_PARAM_CLIENT_BIN_DIR = "client.bin.dir";
-    public static final String CONFIG_PARAM_CLIENT_WORK_DIR = "client.work.dir";
-    public static final String AWE_CLIENT_SCRIPT_NAME = "awe_" + SERVICE_NAME + "_run_job.sh";
-    public static final String SERVICE_VERSION = "0.8";
     
-    public WorkspaceClient getWsClient(AuthToken authPart) throws Exception {
-        String wsUrl = config.get(CONFIG_PARAM_WS_URL);
-        if (wsUrl == null)
-            throw new IllegalStateException("Parameter '" + CONFIG_PARAM_WS_URL +
-                    "' is not defined in configuration");
-        WorkspaceClient wsClient = new WorkspaceClient(new URL(wsUrl), authPart);
-        wsClient.setAuthAllowedForHttp(true);
-        return wsClient;
-    }
-
     private KBaseFeatureValuesImpl impl(AuthToken authPart) throws Exception {
         return new KBaseFeatureValuesImpl(null, authPart.toString(), config, null);
+    }
+    
+    @SuppressWarnings("unchecked")
+    private List<ProvenanceAction> prov(RpcContext jsonRpcContext) {
+        return (List<ProvenanceAction>)jsonRpcContext.getProvenance();
     }
     //END_CLASS_HEADER
 
@@ -80,15 +61,12 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * provides an estimate of K by [...]
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.EstimateKParams EstimateKParams}
-     * @return   parameter "job_id" of String
      */
     @JsonServerMethod(rpc = "KBaseFeatureValues.estimate_k", async=true)
-    public String estimateK(EstimateKParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
-        String returnVal = null;
+    public void estimateK(EstimateKParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         //BEGIN estimate_k
-        returnVal = impl(authPart).estimateK(params);
+        impl(authPart).estimateK(params, prov(jsonRpcContext));
         //END estimate_k
-        return returnVal;
     }
 
     /**
@@ -98,15 +76,12 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * provides an estimate of K by [...]
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.EstimateKParamsNew EstimateKParamsNew}
-     * @return   parameter "job_id" of String
      */
     @JsonServerMethod(rpc = "KBaseFeatureValues.estimate_k_new", async=true)
-    public String estimateKNew(EstimateKParamsNew params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
-        String returnVal = null;
+    public void estimateKNew(EstimateKParamsNew params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         //BEGIN estimate_k_new
-        returnVal = impl(authPart).estimateKNew(params);
+        impl(authPart).estimateKNew(params, prov(jsonRpcContext));
         //END estimate_k_new
-        return returnVal;
     }
 
     /**
@@ -115,15 +90,12 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * Clusters features by K-means clustering.
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ClusterKMeansParams ClusterKMeansParams}
-     * @return   parameter "job_id" of String
      */
     @JsonServerMethod(rpc = "KBaseFeatureValues.cluster_k_means", async=true)
-    public String clusterKMeans(ClusterKMeansParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
-        String returnVal = null;
+    public void clusterKMeans(ClusterKMeansParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         //BEGIN cluster_k_means
-        returnVal = impl(authPart).clusterKMeans(params);
+        impl(authPart).clusterKMeans(params, prov(jsonRpcContext));
         //END cluster_k_means
-        return returnVal;
     }
 
     /**
@@ -132,15 +104,12 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * Clusters features by hierarchical clustering.
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ClusterHierarchicalParams ClusterHierarchicalParams}
-     * @return   parameter "job_id" of String
      */
     @JsonServerMethod(rpc = "KBaseFeatureValues.cluster_hierarchical", async=true)
-    public String clusterHierarchical(ClusterHierarchicalParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
-        String returnVal = null;
+    public void clusterHierarchical(ClusterHierarchicalParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         //BEGIN cluster_hierarchical
-        returnVal = impl(authPart).clusterHierarchical(params);
+        impl(authPart).clusterHierarchical(params, prov(jsonRpcContext));
         //END cluster_hierarchical
-        return returnVal;
     }
 
     /**
@@ -151,15 +120,12 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * a specific hieght or by some other approach.
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ClustersFromDendrogramParams ClustersFromDendrogramParams}
-     * @return   parameter "job_id" of String
      */
     @JsonServerMethod(rpc = "KBaseFeatureValues.clusters_from_dendrogram", async=true)
-    public String clustersFromDendrogram(ClustersFromDendrogramParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
-        String returnVal = null;
+    public void clustersFromDendrogram(ClustersFromDendrogramParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         //BEGIN clusters_from_dendrogram
-        returnVal = impl(authPart).clustersFromDendrogram(params);
+        impl(authPart).clustersFromDendrogram(params, prov(jsonRpcContext));
         //END clusters_from_dendrogram
-        return returnVal;
     }
 
     /**
@@ -170,15 +136,12 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * a specific hieght or by some other approach.
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.EvaluateClustersetQualityParams EvaluateClustersetQualityParams}
-     * @return   parameter "job_id" of String
      */
     @JsonServerMethod(rpc = "KBaseFeatureValues.evaluate_clusterset_quality", async=true)
-    public String evaluateClustersetQuality(EvaluateClustersetQualityParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
-        String returnVal = null;
+    public void evaluateClustersetQuality(EvaluateClustersetQualityParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         //BEGIN evaluate_clusterset_quality
-        impl(authPart).evaluateClustersetQuality(params);
+        impl(authPart).evaluateClustersetQuality(params, prov(jsonRpcContext));
         //END evaluate_clusterset_quality
-        return returnVal;
     }
 
     /**
@@ -186,15 +149,12 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * <pre>
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ValidateMatrixParams ValidateMatrixParams}
-     * @return   parameter "job_id" of String
      */
     @JsonServerMethod(rpc = "KBaseFeatureValues.validate_matrix", authOptional=true, async=true)
-    public String validateMatrix(ValidateMatrixParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
-        String returnVal = null;
+    public void validateMatrix(ValidateMatrixParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         //BEGIN validate_matrix
-        impl(authPart).validateMatrix(params);
+        impl(authPart).validateMatrix(params, prov(jsonRpcContext));
         //END validate_matrix
-        return returnVal;
     }
 
     /**
@@ -202,70 +162,12 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * <pre>
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.CorrectMatrixParams CorrectMatrixParams}
-     * @return   parameter "job_id" of String
      */
     @JsonServerMethod(rpc = "KBaseFeatureValues.correct_matrix", async=true)
-    public String correctMatrix(CorrectMatrixParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
-        String returnVal = null;
+    public void correctMatrix(CorrectMatrixParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         //BEGIN correct_matrix
-        returnVal = impl(authPart).correctMatrix(params);
+        impl(authPart).correctMatrix(params, prov(jsonRpcContext));
         //END correct_matrix
-        return returnVal;
-    }
-
-    /**
-     * <p>Original spec-file function name: status</p>
-     * <pre>
-     * </pre>
-     * @return   instance of type {@link us.kbase.kbasefeaturevalues.ServiceStatus ServiceStatus}
-     */
-    @JsonServerMethod(rpc = "KBaseFeatureValues.status", async=true)
-    public ServiceStatus status(RpcContext jsonRpcContext) throws Exception {
-        ServiceStatus returnVal = null;
-        //BEGIN status
-        String status = "OK";
-        String startupTime = "";
-        String gitUrl = "";
-        String branch = "";
-        String commit = "";
-        String deployCfgPath = "";
-        Map<String, String> safeConfig = new LinkedHashMap<String, String>();
-        try {
-            long dateTime = ManagementFactory.getRuntimeMXBean().getStartTime();
-            startupTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(dateTime);
-            String envVar = "KB_DEPLOYMENT_CONFIG";
-            deployCfgPath = System.getProperty(envVar) == null ? System.getenv(envVar) : 
-                System.getProperty(envVar);
-            if (config == null) {
-                status = "Error: configuration is not found";
-            } else {
-                String[] keys = {CONFIG_PARAM_SCRATCH, CONFIG_PARAM_WS_URL, CONFIG_PARAM_UJS_URL, 
-                        CONFIG_PARAM_SHOCK_URL, CONFIG_PARAM_AWE_URL};
-                for (String key : keys) {
-                    String value = config.get(key);
-                    if (value == null) {
-                        status = "Error: configuration parameter '" + key + "' is not defined";
-                    } else {
-                        safeConfig.put(key, value);
-                    }
-                }
-            }
-            Properties gitProps = new Properties();
-            InputStream is = this.getClass().getResourceAsStream("git.properties");
-            gitProps.load(is);
-            is.close();
-            gitUrl = gitProps.getProperty("giturl");
-            branch = gitProps.getProperty("branch");
-            commit = gitProps.getProperty("commit");
-        } catch (Exception ex) {
-            status = "Error: " + ex.getMessage();
-        }
-        returnVal = new ServiceStatus().withVersion(SERVICE_VERSION).withStatus(status)
-                .withStartupTime(startupTime).withGiturl(gitUrl).withBranch(branch)
-                .withCommit(commit).withSafeConfiguration(safeConfig)
-                .withDeploymentCfgPath(deployCfgPath);
-        //END status
-        return returnVal;
     }
 
     /**
@@ -273,15 +175,12 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * <pre>
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ReconnectMatrixToGenomeParams ReconnectMatrixToGenomeParams}
-     * @return   parameter "job_id" of String
      */
     @JsonServerMethod(rpc = "KBaseFeatureValues.reconnect_matrix_to_genome", async=true)
-    public String reconnectMatrixToGenome(ReconnectMatrixToGenomeParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
-        String returnVal = null;
+    public void reconnectMatrixToGenome(ReconnectMatrixToGenomeParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         //BEGIN reconnect_matrix_to_genome
-        returnVal = impl(authPart).reconnectMatrixToGenome(params);
+        impl(authPart).reconnectMatrixToGenome(params, prov(jsonRpcContext));
         //END reconnect_matrix_to_genome
-        return returnVal;
     }
 
     /**
@@ -289,15 +188,12 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * <pre>
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.BuildFeatureSetParams BuildFeatureSetParams}
-     * @return   parameter "job_id" of String
      */
     @JsonServerMethod(rpc = "KBaseFeatureValues.build_feature_set", async=true)
-    public String buildFeatureSet(BuildFeatureSetParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
-        String returnVal = null;
+    public void buildFeatureSet(BuildFeatureSetParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         //BEGIN build_feature_set
-        returnVal = impl(authPart).buildFeatureSet(params);
+        impl(authPart).buildFeatureSet(params, prov(jsonRpcContext));
         //END build_feature_set
-        return returnVal;
     }
 
     /**
@@ -439,6 +335,19 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
         //BEGIN get_submatrix_stat
         returnVal = impl(authPart).getSubmatrixStat(arg1);
         //END get_submatrix_stat
+        return returnVal;
+    }
+    @JsonServerMethod(rpc = "KBaseFeatureValues.status")
+    public Map<String, Object> status() {
+        Map<String, Object> returnVal = null;
+        //BEGIN_STATUS
+        returnVal = new LinkedHashMap<String, Object>();
+        returnVal.put("state", "OK");
+        returnVal.put("message", "");
+        returnVal.put("version", version);
+        returnVal.put("git_url", gitUrl);
+        returnVal.put("git_commit_hash", gitCommitHash);
+        //END_STATUS
         return returnVal;
     }
 

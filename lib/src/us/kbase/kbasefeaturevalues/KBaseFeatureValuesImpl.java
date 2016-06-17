@@ -81,7 +81,8 @@ public class KBaseFeatureValuesImpl {
         return jobId;
     }
     
-    public String estimateK(EstimateKParams params) throws Exception {
+    public void estimateK(EstimateKParams params, 
+            List<ProvenanceAction> provenance) throws Exception {
         ObjectData objData = getWsClient().getObjects(Arrays.asList(
                 new ObjectIdentity().withRef(params.getInputMatrix()))).get(0);
         BioMatrix matrix = objData.getData().asClassInstance(BioMatrix.class);
@@ -89,21 +90,16 @@ public class KBaseFeatureValuesImpl {
         EstimateKResult toSave = mathClient.estimateK(matrix.getData(), params.getMinK(), 
                 params.getMaxK(), params.getMaxIter(), params.getRandomSeed(),
                 params.getNeighbSize(), params.getMaxItems());
-        List<ProvenanceAction> provenance = Arrays.asList(
-                new ProvenanceAction().withService(KBaseFeatureValuesServer.SERVICE_NAME)
-                .withServiceVer(KBaseFeatureValuesServer.SERVICE_VERSION)
-                .withDescription("K estimation for K-Means clustering method")
-                .withInputWsObjects(Arrays.asList(params.getInputMatrix()))
-                .withMethod("estimate_k")
-                .withMethodParams(Arrays.asList(new UObject(params))));
+        provenance.get(0).withDescription("K estimation for K-Means clustering method")
+                .withInputWsObjects(Arrays.asList(params.getInputMatrix()));
         getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(params.getOutWorkspace())
                 .withObjects(Arrays.asList(new ObjectSaveData()
                 .withType("KBaseFeatureValues.EstimateKResult").withName(params.getOutEstimateResult())
                 .withData(new UObject(toSave)).withProvenance(provenance))));
-        return params.getOutWorkspace() + "/" + params.getOutEstimateResult();
     }
 
-    public String estimateKNew(EstimateKParamsNew params) throws Exception {
+    public void estimateKNew(EstimateKParamsNew params,
+            List<ProvenanceAction> provenance) throws Exception {
         ObjectData objData = getWsClient().getObjects(Arrays.asList(
                 new ObjectIdentity().withRef(params.getInputMatrix()))).get(0);
         BioMatrix matrix = objData.getData().asClassInstance(BioMatrix.class);
@@ -111,20 +107,16 @@ public class KBaseFeatureValuesImpl {
         EstimateKResult toSave = mathClient.estimateKNew(matrix.getData(), params.getMinK(),
                 params.getMaxK(), params.getCriterion(), params.getUsepam(),params.getAlpha(),
             params.getDiss(),params.getRandomSeed());
-        List<ProvenanceAction> provenance = Arrays.asList(
-                new ProvenanceAction().withService(KBaseFeatureValuesServer.SERVICE_NAME)
-                .withServiceVer(KBaseFeatureValuesServer.SERVICE_VERSION)
-                .withDescription("K estimation for K-Means clustering method")
-                .withInputWsObjects(Arrays.asList(params.getInputMatrix()))
-                .withMethod("estimate_k_new")
-                .withMethodParams(Arrays.asList(new UObject(params))));
+        provenance.get(0).withDescription("K estimation for K-Means clustering method")
+                .withInputWsObjects(Arrays.asList(params.getInputMatrix()));
         getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(params.getOutWorkspace())
                 .withObjects(Arrays.asList(new ObjectSaveData()
                 .withType("KBaseFeatureValues.EstimateKResult").withName(params.getOutEstimateResult())
                 .withData(new UObject(toSave)).withProvenance(provenance))));
-        return params.getOutWorkspace() + "/" + params.getOutEstimateResult();    }
+    }
     
-    public String clusterKMeans(ClusterKMeansParams params) throws Exception {
+    public void clusterKMeans(ClusterKMeansParams params, 
+            List<ProvenanceAction> provenance) throws Exception {
         ObjectData objData = getWsClient().getObjects(Arrays.asList(
                 new ObjectIdentity().withRef(params.getInputData()))).get(0);
         BioMatrix matrix = objData.getData().asClassInstance(BioMatrix.class);
@@ -147,18 +139,12 @@ public class KBaseFeatureValuesImpl {
         }
         FeatureClusters toSave = new FeatureClusters().withOriginalData(params.getInputData());
         toSave.withFeatureClusters(clustersFromLabels(matrix.getData(), res));
-        List<ProvenanceAction> provenance = Arrays.asList(
-                new ProvenanceAction().withService(KBaseFeatureValuesServer.SERVICE_NAME)
-                .withServiceVer(KBaseFeatureValuesServer.SERVICE_VERSION)
-                .withDescription("K-Means clustering method")
-                .withInputWsObjects(Arrays.asList(params.getInputData()))
-                .withMethod("cluster_k_means")
-                .withMethodParams(Arrays.asList(new UObject(params))));
+        provenance.get(0).withDescription("K-Means clustering method")
+                .withInputWsObjects(Arrays.asList(params.getInputData()));
         getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(params.getOutWorkspace())
                 .withObjects(Arrays.asList(new ObjectSaveData()
                 .withType("KBaseFeatureValues.FeatureClusters").withName(params.getOutClustersetId())
                 .withData(new UObject(toSave)).withProvenance(provenance))));
-        return params.getOutWorkspace() + "/" + params.getOutClustersetId();
     }
 
     public static List<LabeledCluster> clustersFromLabels(FloatMatrix2D matrixData, ClusterResults res) {
@@ -197,7 +183,8 @@ public class KBaseFeatureValuesImpl {
         return (value == null || Double.isNaN(value)) ? null : value;
     }
     
-    public String clusterHierarchical(ClusterHierarchicalParams params) throws Exception {
+    public void clusterHierarchical(ClusterHierarchicalParams params,
+            List<ProvenanceAction> provenance) throws Exception {
         ObjectData objData = getWsClient().getObjects(Arrays.asList(
                 new ObjectIdentity().withRef(params.getInputData()))).get(0);
         BioMatrix matrix = objData.getData().asClassInstance(BioMatrix.class);
@@ -207,21 +194,16 @@ public class KBaseFeatureValuesImpl {
         FeatureClusters toSave = new FeatureClusters().withOriginalData(params.getInputData())
                 .withFeatureClusters(clustersFromLabels(matrix.getData(), res))
                 .withFeatureDendrogram(res.getDendrogram());
-        List<ProvenanceAction> provenance = Arrays.asList(
-                new ProvenanceAction().withService(KBaseFeatureValuesServer.SERVICE_NAME)
-                .withServiceVer(KBaseFeatureValuesServer.SERVICE_VERSION)
-                .withDescription("Hierarchical clustering method")
-                .withInputWsObjects(Arrays.asList(params.getInputData()))
-                .withMethod("cluster_hierarchical")
-                .withMethodParams(Arrays.asList(new UObject(params))));
+        provenance.get(0).withDescription("Hierarchical clustering method")
+                .withInputWsObjects(Arrays.asList(params.getInputData()));
         getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(params.getOutWorkspace())
                 .withObjects(Arrays.asList(new ObjectSaveData()
                 .withType("KBaseFeatureValues.FeatureClusters").withName(params.getOutClustersetId())
                 .withData(new UObject(toSave)).withProvenance(provenance))));
-        return params.getOutWorkspace() + "/" + params.getOutClustersetId();
     }
 
-    public String clustersFromDendrogram(ClustersFromDendrogramParams params) throws Exception {
+    public void clustersFromDendrogram(ClustersFromDendrogramParams params,
+            List<ProvenanceAction> provenance) throws Exception {
         ObjectData objData = getWsClient().getObjects(Arrays.asList(
                 new ObjectIdentity().withRef(params.getInputData()))).get(0);
         FeatureClusters input = objData.getData().asClassInstance(FeatureClusters.class);
@@ -234,29 +216,26 @@ public class KBaseFeatureValuesImpl {
         FeatureClusters toSave = new FeatureClusters().withOriginalData(input.getOriginalData())
                 .withFeatureClusters(clustersFromLabels(matrix.getData(), res))
                 .withFeatureDendrogram(res.getDendrogram());
-        List<ProvenanceAction> provenance = Arrays.asList(
-                new ProvenanceAction().withService(KBaseFeatureValuesServer.SERVICE_NAME)
-                .withServiceVer(KBaseFeatureValuesServer.SERVICE_VERSION)
-                .withDescription("Clusters from dendrogram")
-                .withInputWsObjects(Arrays.asList(params.getInputData()))
-                .withMethod("clusters_from_dendrogram")
-                .withMethodParams(Arrays.asList(new UObject(params))));
+        provenance.get(0).withDescription("Clusters from dendrogram")
+                .withInputWsObjects(Arrays.asList(params.getInputData()));
         getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(params.getOutWorkspace())
                 .withObjects(Arrays.asList(new ObjectSaveData()
                 .withType("KBaseFeatureValues.FeatureClusters").withName(params.getOutClustersetId())
                 .withData(new UObject(toSave)).withProvenance(provenance))));
-        return params.getOutWorkspace() + "/" + params.getOutClustersetId();
     }
 
-    public void evaluateClustersetQuality(EvaluateClustersetQualityParams params) throws Exception {
+    public void evaluateClustersetQuality(EvaluateClustersetQualityParams params, 
+            List<ProvenanceAction> provenance) throws Exception {
         throw new IllegalStateException("Not yet implemented");
     }
 
-    public void validateMatrix(ValidateMatrixParams params) throws Exception {
+    public void validateMatrix(ValidateMatrixParams params, 
+            List<ProvenanceAction> provenance) throws Exception {
         throw new IllegalStateException("Not yet implemented");
     }
 
-    public String correctMatrix(CorrectMatrixParams params) throws Exception {
+    public void correctMatrix(CorrectMatrixParams params, 
+            List<ProvenanceAction> provenance) throws Exception {
         ObjectData objData = getWsClient().getObjects(Arrays.asList(
                 new ObjectIdentity().withRef(params.getInputData()))).get(0);
         String inputType = objData.getInfo().getE3();
@@ -268,21 +247,16 @@ public class KBaseFeatureValuesImpl {
         String outMatrixId = params.getOutMatrixId();
         if (outMatrixId == null)
             outMatrixId = objData.getInfo().getE2();
-        List<ProvenanceAction> provenance = Arrays.asList(
-                new ProvenanceAction().withService(KBaseFeatureValuesServer.SERVICE_NAME)
-                .withServiceVer(KBaseFeatureValuesServer.SERVICE_VERSION)
-                .withDescription("Correcting matrix values")
-                .withInputWsObjects(Arrays.asList(params.getInputData()))
-                .withMethod("correct_matrix")
-                .withMethodParams(Arrays.asList(new UObject(params))));
+        provenance.get(0).withDescription("Correcting matrix values")
+                .withInputWsObjects(Arrays.asList(params.getInputData()));
         getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(params.getOutWorkspace())
                 .withObjects(Arrays.asList(new ObjectSaveData()
                 .withType(inputType).withName(outMatrixId)
                 .withData(new UObject(matrix)).withProvenance(provenance))));
-        return params.getOutWorkspace() + "/" + outMatrixId;
     }
 
-    public String reconnectMatrixToGenome(ReconnectMatrixToGenomeParams params) throws Exception {
+    public void reconnectMatrixToGenome(ReconnectMatrixToGenomeParams params,
+            List<ProvenanceAction> provenance) throws Exception {
         ObjectData objData = getWsClient().getObjects(Arrays.asList(
                 new ObjectIdentity().withRef(params.getInputData()))).get(0);
         String inputType = objData.getInfo().getE3();
@@ -293,22 +267,17 @@ public class KBaseFeatureValuesImpl {
         String outMatrixId = params.getOutMatrixId();
         if (outMatrixId == null)
             outMatrixId = objData.getInfo().getE2();
-        List<ProvenanceAction> provenance = Arrays.asList(
-                new ProvenanceAction().withService(KBaseFeatureValuesServer.SERVICE_NAME)
-                .withServiceVer(KBaseFeatureValuesServer.SERVICE_VERSION)
-                .withDescription("Reconnection of matrix rows to genome features")
-                .withInputWsObjects(Arrays.asList(params.getInputData()))
-                .withMethod("reconnect_matrix_to_genome")
-                .withMethodParams(Arrays.asList(new UObject(params))));
+        provenance.get(0).withDescription("Reconnection of matrix rows to genome features")
+                .withInputWsObjects(Arrays.asList(params.getInputData()));
         getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(params.getOutWorkspace())
                 .withObjects(Arrays.asList(new ObjectSaveData()
                 .withType(inputType).withName(outMatrixId)
                 .withData(new UObject(matrix)).withProvenance(provenance))));
-        return params.getOutWorkspace() + "/" + outMatrixId;
     }
 
     @SuppressWarnings("unchecked")
-    public String buildFeatureSet(BuildFeatureSetParams params) throws Exception {
+    public void buildFeatureSet(BuildFeatureSetParams params,
+            List<ProvenanceAction> provenance) throws Exception {
         /*
             Here is definition of KBaseCollections.FeatureSet type:
             typedef structure {
@@ -387,17 +356,12 @@ public class KBaseFeatureValuesImpl {
         featureSet.put("elements", elements);
         if (params.getBaseFeatureSet() != null)
             provRefs.add(params.getBaseFeatureSet());
-        List<ProvenanceAction> provenance = Arrays.asList(
-                new ProvenanceAction().withService(KBaseFeatureValuesServer.SERVICE_NAME)
-                .withServiceVer(KBaseFeatureValuesServer.SERVICE_VERSION)
-                .withDescription("Reconnection of matrix rows to genome features")
-                .withInputWsObjects(provRefs).withMethod("reconnect_matrix_to_genome")
-                .withMethodParams(Arrays.asList(new UObject(params))));
+        provenance.get(0).withDescription("Reconnection of matrix rows to genome features")
+                .withInputWsObjects(provRefs);
         getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(params.getOutWorkspace())
                 .withObjects(Arrays.asList(new ObjectSaveData()
                 .withType("KBaseCollections.FeatureSet").withName(params.getOutputFeatureSet())
                 .withData(new UObject(featureSet)).withProvenance(provenance))));
-        return params.getOutWorkspace() + "/" + params.getOutputFeatureSet();
     }
     
     private static void addToListOnce(List<String> list, String item) {
@@ -451,48 +415,6 @@ public class KBaseFeatureValuesImpl {
                 .withRowNormalization(rowNormalization).withColNormalization(colNormalization);
     }
     
-    
-    class MatrixGenomeLoader{
-    	ObjectData matrixData;
-    	ExpressionMatrix matrix;
-        String genomeId = null;
-        String genomeName = null;
-        Hashtable<String,Feature> featureId2Feature = null;
-    	
-    	
-    	@SuppressWarnings("unchecked")
-		public void load(String mtxRef) throws Exception{
-            WorkspaceClient wsClient = getWsClient();
-
-            // Get expression matrix
-    		matrixData = getExpressionMatrixObject(mtxRef);
-    		matrix = (ExpressionMatrix)  matrixData
-    			.getData()
-    			.asClassInstance(ExpressionMatrix.class);
-                                        
-            if (matrix.getGenomeRef() != null) {
-            	SubObjectIdentity genomeIndentity = new SubObjectIdentity()
-            		.withRef( matrix.getGenomeRef() )
-            		.withIncluded( Arrays.asList("id", "scientific_name", "features") );
-            	
-                ObjectData genomeData = wsClient
-                	.getObjectSubset(Arrays.asList(genomeIndentity))
-                	.get(0);
-                
-                Map<String, Object> genomeDataMap = (Map<String, Object>) genomeData
-                	.getData()
-                	.asClassInstance(Map.class);
-                
-                genomeId = (String) genomeDataMap.get("id");
-                genomeName = (String) genomeDataMap.get("scientific_name");  
-                List<Feature> features = UObject.transformObjectToObject(genomeDataMap.get("features"), new TypeReference<List<Feature>>() {}); 
-//     				Gives: java.lang.TypeNotPresentException: Type us.kbase.common.service.Tuple3 not present            
-//                List<Feature> features = new ArrayList<Feature>();  
-                featureId2Feature = buildFeatureId2FeatureHash(features);            
-            }    		
-    	}
-
-    }
     
 	public MatrixStat getMatrixStat(GetMatrixStatParams params) throws Exception {
 
@@ -785,7 +707,49 @@ public class KBaseFeatureValuesImpl {
         	.getObjects(Arrays.asList(mtxIndentity))
         	.get(0);		
 	}	
-	
+
+    class MatrixGenomeLoader{
+        ObjectData matrixData;
+        ExpressionMatrix matrix;
+        String genomeId = null;
+        String genomeName = null;
+        Hashtable<String,Feature> featureId2Feature = null;
+        
+        
+        @SuppressWarnings("unchecked")
+        public void load(String mtxRef) throws Exception{
+            WorkspaceClient wsClient = getWsClient();
+
+            // Get expression matrix
+            matrixData = getExpressionMatrixObject(mtxRef);
+            matrix = (ExpressionMatrix)  matrixData
+                .getData()
+                .asClassInstance(ExpressionMatrix.class);
+                                        
+            if (matrix.getGenomeRef() != null) {
+                SubObjectIdentity genomeIndentity = new SubObjectIdentity()
+                    .withRef( matrix.getGenomeRef() )
+                    .withIncluded( Arrays.asList("id", "scientific_name", "features") );
+                
+                ObjectData genomeData = wsClient
+                    .getObjectSubset(Arrays.asList(genomeIndentity))
+                    .get(0);
+                
+                Map<String, Object> genomeDataMap = (Map<String, Object>) genomeData
+                    .getData()
+                    .asClassInstance(Map.class);
+                
+                genomeId = (String) genomeDataMap.get("id");
+                genomeName = (String) genomeDataMap.get("scientific_name");  
+                List<Feature> features = UObject.transformObjectToObject(genomeDataMap.get("features"), new TypeReference<List<Feature>>() {}); 
+//                  Gives: java.lang.TypeNotPresentException: Type us.kbase.common.service.Tuple3 not present            
+//                List<Feature> features = new ArrayList<Feature>();  
+                featureId2Feature = buildFeatureId2FeatureHash(features);            
+            }           
+        }
+
+    }
+
 	@JsonInclude(JsonInclude.Include.NON_NULL)
     public static class BioMatrix {
         @JsonProperty("genome_ref")

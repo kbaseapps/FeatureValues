@@ -28,6 +28,7 @@ import us.kbase.common.service.UnauthorizedException;
  */
 public class KBaseFeatureValuesClient {
     private JsonClientCaller caller;
+    private String serviceVersion = null;
 
 
     /** Constructs a client with a custom URL and no user credentials.
@@ -146,6 +147,14 @@ public class KBaseFeatureValuesClient {
         caller.setFileForNextRpcResponse(f);
     }
 
+    public String getServiceVersion() {
+        return this.serviceVersion;
+    }
+
+    public void setServiceVersion(String newValue) {
+        this.serviceVersion = newValue;
+    }
+
     /**
      * <p>Original spec-file function name: estimate_k</p>
      * <pre>
@@ -153,16 +162,14 @@ public class KBaseFeatureValuesClient {
      * provides an estimate of K by [...]
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.EstimateKParams EstimateKParams}
-     * @return   parameter "job_id" of String
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
-    public String estimateK(EstimateKParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+    public void estimateK(EstimateKParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
         args.add(params);
-        TypeReference<List<String>> retType = new TypeReference<List<String>>() {};
-        List<String> res = caller.jsonrpcCall("KBaseFeatureValues.estimate_k", args, retType, true, true, jsonRpcContext);
-        return res.get(0);
+        TypeReference<Object> retType = new TypeReference<Object>() {};
+        caller.jsonrpcCall("KBaseFeatureValues.estimate_k", args, retType, false, true, jsonRpcContext, this.serviceVersion);
     }
 
     /**
@@ -172,16 +179,14 @@ public class KBaseFeatureValuesClient {
      * provides an estimate of K by [...]
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.EstimateKParamsNew EstimateKParamsNew}
-     * @return   parameter "job_id" of String
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
-    public String estimateKNew(EstimateKParamsNew params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+    public void estimateKNew(EstimateKParamsNew params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
         args.add(params);
-        TypeReference<List<String>> retType = new TypeReference<List<String>>() {};
-        List<String> res = caller.jsonrpcCall("KBaseFeatureValues.estimate_k_new", args, retType, true, true, jsonRpcContext);
-        return res.get(0);
+        TypeReference<Object> retType = new TypeReference<Object>() {};
+        caller.jsonrpcCall("KBaseFeatureValues.estimate_k_new", args, retType, false, true, jsonRpcContext, this.serviceVersion);
     }
 
     /**
@@ -190,16 +195,14 @@ public class KBaseFeatureValuesClient {
      * Clusters features by K-means clustering.
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ClusterKMeansParams ClusterKMeansParams}
-     * @return   parameter "job_id" of String
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
-    public String clusterKMeans(ClusterKMeansParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+    public void clusterKMeans(ClusterKMeansParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
         args.add(params);
-        TypeReference<List<String>> retType = new TypeReference<List<String>>() {};
-        List<String> res = caller.jsonrpcCall("KBaseFeatureValues.cluster_k_means", args, retType, true, true, jsonRpcContext);
-        return res.get(0);
+        TypeReference<Object> retType = new TypeReference<Object>() {};
+        caller.jsonrpcCall("KBaseFeatureValues.cluster_k_means", args, retType, false, true, jsonRpcContext, this.serviceVersion);
     }
 
     /**
@@ -208,16 +211,14 @@ public class KBaseFeatureValuesClient {
      * Clusters features by hierarchical clustering.
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ClusterHierarchicalParams ClusterHierarchicalParams}
-     * @return   parameter "job_id" of String
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
-    public String clusterHierarchical(ClusterHierarchicalParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+    public void clusterHierarchical(ClusterHierarchicalParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
         args.add(params);
-        TypeReference<List<String>> retType = new TypeReference<List<String>>() {};
-        List<String> res = caller.jsonrpcCall("KBaseFeatureValues.cluster_hierarchical", args, retType, true, true, jsonRpcContext);
-        return res.get(0);
+        TypeReference<Object> retType = new TypeReference<Object>() {};
+        caller.jsonrpcCall("KBaseFeatureValues.cluster_hierarchical", args, retType, false, true, jsonRpcContext, this.serviceVersion);
     }
 
     /**
@@ -228,16 +229,14 @@ public class KBaseFeatureValuesClient {
      * a specific hieght or by some other approach.
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ClustersFromDendrogramParams ClustersFromDendrogramParams}
-     * @return   parameter "job_id" of String
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
-    public String clustersFromDendrogram(ClustersFromDendrogramParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+    public void clustersFromDendrogram(ClustersFromDendrogramParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
         args.add(params);
-        TypeReference<List<String>> retType = new TypeReference<List<String>>() {};
-        List<String> res = caller.jsonrpcCall("KBaseFeatureValues.clusters_from_dendrogram", args, retType, true, true, jsonRpcContext);
-        return res.get(0);
+        TypeReference<Object> retType = new TypeReference<Object>() {};
+        caller.jsonrpcCall("KBaseFeatureValues.clusters_from_dendrogram", args, retType, false, true, jsonRpcContext, this.serviceVersion);
     }
 
     /**
@@ -248,16 +247,14 @@ public class KBaseFeatureValuesClient {
      * a specific hieght or by some other approach.
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.EvaluateClustersetQualityParams EvaluateClustersetQualityParams}
-     * @return   parameter "job_id" of String
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
-    public String evaluateClustersetQuality(EvaluateClustersetQualityParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+    public void evaluateClustersetQuality(EvaluateClustersetQualityParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
         args.add(params);
-        TypeReference<List<String>> retType = new TypeReference<List<String>>() {};
-        List<String> res = caller.jsonrpcCall("KBaseFeatureValues.evaluate_clusterset_quality", args, retType, true, true, jsonRpcContext);
-        return res.get(0);
+        TypeReference<Object> retType = new TypeReference<Object>() {};
+        caller.jsonrpcCall("KBaseFeatureValues.evaluate_clusterset_quality", args, retType, false, true, jsonRpcContext, this.serviceVersion);
     }
 
     /**
@@ -265,16 +262,14 @@ public class KBaseFeatureValuesClient {
      * <pre>
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ValidateMatrixParams ValidateMatrixParams}
-     * @return   parameter "job_id" of String
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
-    public String validateMatrix(ValidateMatrixParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+    public void validateMatrix(ValidateMatrixParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
         args.add(params);
-        TypeReference<List<String>> retType = new TypeReference<List<String>>() {};
-        List<String> res = caller.jsonrpcCall("KBaseFeatureValues.validate_matrix", args, retType, true, false, jsonRpcContext);
-        return res.get(0);
+        TypeReference<Object> retType = new TypeReference<Object>() {};
+        caller.jsonrpcCall("KBaseFeatureValues.validate_matrix", args, retType, false, false, jsonRpcContext, this.serviceVersion);
     }
 
     /**
@@ -282,31 +277,14 @@ public class KBaseFeatureValuesClient {
      * <pre>
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.CorrectMatrixParams CorrectMatrixParams}
-     * @return   parameter "job_id" of String
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
-    public String correctMatrix(CorrectMatrixParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+    public void correctMatrix(CorrectMatrixParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
         args.add(params);
-        TypeReference<List<String>> retType = new TypeReference<List<String>>() {};
-        List<String> res = caller.jsonrpcCall("KBaseFeatureValues.correct_matrix", args, retType, true, true, jsonRpcContext);
-        return res.get(0);
-    }
-
-    /**
-     * <p>Original spec-file function name: status</p>
-     * <pre>
-     * </pre>
-     * @return   instance of type {@link us.kbase.kbasefeaturevalues.ServiceStatus ServiceStatus}
-     * @throws IOException if an IO exception occurs
-     * @throws JsonClientException if a JSON RPC exception occurs
-     */
-    public ServiceStatus status(RpcContext... jsonRpcContext) throws IOException, JsonClientException {
-        List<Object> args = new ArrayList<Object>();
-        TypeReference<List<ServiceStatus>> retType = new TypeReference<List<ServiceStatus>>() {};
-        List<ServiceStatus> res = caller.jsonrpcCall("KBaseFeatureValues.status", args, retType, true, false, jsonRpcContext);
-        return res.get(0);
+        TypeReference<Object> retType = new TypeReference<Object>() {};
+        caller.jsonrpcCall("KBaseFeatureValues.correct_matrix", args, retType, false, true, jsonRpcContext, this.serviceVersion);
     }
 
     /**
@@ -314,16 +292,14 @@ public class KBaseFeatureValuesClient {
      * <pre>
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ReconnectMatrixToGenomeParams ReconnectMatrixToGenomeParams}
-     * @return   parameter "job_id" of String
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
-    public String reconnectMatrixToGenome(ReconnectMatrixToGenomeParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+    public void reconnectMatrixToGenome(ReconnectMatrixToGenomeParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
         args.add(params);
-        TypeReference<List<String>> retType = new TypeReference<List<String>>() {};
-        List<String> res = caller.jsonrpcCall("KBaseFeatureValues.reconnect_matrix_to_genome", args, retType, true, true, jsonRpcContext);
-        return res.get(0);
+        TypeReference<Object> retType = new TypeReference<Object>() {};
+        caller.jsonrpcCall("KBaseFeatureValues.reconnect_matrix_to_genome", args, retType, false, true, jsonRpcContext, this.serviceVersion);
     }
 
     /**
@@ -331,16 +307,14 @@ public class KBaseFeatureValuesClient {
      * <pre>
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.BuildFeatureSetParams BuildFeatureSetParams}
-     * @return   parameter "job_id" of String
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
-    public String buildFeatureSet(BuildFeatureSetParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+    public void buildFeatureSet(BuildFeatureSetParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
         args.add(params);
-        TypeReference<List<String>> retType = new TypeReference<List<String>>() {};
-        List<String> res = caller.jsonrpcCall("KBaseFeatureValues.build_feature_set", args, retType, true, true, jsonRpcContext);
-        return res.get(0);
+        TypeReference<Object> retType = new TypeReference<Object>() {};
+        caller.jsonrpcCall("KBaseFeatureValues.build_feature_set", args, retType, false, true, jsonRpcContext, this.serviceVersion);
     }
 
     /**
@@ -356,7 +330,7 @@ public class KBaseFeatureValuesClient {
         List<Object> args = new ArrayList<Object>();
         args.add(arg1);
         TypeReference<List<MatrixDescriptor>> retType = new TypeReference<List<MatrixDescriptor>>() {};
-        List<MatrixDescriptor> res = caller.jsonrpcCall("KBaseFeatureValues.get_matrix_descriptor", args, retType, true, true, jsonRpcContext);
+        List<MatrixDescriptor> res = caller.jsonrpcCall("KBaseFeatureValues.get_matrix_descriptor", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 
@@ -373,7 +347,7 @@ public class KBaseFeatureValuesClient {
         List<Object> args = new ArrayList<Object>();
         args.add(arg1);
         TypeReference<List<List<ItemDescriptor>>> retType = new TypeReference<List<List<ItemDescriptor>>>() {};
-        List<List<ItemDescriptor>> res = caller.jsonrpcCall("KBaseFeatureValues.get_matrix_row_descriptors", args, retType, true, true, jsonRpcContext);
+        List<List<ItemDescriptor>> res = caller.jsonrpcCall("KBaseFeatureValues.get_matrix_row_descriptors", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 
@@ -390,7 +364,7 @@ public class KBaseFeatureValuesClient {
         List<Object> args = new ArrayList<Object>();
         args.add(arg1);
         TypeReference<List<List<ItemDescriptor>>> retType = new TypeReference<List<List<ItemDescriptor>>>() {};
-        List<List<ItemDescriptor>> res = caller.jsonrpcCall("KBaseFeatureValues.get_matrix_column_descriptors", args, retType, true, true, jsonRpcContext);
+        List<List<ItemDescriptor>> res = caller.jsonrpcCall("KBaseFeatureValues.get_matrix_column_descriptors", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 
@@ -407,7 +381,7 @@ public class KBaseFeatureValuesClient {
         List<Object> args = new ArrayList<Object>();
         args.add(arg1);
         TypeReference<List<List<ItemStat>>> retType = new TypeReference<List<List<ItemStat>>>() {};
-        List<List<ItemStat>> res = caller.jsonrpcCall("KBaseFeatureValues.get_matrix_rows_stat", args, retType, true, true, jsonRpcContext);
+        List<List<ItemStat>> res = caller.jsonrpcCall("KBaseFeatureValues.get_matrix_rows_stat", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 
@@ -424,7 +398,7 @@ public class KBaseFeatureValuesClient {
         List<Object> args = new ArrayList<Object>();
         args.add(arg1);
         TypeReference<List<List<ItemStat>>> retType = new TypeReference<List<List<ItemStat>>>() {};
-        List<List<ItemStat>> res = caller.jsonrpcCall("KBaseFeatureValues.get_matrix_columns_stat", args, retType, true, true, jsonRpcContext);
+        List<List<ItemStat>> res = caller.jsonrpcCall("KBaseFeatureValues.get_matrix_columns_stat", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 
@@ -441,7 +415,7 @@ public class KBaseFeatureValuesClient {
         List<Object> args = new ArrayList<Object>();
         args.add(arg1);
         TypeReference<List<List<ItemSetStat>>> retType = new TypeReference<List<List<ItemSetStat>>>() {};
-        List<List<ItemSetStat>> res = caller.jsonrpcCall("KBaseFeatureValues.get_matrix_row_sets_stat", args, retType, true, true, jsonRpcContext);
+        List<List<ItemSetStat>> res = caller.jsonrpcCall("KBaseFeatureValues.get_matrix_row_sets_stat", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 
@@ -458,7 +432,7 @@ public class KBaseFeatureValuesClient {
         List<Object> args = new ArrayList<Object>();
         args.add(arg1);
         TypeReference<List<List<ItemSetStat>>> retType = new TypeReference<List<List<ItemSetStat>>>() {};
-        List<List<ItemSetStat>> res = caller.jsonrpcCall("KBaseFeatureValues.get_matrix_column_sets_stat", args, retType, true, true, jsonRpcContext);
+        List<List<ItemSetStat>> res = caller.jsonrpcCall("KBaseFeatureValues.get_matrix_column_sets_stat", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 
@@ -475,7 +449,7 @@ public class KBaseFeatureValuesClient {
         List<Object> args = new ArrayList<Object>();
         args.add(arg1);
         TypeReference<List<MatrixStat>> retType = new TypeReference<List<MatrixStat>>() {};
-        List<MatrixStat> res = caller.jsonrpcCall("KBaseFeatureValues.get_matrix_stat", args, retType, true, true, jsonRpcContext);
+        List<MatrixStat> res = caller.jsonrpcCall("KBaseFeatureValues.get_matrix_stat", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 
@@ -492,7 +466,7 @@ public class KBaseFeatureValuesClient {
         List<Object> args = new ArrayList<Object>();
         args.add(arg1);
         TypeReference<List<SubmatrixStat>> retType = new TypeReference<List<SubmatrixStat>>() {};
-        List<SubmatrixStat> res = caller.jsonrpcCall("KBaseFeatureValues.get_submatrix_stat", args, retType, true, true, jsonRpcContext);
+        List<SubmatrixStat> res = caller.jsonrpcCall("KBaseFeatureValues.get_submatrix_stat", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 }

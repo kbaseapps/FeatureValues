@@ -112,7 +112,7 @@ sub new
 
 =head2 estimate_k
 
-  $job_id = $obj->estimate_k($params)
+  $obj->estimate_k($params)
 
 =over 4
 
@@ -122,7 +122,6 @@ sub new
 
 <pre>
 $params is a KBaseFeatureValues.EstimateKParams
-$job_id is a string
 EstimateKParams is a reference to a hash where the following keys are defined:
 	input_matrix has a value which is a KBaseFeatureValues.ws_matrix_id
 	min_k has a value which is an int
@@ -142,7 +141,6 @@ ws_matrix_id is a string
 =begin text
 
 $params is a KBaseFeatureValues.EstimateKParams
-$job_id is a string
 EstimateKParams is a reference to a hash where the following keys are defined:
 	input_matrix has a value which is a KBaseFeatureValues.ws_matrix_id
 	min_k has a value which is an int
@@ -190,9 +188,10 @@ provides an estimate of K by [...]
 	}
     }
 
-    my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-	method => "KBaseFeatureValues.estimate_k",
-	params => \@args,
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "KBaseFeatureValues.estimate_k",
+	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
@@ -202,7 +201,7 @@ provides an estimate of K by [...]
 					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
 					      );
 	} else {
-	    return wantarray ? @{$result->result} : $result->result->[0];
+	    return;
 	}
     } else {
         Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method estimate_k",
@@ -216,7 +215,7 @@ provides an estimate of K by [...]
 
 =head2 estimate_k_new
 
-  $job_id = $obj->estimate_k_new($params)
+  $obj->estimate_k_new($params)
 
 =over 4
 
@@ -226,7 +225,6 @@ provides an estimate of K by [...]
 
 <pre>
 $params is a KBaseFeatureValues.EstimateKParamsNew
-$job_id is a string
 EstimateKParamsNew is a reference to a hash where the following keys are defined:
 	input_matrix has a value which is a KBaseFeatureValues.ws_matrix_id
 	min_k has a value which is an int
@@ -248,7 +246,6 @@ boolean is an int
 =begin text
 
 $params is a KBaseFeatureValues.EstimateKParamsNew
-$job_id is a string
 EstimateKParamsNew is a reference to a hash where the following keys are defined:
 	input_matrix has a value which is a KBaseFeatureValues.ws_matrix_id
 	min_k has a value which is an int
@@ -298,9 +295,10 @@ provides an estimate of K by [...]
 	}
     }
 
-    my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-	method => "KBaseFeatureValues.estimate_k_new",
-	params => \@args,
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "KBaseFeatureValues.estimate_k_new",
+	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
@@ -310,7 +308,7 @@ provides an estimate of K by [...]
 					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
 					      );
 	} else {
-	    return wantarray ? @{$result->result} : $result->result->[0];
+	    return;
 	}
     } else {
         Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method estimate_k_new",
@@ -324,7 +322,7 @@ provides an estimate of K by [...]
 
 =head2 cluster_k_means
 
-  $job_id = $obj->cluster_k_means($params)
+  $obj->cluster_k_means($params)
 
 =over 4
 
@@ -334,7 +332,6 @@ provides an estimate of K by [...]
 
 <pre>
 $params is a KBaseFeatureValues.ClusterKMeansParams
-$job_id is a string
 ClusterKMeansParams is a reference to a hash where the following keys are defined:
 	k has a value which is an int
 	input_data has a value which is a KBaseFeatureValues.ws_matrix_id
@@ -353,7 +350,6 @@ ws_matrix_id is a string
 =begin text
 
 $params is a KBaseFeatureValues.ClusterKMeansParams
-$job_id is a string
 ClusterKMeansParams is a reference to a hash where the following keys are defined:
 	k has a value which is an int
 	input_data has a value which is a KBaseFeatureValues.ws_matrix_id
@@ -399,9 +395,10 @@ Clusters features by K-means clustering.
 	}
     }
 
-    my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-	method => "KBaseFeatureValues.cluster_k_means",
-	params => \@args,
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "KBaseFeatureValues.cluster_k_means",
+	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
@@ -411,7 +408,7 @@ Clusters features by K-means clustering.
 					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
 					      );
 	} else {
-	    return wantarray ? @{$result->result} : $result->result->[0];
+	    return;
 	}
     } else {
         Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method cluster_k_means",
@@ -425,7 +422,7 @@ Clusters features by K-means clustering.
 
 =head2 cluster_hierarchical
 
-  $job_id = $obj->cluster_hierarchical($params)
+  $obj->cluster_hierarchical($params)
 
 =over 4
 
@@ -435,7 +432,6 @@ Clusters features by K-means clustering.
 
 <pre>
 $params is a KBaseFeatureValues.ClusterHierarchicalParams
-$job_id is a string
 ClusterHierarchicalParams is a reference to a hash where the following keys are defined:
 	distance_metric has a value which is a string
 	linkage_criteria has a value which is a string
@@ -455,7 +451,6 @@ ws_matrix_id is a string
 =begin text
 
 $params is a KBaseFeatureValues.ClusterHierarchicalParams
-$job_id is a string
 ClusterHierarchicalParams is a reference to a hash where the following keys are defined:
 	distance_metric has a value which is a string
 	linkage_criteria has a value which is a string
@@ -502,9 +497,10 @@ Clusters features by hierarchical clustering.
 	}
     }
 
-    my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-	method => "KBaseFeatureValues.cluster_hierarchical",
-	params => \@args,
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "KBaseFeatureValues.cluster_hierarchical",
+	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
@@ -514,7 +510,7 @@ Clusters features by hierarchical clustering.
 					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
 					      );
 	} else {
-	    return wantarray ? @{$result->result} : $result->result->[0];
+	    return;
 	}
     } else {
         Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method cluster_hierarchical",
@@ -528,7 +524,7 @@ Clusters features by hierarchical clustering.
 
 =head2 clusters_from_dendrogram
 
-  $job_id = $obj->clusters_from_dendrogram($params)
+  $obj->clusters_from_dendrogram($params)
 
 =over 4
 
@@ -538,7 +534,6 @@ Clusters features by hierarchical clustering.
 
 <pre>
 $params is a KBaseFeatureValues.ClustersFromDendrogramParams
-$job_id is a string
 ClustersFromDendrogramParams is a reference to a hash where the following keys are defined:
 	feature_height_cutoff has a value which is a float
 	condition_height_cutoff has a value which is a float
@@ -554,7 +549,6 @@ ws_featureclusters_id is a string
 =begin text
 
 $params is a KBaseFeatureValues.ClustersFromDendrogramParams
-$job_id is a string
 ClustersFromDendrogramParams is a reference to a hash where the following keys are defined:
 	feature_height_cutoff has a value which is a float
 	condition_height_cutoff has a value which is a float
@@ -599,9 +593,10 @@ a specific hieght or by some other approach.
 	}
     }
 
-    my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-	method => "KBaseFeatureValues.clusters_from_dendrogram",
-	params => \@args,
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "KBaseFeatureValues.clusters_from_dendrogram",
+	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
@@ -611,7 +606,7 @@ a specific hieght or by some other approach.
 					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
 					      );
 	} else {
-	    return wantarray ? @{$result->result} : $result->result->[0];
+	    return;
 	}
     } else {
         Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method clusters_from_dendrogram",
@@ -625,7 +620,7 @@ a specific hieght or by some other approach.
 
 =head2 evaluate_clusterset_quality
 
-  $job_id = $obj->evaluate_clusterset_quality($params)
+  $obj->evaluate_clusterset_quality($params)
 
 =over 4
 
@@ -635,7 +630,6 @@ a specific hieght or by some other approach.
 
 <pre>
 $params is a KBaseFeatureValues.EvaluateClustersetQualityParams
-$job_id is a string
 EvaluateClustersetQualityParams is a reference to a hash where the following keys are defined:
 	input_clusterset has a value which is a KBaseFeatureValues.ws_featureclusters_id
 	out_workspace has a value which is a string
@@ -649,7 +643,6 @@ ws_featureclusters_id is a string
 =begin text
 
 $params is a KBaseFeatureValues.EvaluateClustersetQualityParams
-$job_id is a string
 EvaluateClustersetQualityParams is a reference to a hash where the following keys are defined:
 	input_clusterset has a value which is a KBaseFeatureValues.ws_featureclusters_id
 	out_workspace has a value which is a string
@@ -692,9 +685,10 @@ a specific hieght or by some other approach.
 	}
     }
 
-    my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-	method => "KBaseFeatureValues.evaluate_clusterset_quality",
-	params => \@args,
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "KBaseFeatureValues.evaluate_clusterset_quality",
+	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
@@ -704,7 +698,7 @@ a specific hieght or by some other approach.
 					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
 					      );
 	} else {
-	    return wantarray ? @{$result->result} : $result->result->[0];
+	    return;
 	}
     } else {
         Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method evaluate_clusterset_quality",
@@ -718,7 +712,7 @@ a specific hieght or by some other approach.
 
 =head2 validate_matrix
 
-  $job_id = $obj->validate_matrix($params)
+  $obj->validate_matrix($params)
 
 =over 4
 
@@ -728,7 +722,6 @@ a specific hieght or by some other approach.
 
 <pre>
 $params is a KBaseFeatureValues.ValidateMatrixParams
-$job_id is a string
 ValidateMatrixParams is a reference to a hash where the following keys are defined:
 	method has a value which is a string
 	input_data has a value which is a KBaseFeatureValues.ws_matrix_id
@@ -741,7 +734,6 @@ ws_matrix_id is a string
 =begin text
 
 $params is a KBaseFeatureValues.ValidateMatrixParams
-$job_id is a string
 ValidateMatrixParams is a reference to a hash where the following keys are defined:
 	method has a value which is a string
 	input_data has a value which is a KBaseFeatureValues.ws_matrix_id
@@ -781,9 +773,10 @@ ws_matrix_id is a string
 	}
     }
 
-    my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-	method => "KBaseFeatureValues.validate_matrix",
-	params => \@args,
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "KBaseFeatureValues.validate_matrix",
+	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
@@ -793,7 +786,7 @@ ws_matrix_id is a string
 					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
 					      );
 	} else {
-	    return wantarray ? @{$result->result} : $result->result->[0];
+	    return;
 	}
     } else {
         Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method validate_matrix",
@@ -807,7 +800,7 @@ ws_matrix_id is a string
 
 =head2 correct_matrix
 
-  $job_id = $obj->correct_matrix($params)
+  $obj->correct_matrix($params)
 
 =over 4
 
@@ -817,7 +810,6 @@ ws_matrix_id is a string
 
 <pre>
 $params is a KBaseFeatureValues.CorrectMatrixParams
-$job_id is a string
 CorrectMatrixParams is a reference to a hash where the following keys are defined:
 	transform_type has a value which is a string
 	transform_value has a value which is a float
@@ -833,7 +825,6 @@ ws_matrix_id is a string
 =begin text
 
 $params is a KBaseFeatureValues.CorrectMatrixParams
-$job_id is a string
 CorrectMatrixParams is a reference to a hash where the following keys are defined:
 	transform_type has a value which is a string
 	transform_value has a value which is a float
@@ -876,9 +867,10 @@ ws_matrix_id is a string
 	}
     }
 
-    my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-	method => "KBaseFeatureValues.correct_matrix",
-	params => \@args,
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "KBaseFeatureValues.correct_matrix",
+	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
@@ -888,7 +880,7 @@ ws_matrix_id is a string
 					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
 					      );
 	} else {
-	    return wantarray ? @{$result->result} : $result->result->[0];
+	    return;
 	}
     } else {
         Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method correct_matrix",
@@ -900,95 +892,9 @@ ws_matrix_id is a string
  
 
 
-=head2 status
-
-  $return = $obj->status()
-
-=over 4
-
-=item Parameter and return types
-
-=begin html
-
-<pre>
-$return is a KBaseFeatureValues.ServiceStatus
-ServiceStatus is a reference to a hash where the following keys are defined:
-	version has a value which is a string
-	status has a value which is a string
-	startup_time has a value which is a string
-	giturl has a value which is a string
-	branch has a value which is a string
-	commit has a value which is a string
-	deployment_cfg_path has a value which is a string
-	safe_configuration has a value which is a reference to a hash where the key is a string and the value is a string
-
-</pre>
-
-=end html
-
-=begin text
-
-$return is a KBaseFeatureValues.ServiceStatus
-ServiceStatus is a reference to a hash where the following keys are defined:
-	version has a value which is a string
-	status has a value which is a string
-	startup_time has a value which is a string
-	giturl has a value which is a string
-	branch has a value which is a string
-	commit has a value which is a string
-	deployment_cfg_path has a value which is a string
-	safe_configuration has a value which is a reference to a hash where the key is a string and the value is a string
-
-
-=end text
-
-=item Description
-
-
-
-=back
-
-=cut
-
- sub status
-{
-    my($self, @args) = @_;
-
-# Authentication: none
-
-    if ((my $n = @args) != 0)
-    {
-	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
-							       "Invalid argument count for function status (received $n, expecting 0)");
-    }
-
-    my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-	method => "KBaseFeatureValues.status",
-	params => \@args,
-    });
-    if ($result) {
-	if ($result->is_error) {
-	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
-					       code => $result->content->{error}->{code},
-					       method_name => 'status',
-					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
-					      );
-	} else {
-	    return wantarray ? @{$result->result} : $result->result->[0];
-	}
-    } else {
-        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method status",
-					    status_line => $self->{client}->status_line,
-					    method_name => 'status',
-				       );
-    }
-}
- 
-
-
 =head2 reconnect_matrix_to_genome
 
-  $job_id = $obj->reconnect_matrix_to_genome($params)
+  $obj->reconnect_matrix_to_genome($params)
 
 =over 4
 
@@ -998,7 +904,6 @@ ServiceStatus is a reference to a hash where the following keys are defined:
 
 <pre>
 $params is a KBaseFeatureValues.ReconnectMatrixToGenomeParams
-$job_id is a string
 ReconnectMatrixToGenomeParams is a reference to a hash where the following keys are defined:
 	input_data has a value which is a KBaseFeatureValues.ws_matrix_id
 	genome_ref has a value which is a KBaseFeatureValues.ws_genome_id
@@ -1014,7 +919,6 @@ ws_genome_id is a string
 =begin text
 
 $params is a KBaseFeatureValues.ReconnectMatrixToGenomeParams
-$job_id is a string
 ReconnectMatrixToGenomeParams is a reference to a hash where the following keys are defined:
 	input_data has a value which is a KBaseFeatureValues.ws_matrix_id
 	genome_ref has a value which is a KBaseFeatureValues.ws_genome_id
@@ -1057,9 +961,10 @@ ws_genome_id is a string
 	}
     }
 
-    my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-	method => "KBaseFeatureValues.reconnect_matrix_to_genome",
-	params => \@args,
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "KBaseFeatureValues.reconnect_matrix_to_genome",
+	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
@@ -1069,7 +974,7 @@ ws_genome_id is a string
 					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
 					      );
 	} else {
-	    return wantarray ? @{$result->result} : $result->result->[0];
+	    return;
 	}
     } else {
         Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method reconnect_matrix_to_genome",
@@ -1083,7 +988,7 @@ ws_genome_id is a string
 
 =head2 build_feature_set
 
-  $job_id = $obj->build_feature_set($params)
+  $obj->build_feature_set($params)
 
 =over 4
 
@@ -1093,7 +998,6 @@ ws_genome_id is a string
 
 <pre>
 $params is a KBaseFeatureValues.BuildFeatureSetParams
-$job_id is a string
 BuildFeatureSetParams is a reference to a hash where the following keys are defined:
 	genome has a value which is a KBaseFeatureValues.ws_genome_id
 	feature_ids has a value which is a string
@@ -1112,7 +1016,6 @@ ws_featureset_id is a string
 =begin text
 
 $params is a KBaseFeatureValues.BuildFeatureSetParams
-$job_id is a string
 BuildFeatureSetParams is a reference to a hash where the following keys are defined:
 	genome has a value which is a KBaseFeatureValues.ws_genome_id
 	feature_ids has a value which is a string
@@ -1158,9 +1061,10 @@ ws_featureset_id is a string
 	}
     }
 
-    my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-	method => "KBaseFeatureValues.build_feature_set",
-	params => \@args,
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "KBaseFeatureValues.build_feature_set",
+	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
@@ -1170,7 +1074,7 @@ ws_featureset_id is a string
 					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
 					      );
 	} else {
-	    return wantarray ? @{$result->result} : $result->result->[0];
+	    return;
 	}
     } else {
         Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method build_feature_set",
@@ -1269,9 +1173,10 @@ MatrixDescriptor is a reference to a hash where the following keys are defined:
 	}
     }
 
-    my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-	method => "KBaseFeatureValues.get_matrix_descriptor",
-	params => \@args,
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "KBaseFeatureValues.get_matrix_descriptor",
+	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
@@ -1374,9 +1279,10 @@ ItemDescriptor is a reference to a hash where the following keys are defined:
 	}
     }
 
-    my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-	method => "KBaseFeatureValues.get_matrix_row_descriptors",
-	params => \@args,
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "KBaseFeatureValues.get_matrix_row_descriptors",
+	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
@@ -1479,9 +1385,10 @@ ItemDescriptor is a reference to a hash where the following keys are defined:
 	}
     }
 
-    my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-	method => "KBaseFeatureValues.get_matrix_column_descriptors",
-	params => \@args,
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "KBaseFeatureValues.get_matrix_column_descriptors",
+	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
@@ -1592,9 +1499,10 @@ ItemStat is a reference to a hash where the following keys are defined:
 	}
     }
 
-    my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-	method => "KBaseFeatureValues.get_matrix_rows_stat",
-	params => \@args,
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "KBaseFeatureValues.get_matrix_rows_stat",
+	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
@@ -1705,9 +1613,10 @@ ItemStat is a reference to a hash where the following keys are defined:
 	}
     }
 
-    my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-	method => "KBaseFeatureValues.get_matrix_columns_stat",
-	params => \@args,
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "KBaseFeatureValues.get_matrix_columns_stat",
+	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
@@ -1834,9 +1743,10 @@ ItemSetStat is a reference to a hash where the following keys are defined:
 	}
     }
 
-    my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-	method => "KBaseFeatureValues.get_matrix_row_sets_stat",
-	params => \@args,
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "KBaseFeatureValues.get_matrix_row_sets_stat",
+	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
@@ -1963,9 +1873,10 @@ ItemSetStat is a reference to a hash where the following keys are defined:
 	}
     }
 
-    my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-	method => "KBaseFeatureValues.get_matrix_column_sets_stat",
-	params => \@args,
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "KBaseFeatureValues.get_matrix_column_sets_stat",
+	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
@@ -2116,9 +2027,10 @@ ItemStat is a reference to a hash where the following keys are defined:
 	}
     }
 
-    my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-	method => "KBaseFeatureValues.get_matrix_stat",
-	params => \@args,
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "KBaseFeatureValues.get_matrix_stat",
+	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
@@ -2317,9 +2229,10 @@ PairwiseComparison is a reference to a hash where the following keys are defined
 	}
     }
 
-    my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-	method => "KBaseFeatureValues.get_submatrix_stat",
-	params => \@args,
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "KBaseFeatureValues.get_submatrix_stat",
+	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
@@ -3292,50 +3205,6 @@ transform_value has a value which is a float
 input_data has a value which is a KBaseFeatureValues.ws_matrix_id
 out_workspace has a value which is a string
 out_matrix_id has a value which is a string
-
-
-=end text
-
-=back
-
-
-
-=head2 ServiceStatus
-
-=over 4
-
-
-
-=item Definition
-
-=begin html
-
-<pre>
-a reference to a hash where the following keys are defined:
-version has a value which is a string
-status has a value which is a string
-startup_time has a value which is a string
-giturl has a value which is a string
-branch has a value which is a string
-commit has a value which is a string
-deployment_cfg_path has a value which is a string
-safe_configuration has a value which is a reference to a hash where the key is a string and the value is a string
-
-</pre>
-
-=end html
-
-=begin text
-
-a reference to a hash where the following keys are defined:
-version has a value which is a string
-status has a value which is a string
-startup_time has a value which is a string
-giturl has a value which is a string
-branch has a value which is a string
-commit has a value which is a string
-deployment_cfg_path has a value which is a string
-safe_configuration has a value which is a reference to a hash where the key is a string and the value is a string
 
 
 =end text

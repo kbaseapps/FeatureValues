@@ -2,8 +2,18 @@ OVERVIEW
 -----------------------------------------
 This KBase service provides a set of methods for manipulation 
 and visualization of expression values organized as two-
-dimentional matrix and assigned to genome features on one 
-dimention and to different sorts conditions on second dimention.
+dimensional matrix and assigned to genome features on one 
+dimension and to different sorts conditions on second dimension.
+
+
+
+VERSION: 0.0.9 (Released 6/17/2016)
+------------------------------------------
+NEW FEATURES:
+- none
+
+UPDATED FEATURES / MAJOR BUG FIXES:
+- Module is wrapped by KBase SDK 
 
 
 

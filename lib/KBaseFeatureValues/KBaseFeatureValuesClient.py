@@ -45,7 +45,6 @@ class KBaseFeatureValues(object):
            parameter "random_seed" of Long, parameter "neighb_size" of Long,
            parameter "max_items" of Long, parameter "out_workspace" of
            String, parameter "out_estimate_result" of String
-        :returns: instance of String
         """
         return self._client.call_method(
             'KBaseFeatureValues.estimate_k',
@@ -67,7 +66,6 @@ class KBaseFeatureValues(object):
            false values, false = 0, true = 1 @range [0,1]), parameter
            "random_seed" of Long, parameter "out_workspace" of String,
            parameter "out_estimate_result" of String
-        :returns: instance of String
         """
         return self._client.call_method(
             'KBaseFeatureValues.estimate_k_new',
@@ -84,7 +82,6 @@ class KBaseFeatureValues(object):
            "n_start" of Long, parameter "max_iter" of Long, parameter
            "random_seed" of Long, parameter "algorithm" of String, parameter
            "out_workspace" of String, parameter "out_clusterset_id" of String
-        :returns: instance of String
         """
         return self._client.call_method(
             'KBaseFeatureValues.cluster_k_means',
@@ -103,7 +100,6 @@ class KBaseFeatureValues(object):
            KBaseFeatureValues.SingleKnockoutFitnessMatrix), parameter
            "algorithm" of String, parameter "out_workspace" of String,
            parameter "out_clusterset_id" of String
-        :returns: instance of String
         """
         return self._client.call_method(
             'KBaseFeatureValues.cluster_hierarchical',
@@ -121,7 +117,6 @@ class KBaseFeatureValues(object):
            FeatureClusters data object. @id ws
            KBaseFeatureValues.FeatureClusters), parameter "out_workspace" of
            String, parameter "out_clusterset_id" of String
-        :returns: instance of String
         """
         return self._client.call_method(
             'KBaseFeatureValues.clusters_from_dendrogram',
@@ -137,7 +132,6 @@ class KBaseFeatureValues(object):
            "ws_featureclusters_id" (The workspace ID of a FeatureClusters
            data object. @id ws KBaseFeatureValues.FeatureClusters), parameter
            "out_workspace" of String, parameter "out_report_id" of String
-        :returns: instance of String
         """
         return self._client.call_method(
             'KBaseFeatureValues.evaluate_clusterset_quality',
@@ -152,7 +146,6 @@ class KBaseFeatureValues(object):
            ID that references a Float2DMatrix wrapper data object. @id ws
            KBaseFeatureValues.ExpressionMatrix
            KBaseFeatureValues.SingleKnockoutFitnessMatrix)
-        :returns: instance of String
         """
         return self._client.call_method(
             'KBaseFeatureValues.validate_matrix',
@@ -170,24 +163,10 @@ class KBaseFeatureValues(object):
            @id ws KBaseFeatureValues.ExpressionMatrix
            KBaseFeatureValues.SingleKnockoutFitnessMatrix), parameter
            "out_workspace" of String, parameter "out_matrix_id" of String
-        :returns: instance of String
         """
         return self._client.call_method(
             'KBaseFeatureValues.correct_matrix',
             [params], self._service_ver, context)
-
-    def status(self, context=None):
-        """
-        :returns: instance of type "ServiceStatus" -> structure: parameter
-           "version" of String, parameter "status" of String, parameter
-           "startup_time" of String, parameter "giturl" of String, parameter
-           "branch" of String, parameter "commit" of String, parameter
-           "deployment_cfg_path" of String, parameter "safe_configuration" of
-           mapping from String to String
-        """
-        return self._client.call_method(
-            'KBaseFeatureValues.status',
-            [], self._service_ver, context)
 
     def reconnect_matrix_to_genome(self, params, context=None):
         """
@@ -201,7 +180,6 @@ class KBaseFeatureValues(object):
            "genome_ref" of type "ws_genome_id" (The workspace ID for a Genome
            data object. @id ws KBaseGenomes.Genome), parameter
            "out_workspace" of String, parameter "out_matrix_id" of String
-        :returns: instance of String
         """
         return self._client.call_method(
             'KBaseFeatureValues.reconnect_matrix_to_genome',
@@ -219,7 +197,6 @@ class KBaseFeatureValues(object):
            object. @id ws KBaseCollections.FeatureSet), parameter
            "description" of String, parameter "out_workspace" of String,
            parameter "output_feature_set" of String
-        :returns: instance of String
         """
         return self._client.call_method(
             'KBaseFeatureValues.build_feature_set',
