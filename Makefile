@@ -1,128 +1,84 @@
-KB_TOP ?= /kb/dev_container
-TARGET ?= /kb/deployment
+SERVICE = kbasefeaturevalues
+SERVICE_CAPS = KBaseFeatureValues
+SPEC_FILE = KBaseFeatureValues.spec
+URL = https://kbase.us/services/kbasefeaturevalues
 DIR = $(shell pwd)
-LOCAL_BIN = $(DIR)/bin
-BIN = $(TARGET)/bin
-SERVICE_NAME = KBaseFeatureValues
+LIB_DIR = lib
+SCRIPTS_DIR = scripts
+TEST_DIR = test
+LBIN_DIR = bin
+TARGET ?= /kb/deployment
+JARS_DIR = $(TARGET)/lib/jars
+EXECUTABLE_SCRIPT_NAME = run_$(SERVICE_CAPS)_async_job.sh
 SUB_SERVICE_LOCAL_DIR = $(DIR)/clusterservice
 SUB1_SERVICE_NAME = ClusterServicePy
 SUB1_ASYNC_JOB_SCRIPT_FILE = run_ClusterServicePy_async_job.sh
 SUB2_SERVICE_NAME = ClusterServiceR
 SUB2_ASYNC_JOB_SCRIPT_FILE = run_ClusterServiceR_async_job.sh
-ANT = ant
-TESTCFG ?= test.cfg
-SERVICE_DIR = $(TARGET)/services/$(SERVICE_NAME)
-SUB_SERVICE_DIR = $(SERVICE_DIR)/clusterservice
+STARTUP_SCRIPT_NAME = start_server.sh
+TEST_SCRIPT_NAME = run_tests.sh
 KB_RUNTIME ?= /kb/runtime
-JAVA_HOME ?= $(KB_RUNTIME)/java
-SERVICE_PORT = 8082
-MAX_MEMORY_MB = 4000
-CLIENT_MAX_MEMORY_MB = 3000
-KB_PYTHON_PATH ?= $(shell find $(KB_TOP)/modules -maxdepth 2 -name lib -type d | xargs | sed -e 's/ /:/g')
-UNAME_S := $(shell uname -s)
+ANT_HOME ?= $(KB_RUNTIME)/ant
+ANT = $(ANT_HOME)/bin/ant
 
-all: compile
+.PHONY: test
+
+default: compile
+
+all: compile build build-startup-script build-executable-script build-test-script
 
 compile:
-	mkdir -p $(LOCAL_BIN)
-	echo '#!/bin/bash' > $(LOCAL_BIN)/$(SUB1_ASYNC_JOB_SCRIPT_FILE)
-	echo 'export KB_TOP=$(KB_TOP)' >> $(LOCAL_BIN)/$(SUB1_ASYNC_JOB_SCRIPT_FILE)
-	echo 'export KB_RUNTIME=$(KB_RUNTIME)' >> $(LOCAL_BIN)/$(SUB1_ASYNC_JOB_SCRIPT_FILE)
-	echo 'export PATH=$$KB_RUNTIME/bin:$$KB_TOP/bin:$$PATH' >> $(LOCAL_BIN)/$(SUB1_ASYNC_JOB_SCRIPT_FILE)
-	echo 'export KB_PYTHON_PATH=$(KB_PYTHON_PATH)' >> $(LOCAL_BIN)/$(SUB1_ASYNC_JOB_SCRIPT_FILE)
-	echo 'export PYTHONPATH=$(TARGET)/lib:$$KB_PYTHON_PATH:$$PYTHONPATH' >> $(LOCAL_BIN)/$(SUB1_ASYNC_JOB_SCRIPT_FILE)
-	echo 'cd $(SUB_SERVICE_LOCAL_DIR)' >> $(LOCAL_BIN)/$(SUB1_ASYNC_JOB_SCRIPT_FILE)
-	echo 'python $(SUB1_SERVICE_NAME)Server.py $$1 $$2 $$3' >> $(LOCAL_BIN)/$(SUB1_ASYNC_JOB_SCRIPT_FILE)
-	chmod a+x $(LOCAL_BIN)/$(SUB1_ASYNC_JOB_SCRIPT_FILE)
-	echo '#!/bin/bash' > $(LOCAL_BIN)/$(SUB2_ASYNC_JOB_SCRIPT_FILE)
-	echo 'export KB_TOP=$(KB_TOP)' >> $(LOCAL_BIN)/$(SUB2_ASYNC_JOB_SCRIPT_FILE)
-	echo 'export KB_RUNTIME=$(KB_RUNTIME)' >> $(LOCAL_BIN)/$(SUB2_ASYNC_JOB_SCRIPT_FILE)
-	echo 'export PATH=$$KB_RUNTIME/bin:$$KB_TOP/bin:$$PATH' >> $(LOCAL_BIN)/$(SUB2_ASYNC_JOB_SCRIPT_FILE)
-	echo 'cd $(SUB_SERVICE_LOCAL_DIR)' >> $(LOCAL_BIN)/$(SUB2_ASYNC_JOB_SCRIPT_FILE)
-	echo 'Rscript $(SUB2_SERVICE_NAME)Impl.r $$1 $$2' >> $(LOCAL_BIN)/$(SUB2_ASYNC_JOB_SCRIPT_FILE)
-	chmod a+x $(LOCAL_BIN)/$(SUB2_ASYNC_JOB_SCRIPT_FILE)
-	$(ANT) compile -Djardir=$(DIR)/../jars/lib/jars -Dbindir=$(LOCAL_BIN) -Djava.home=$(JAVA_HOME) -Dawe.max.mem=$(CLIENT_MAX_MEMORY_MB)m
+	kb-sdk compile $(SPEC_FILE) \
+		--out $(LIB_DIR) \
+		--plclname $(SERVICE_CAPS)::$(SERVICE_CAPS)Client \
+		--jsclname javascript/Client \
+		--pyclname $(SERVICE_CAPS).$(SERVICE_CAPS)Client \
+		--javasrc src \
+		--java \
+		--javasrv \
+		--javapackage us.kbase;
 
-deploy: deploy-client deploy-service deploy-scripts
+build:
+	$(ANT) war -Djars.dir=$(JARS_DIR)
+	chmod +x $(SCRIPTS_DIR)/entrypoint.sh
 
-undeploy:
-	@echo "Nothing to undeploy"
+build-executable-script:
+	mkdir -p $(LBIN_DIR)
+	$(ANT) build-executable-script -Djars.dir=$(JARS_DIR) -Dexec.cmd.file=$(EXECUTABLE_SCRIPT_NAME)
+	chmod +x $(LBIN_DIR)/$(EXECUTABLE_SCRIPT_NAME)
+	echo '#!/bin/bash' > $(LBIN_DIR)/$(SUB1_ASYNC_JOB_SCRIPT_FILE)
+	echo 'export PYTHONPATH=$$PATH:$$PYTHONPATH' >> $(LBIN_DIR)/$(SUB1_ASYNC_JOB_SCRIPT_FILE)
+	echo 'cd $(SUB_SERVICE_LOCAL_DIR)' >> $(LBIN_DIR)/$(SUB1_ASYNC_JOB_SCRIPT_FILE)
+	echo 'python $(SUB1_SERVICE_NAME)Server.py $$1 $$2 $$3' >> $(LBIN_DIR)/$(SUB1_ASYNC_JOB_SCRIPT_FILE)
+	chmod a+x $(LBIN_DIR)/$(SUB1_ASYNC_JOB_SCRIPT_FILE)
+	echo '#!/bin/bash' > $(LBIN_DIR)/$(SUB2_ASYNC_JOB_SCRIPT_FILE)
+	echo 'export R_LIBS=$(R_LIBS)' >> $(LBIN_DIR)/$(SUB2_ASYNC_JOB_SCRIPT_FILE)
+	echo 'cd $(SUB_SERVICE_LOCAL_DIR)' >> $(LBIN_DIR)/$(SUB2_ASYNC_JOB_SCRIPT_FILE)
+	echo 'Rscript $(SUB2_SERVICE_NAME)Impl.r $$1 $$2' >> $(LBIN_DIR)/$(SUB2_ASYNC_JOB_SCRIPT_FILE)
+	chmod a+x $(LBIN_DIR)/$(SUB2_ASYNC_JOB_SCRIPT_FILE)
 
-deploy-client: deploy-scripts
+build-startup-script:
+	mkdir -p $(LBIN_DIR)
+	echo '#!/bin/bash' > $(SCRIPTS_DIR)/$(STARTUP_SCRIPT_NAME)
+	echo 'script_dir=$$(dirname "$$(readlink -f "$$0")")' >> $(SCRIPTS_DIR)/$(STARTUP_SCRIPT_NAME)
+	echo 'cd $(SCRIPTS_DIR)' >> $(SCRIPTS_DIR)/$(STARTUP_SCRIPT_NAME)
+	echo 'java -Xmx5g -cp $(JARS_DIR)/jetty/jetty-start-7.0.0.jar:$(JARS_DIR)/jetty/jetty-all-7.0.0.jar:$(JARS_DIR)/servlet/servlet-api-2.5.jar \
+		-DKB_DEPLOYMENT_CONFIG=$$script_dir/../deploy.cfg -Djetty.port=5000 org.eclipse.jetty.start.Main jetty.xml' >> $(SCRIPTS_DIR)/$(STARTUP_SCRIPT_NAME)
+	chmod +x $(SCRIPTS_DIR)/$(STARTUP_SCRIPT_NAME)
 
-deploy-service: deploy-scripts
-	cp $(DIR)/service/jetty.xml $(SERVICE_DIR)/
-	mkdir -p $(SERVICE_DIR)/webapps
-	rm -f $(SERVICE_DIR)/webapps/*.war
-	cp $(DIR)/dist/$(SERVICE_NAME).war $(SERVICE_DIR)/webapps/root.war
-	cp $(DIR)/deploy.cfg $(SERVICE_DIR)/
-	echo '#!/bin/bash' > $(SERVICE_DIR)/start_service
-	echo 'export JAVA_HOME=$(JAVA_HOME)' >> $(SERVICE_DIR)/start_service
-	echo 'export PATH=$(JAVA_HOME)/bin:$$PATH' >> $(SERVICE_DIR)/start_service
-	echo 'JARS=$(TARGET)/lib/jars' >> $(SERVICE_DIR)/start_service
-	echo 'if [ -z "$$KB_DEPLOYMENT_CONFIG" ]; then' >> $(SERVICE_DIR)/start_service
-	echo '    export KB_DEPLOYMENT_CONFIG=$(TARGET)/deployment.cfg' >> $(SERVICE_DIR)/start_service
-	echo 'fi' >> $(SERVICE_DIR)/start_service
-	echo 'cd $(SERVICE_DIR)' >> $(SERVICE_DIR)/start_service
-	echo 'java -cp $$JARS/jetty/jetty-start-7.0.0.jar:$$JARS/jetty/jetty-all-7.0.0.jar:$$JARS/servlet/servlet-api-2.5.jar -Xmx$(MAX_MEMORY_MB)m -DKB_DEPLOYMENT_CONFIG=$$KB_DEPLOYMENT_CONFIG -Djetty.port=$(SERVICE_PORT) org.eclipse.jetty.start.Main jetty.xml >out.txt 2>err.txt & pid=$$!' >> $(SERVICE_DIR)/start_service
-	echo 'echo $$pid > $(SERVICE_DIR)/pid.txt' >> $(SERVICE_DIR)/start_service
-	chmod a+x $(SERVICE_DIR)/start_service
-	echo '#!/bin/bash' > $(SERVICE_DIR)/stop_service
-	echo 'PIDFILE=$(SERVICE_DIR)/pid.txt' >> $(SERVICE_DIR)/stop_service
-	echo 'THEPID=$$(cat $$PIDFILE)' >> $(SERVICE_DIR)/stop_service
-	echo 'echo "Killing PID $$THEPID..."' >> $(SERVICE_DIR)/stop_service
-	echo 'kill $$THEPID' >> $(SERVICE_DIR)/stop_service
-	echo 'rm $$PIDFILE' >> $(SERVICE_DIR)/stop_service
-	chmod a+x $(SERVICE_DIR)/stop_service
+build-test-script:
+	echo '#!/bin/bash' > $(TEST_DIR)/$(TEST_SCRIPT_NAME)
+	echo 'script_dir=$$(dirname "$$(readlink -f "$$0")")' >> $(TEST_DIR)/$(TEST_SCRIPT_NAME)
+	echo 'export KB_DEPLOYMENT_CONFIG=$$script_dir/../deploy.cfg' >> $(TEST_DIR)/$(TEST_SCRIPT_NAME)
+	echo 'export KB_AUTH_TOKEN=`cat /kb/module/work/token`' >> $(TEST_DIR)/$(TEST_SCRIPT_NAME)
+	echo 'export JAVA_HOME=$(JAVA_HOME)' >> $(TEST_DIR)/$(TEST_SCRIPT_NAME)
+	echo '$(ANT) test -Djars.dir=$(JARS_DIR)' >> $(TEST_DIR)/$(TEST_SCRIPT_NAME)
+	chmod +x $(TEST_DIR)/$(TEST_SCRIPT_NAME)
 
-deploy-scripts:
-	echo "Checking dependencies..."
-	R_LIBS=$(TARGET)/lib bash $(DIR)/deps/r_lang.sh
-ifeq ($(UNAME_S),Linux)
-	#PYTHONUSERBASE=$(TARGET)/lib bash $(DIR)/deps/scikit_nosudo.sh
-endif
-ifeq ($(UNAME_S),Darwin)
-	#PYTHONUSERBASE=$(TARGET)/lib bash $(DIR)/deps/scikit_macosx.sh
-endif
-	mkdir -p $(SERVICE_DIR)
-	cp -r $(SUB_SERVICE_LOCAL_DIR) $(SERVICE_DIR)/
-	echo '#!/bin/bash' > $(BIN)/$(SUB1_ASYNC_JOB_SCRIPT_FILE)
-	echo 'export KB_TOP=$(TARGET)' >> $(BIN)/$(SUB1_ASYNC_JOB_SCRIPT_FILE)
-	echo 'export KB_RUNTIME=$(KB_RUNTIME)' >> $(BIN)/$(SUB1_ASYNC_JOB_SCRIPT_FILE)
-	echo 'export PATH=$$KB_RUNTIME/bin:$$KB_TOP/bin:$$PATH' >> $(BIN)/$(SUB1_ASYNC_JOB_SCRIPT_FILE)
-	echo 'export PYTHONPATH=$$KB_TOP/lib:$$PYTHONPATH' >> $(BIN)/$(SUB1_ASYNC_JOB_SCRIPT_FILE)
-	echo 'cd $(SUB_SERVICE_DIR)' >> $(BIN)/$(SUB1_ASYNC_JOB_SCRIPT_FILE)
-	echo 'python $(SUB1_SERVICE_NAME)Server.py $$1 $$2 $$3' >> $(BIN)/$(SUB1_ASYNC_JOB_SCRIPT_FILE)
-	chmod a+x $(BIN)/$(SUB1_ASYNC_JOB_SCRIPT_FILE)
-	echo '#!/bin/bash' > $(BIN)/$(SUB2_ASYNC_JOB_SCRIPT_FILE)
-	echo 'export KB_TOP=$(TARGET)' >> $(BIN)/$(SUB2_ASYNC_JOB_SCRIPT_FILE)
-	echo 'export KB_RUNTIME=$(KB_RUNTIME)' >> $(BIN)/$(SUB2_ASYNC_JOB_SCRIPT_FILE)
-	echo 'export PATH=$$KB_RUNTIME/bin:$$KB_TOP/bin:$$PATH' >> $(BIN)/$(SUB2_ASYNC_JOB_SCRIPT_FILE)
-	echo 'export R_LIB=$(TARGET)/lib' >> $(BIN)/$(SUB2_ASYNC_JOB_SCRIPT_FILE)
-	echo 'cd $(SUB_SERVICE_DIR)' >> $(BIN)/$(SUB2_ASYNC_JOB_SCRIPT_FILE)
-	echo 'Rscript $(SUB2_SERVICE_NAME)Impl.r $$1 $$2' >> $(BIN)/$(SUB2_ASYNC_JOB_SCRIPT_FILE)
-	chmod a+x $(BIN)/$(SUB2_ASYNC_JOB_SCRIPT_FILE)
-	$(ANT) deploy -Djardir=$(TARGET)/lib/jars -Dbindir=$(BIN) -Djava.home=$(JAVA_HOME) -Dawe.max.mem=$(CLIENT_MAX_MEMORY_MB)m
-
-test: compile test-client test-service test-scripts
-
-test-client:
-	@echo "No tests for client"
-
-test-service:
-	@echo "No tests for service"
-
-test-scripts:
-	echo "Checking dependencies..."
-	bash $(DIR)/deps/r_lang.sh
-ifeq ($(UNAME_S),Linux)
-	#bash $(DIR)/deps/scikit_nosudo.sh
-endif
-ifeq ($(UNAME_S),Darwin)
-	#bash $(DIR)/deps/scikit_macosx.sh
-endif
-	test/cfg_to_runner.py $(TESTCFG) ""
-	test/run_tests.sh
+test:
+	if [ ! -f /kb/module/work/token ]; then echo -e '\nOutside a docker container please run "kb-sdk test" rather than "make test"\n' && exit 1; fi
+	bash $(TEST_DIR)/$(TEST_SCRIPT_NAME)
 
 clean:
-	@echo "No clean is necessary"
+	rm -rfv $(LBIN_DIR)
+	

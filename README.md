@@ -5,9 +5,9 @@ Feature Values Service
 Overview
 ----------
 This KBase service provides a set of methods for manipulation and visualization
-of expression values organized as two-dimentional matrix and assigned to 
-genome features on one dimention and to different sorts conditions on second 
-dimention.
+of expression values organized as two-dimensional matrix and assigned to 
+genome features on one dimension and to different sorts conditions on second 
+dimension.
 
 
 Authors

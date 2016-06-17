@@ -1,0 +1,20 @@
+module-name:
+    KBaseFeatureValues
+
+module-description:
+    This KBase module provides a set of methods for manipulation and visualization
+    of expression values organized as two-dimentional matrix and assigned to
+    genome features on one dimention and to different sorts conditions on second
+    dimention.
+
+service-language:
+    java
+
+module-version:
+    0.0.9
+
+owners:
+    [rsutormin, msneddon, psnovichkov, marcin, srividya22]
+
+service-config:
+    dynamic-service: true
