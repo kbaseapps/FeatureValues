@@ -2,7 +2,7 @@
 <web-app>
     <servlet>
         <servlet-name>JsonRpcServlet</servlet-name>
-        <servlet-class>kbasefeaturevalues.KBaseFeatureValuesServer</servlet-class>
+        <servlet-class>us.kbase.kbasefeaturevalues.KBaseFeatureValuesServer</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>JsonRpcServlet</servlet-name>

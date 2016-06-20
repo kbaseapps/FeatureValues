@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.stat.correlation.PearsonsCorrelation;
-import org.apache.commons.math.stat.StatUtils;
 
 
 public class FloatMatrix2DUtil {
