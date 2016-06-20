@@ -19,12 +19,6 @@
   <property name="startup.cmd.file" value="start_server.sh"/>
 
   <fileset dir="${jars.dir}" id="lib">
-    <include name="apache_commons/http/httpclient-4.3.1.jar"/>
-    <include name="apache_commons/http/httpcore-4.3.jar"/>
-    <include name="apache_commons/http/httpmime-4.3.1.jar"/>
-    <include name="apache_commons/commons-logging-1.1.1.jar"/>
-    <include name="apache_commons/commons-lang-2.4.jar"/>
-    <include name="apache_commons/commons-math-2.2.jar"/>
     <include name="ini4j/ini4j-0.5.2.jar"/>
     <include name="jackson/jackson-annotations-2.2.3.jar"/>
     <include name="jackson/jackson-core-2.2.3.jar"/>
@@ -35,7 +29,6 @@
     <include name="junit/junit-4.9.jar"/>
     <include name="kbase/auth/kbase-auth-0.3.1.jar"/>
     <include name="kbase/common/kbase-common-0.0.17.jar"/>
-    <include name="kohsuke/args4j-2.0.21.jar"/>
     <include name="logback/logback-classic-1.1.2.jar"/>
     <include name="logback/logback-core-1.1.2.jar"/>
     <include name="servlet/servlet-api-2.5.jar"/>
@@ -43,6 +36,9 @@
     <include name="syslog4j/syslog4j-0.9.46.jar"/>
     <include name="kbase/workspace/WorkspaceClient-0.2.0.jar"/>
     <include name="kbase/genomes/kbase-genomes-20140411.jar"/>
+    <include name="apache_commons/commons-lang-2.4.jar"/>
+    <include name="apache_commons/commons-math-2.2.jar"/>
+    <include name="kohsuke/args4j-2.0.21.jar"/>
   </fileset>
 
   <path id="compile.classpath">
@@ -98,7 +94,7 @@ commit=${git.commit}</echo>
     <property name="jar.absolute.path" location="${dist}/${jar.file}"/>
     <pathconvert targetos="unix" property="lib.classpath" refid="compile.classpath"/>
     <echo file="${bin}/${exec.cmd.file}">#!/bin/bash
-java -Xmx2g -cp ${jar.absolute.path}:${lib.classpath} kbasefeaturevalues.KBaseFeatureValuesServer $1 $2 $3
+java -Xmx3g -cp ${jar.absolute.path}:${lib.classpath} us.kbase.kbasefeaturevalues.KBaseFeatureValuesServer $1 $2 $3
     </echo>
     <chmod file="${bin}/${exec.cmd.file}" perm="a+x"/>
   </target>
