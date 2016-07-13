@@ -96,10 +96,18 @@ public class ExpressionUploader {
     public static ExpressionMatrix parse(String wsUrl, String wsName, File inputFile, 
             String fmtType, String goName, boolean fillMissingValues, String dataType, 
             String dataScale, AuthToken token) throws Exception {
+        String genomeRef = goName == null ? null : (wsName + "/" + goName);
+        return parse(wsUrl, inputFile, fmtType, genomeRef, fillMissingValues, dataType,
+                dataScale, token);
+    }
+    
+    public static ExpressionMatrix parse(String wsUrl, File inputFile, 
+            String fmtType, String genomeRef, boolean fillMissingValues, String dataType, 
+            String dataScale, AuthToken token) throws Exception {
         Map<String, Object> genome = null;
-        if (goName != null) {
+        if (genomeRef != null) {
             WorkspaceClient cl = getWsClient(wsUrl, token);
-            genome = MatrixUtil.loadGenomeFeatures(cl, wsName + "/" + goName);
+            genome = MatrixUtil.loadGenomeFeatures(cl, genomeRef);
         }
         String formatType = fmtType;
         if (formatType == null || formatType.trim().isEmpty())
@@ -118,7 +126,7 @@ public class ExpressionUploader {
             matrix.withScale(dataScale);
         if (genome != null) {
             matrix.withFeatureMapping(MatrixUtil.constructFeatureMapping(matrix.getData(), genome));
-            matrix.withGenomeRef(wsName + "/" + goName);
+            matrix.withGenomeRef(genomeRef);
         }
         if (fillMissingValues)
             MatrixUtil.fillMissingValues(matrix.getData());

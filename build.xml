@@ -38,6 +38,7 @@
     <include name="kbase/genomes/kbase-genomes-20140411.jar"/>
     <include name="apache_commons/commons-lang-2.4.jar"/>
     <include name="apache_commons/commons-math-2.2.jar"/>
+    <include name="apache_commons/commons-io-2.4.jar"/>
     <include name="kohsuke/args4j-2.0.21.jar"/>
   </fileset>
 

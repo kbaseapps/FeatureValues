@@ -1,0 +1,136 @@
+{
+  "ver" : "1.0.0",
+  "authors" : [ ],
+  "contact" : "help@kbase.us",
+  "visble" : true,
+  "categories" : [ "importers" ],
+  "widgets" : {
+    "input" : "kbaseNarrativeMethodInput"
+  },
+  "parameters" : [ {
+    "id" : "expressionFile",
+    "optional" : false,
+    "advanced" : false,
+    "allow_multiple" : false,
+    "default_values" : [ "" ],
+    "field_type" : "file",
+    "text_options" : {
+      "valid_ws_types" : [ ]
+    }
+  }, {
+    "id" : "outputObject",
+    "optional" : false,
+    "advanced" : false,
+    "allow_multiple" : false,
+    "default_values" : [ "" ],
+    "field_type" : "text",
+    "text_options" : {
+      "valid_ws_types" : [ "KBaseFeatureValues.ExpressionMatrix" ],
+      "is_output_name" : true
+    }
+  }, {
+    "id" : "genomeObject",
+    "optional" : true,
+    "advanced" : false,
+    "allow_multiple" : false,
+    "default_values" : [ "" ],
+    "field_type" : "text",
+    "text_options" : {
+      "valid_ws_types" : [ "KBaseGenomes.Genome" ]
+    }
+  }, {
+    "id" : "fillMissingValues",
+    "optional" : true,
+    "advanced" : true,
+    "allow_multiple" : false,
+    "default_values":["0"],
+    "field_type" : "checkbox",
+    "checkbox_options":{
+      "checked_value": 1,
+      "unchecked_value": 0
+    }
+  }, {
+    "id" : "dataType",
+    "optional" : false,
+    "advanced" : false,
+    "allow_multiple" : false,
+    "default_values" : [ "log-ratio" ],
+    "field_type" : "dropdown",
+    "dropdown_options":{
+      "options": [
+        {
+          "value": "untransformed",
+          "display": "Untransformed Raw Values"
+        },
+        {
+          "value": "log2_level",
+          "display": "log2 Level"
+        },
+        {
+          "value": "log10_level",
+          "display": "log10 Level"
+        },
+        {
+          "value": "log2_ratio",
+          "display": "log2 Ratio"
+        },
+        {
+          "value": "log10_ratio",
+          "display": "log10 Ratio"
+        },
+        {
+          "value": "unknown",
+          "display": "Unknown"
+        }
+      ]
+    }
+  }, {
+    "id" : "dataScale",
+    "optional" : true,
+    "advanced" : true,
+    "allow_multiple" : false,
+    "default_values" : [ "" ],
+    "field_type" : "text"
+  } ],
+  "behavior" : {
+    "service-mapping" : {
+      "url" : "",
+      "name" : "KBaseFeatureValues",
+      "method" : "tsv_file_to_matrix",
+      "input_mapping" : [
+        {
+          "narrative_system_variable": "workspace",
+          "target_property": "output_ws_name"
+        },
+        {
+          "input_parameter": "expressionFile",
+          "target_property": "input_shock_id"
+        },
+        {
+          "input_parameter": "genomeObject",
+          "target_property": "genome_ref",
+          "target_type_transform": "ref"
+        },
+        {
+          "input_parameter": "fillMissingValues",
+          "target_property": "fill_missing_values"
+        },
+        {
+          "input_parameter": "dataType",
+          "target_property": "data_type"
+        },
+        {
+          "input_parameter": "dataScale",
+          "target_property": "data_scale"
+        },
+        {
+          "input_parameter": "outputObject",
+          "target_property": "output_obj_name"
+        }
+      ],
+      "output_mapping" : [
+      ]
+    }
+  },
+  "job_id_output_field": "docker"
+}

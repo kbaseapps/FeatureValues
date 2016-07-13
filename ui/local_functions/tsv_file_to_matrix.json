@@ -1,0 +1,19 @@
+{
+    "name" : "Save an Expression Matrix object from a TSV file",
+    "short_description" : 
+        "Use this method to create a new Expression Matrix object from a TSV file.",
+
+    "long_description" : "todo: write longer description",
+
+    "tags" : {
+        "categories" : [],
+        "input": {
+            "file_types": ["tsv"],
+            "kb_types": []
+        },
+        "output": {
+            "file_types": [],
+            "kb_types": ["KBaseFeatureValues.ExpressionMatrix"]
+        }
+    }
+}

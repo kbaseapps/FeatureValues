@@ -19,5 +19,6 @@
 	<classpathentry kind="lib" path="../jars/lib/jars/apache_commons/commons-math-2.2.jar"/>
 	<classpathentry kind="lib" path="../jars/lib/jars/apache_commons/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="../jars/lib/jars/kohsuke/args4j-2.0.21.jar"/>
+	<classpathentry kind="lib" path="../jars/lib/jars/apache_commons/commons-io-2.4.jar"/>
 	<classpathentry kind="output" path="eclipse_classes"/>
 </classpath>

@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -19,10 +20,14 @@ import java.util.zip.GZIPInputStream;
 
 import junit.framework.Assert;
 
+import org.apache.commons.io.FileUtils;
 import org.ini4j.Ini;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import datafileutil.DataFileUtilClient;
+import datafileutil.FileToShockParams;
 
 import us.kbase.kbasefeaturevalues.BuildFeatureSetParams;
 import us.kbase.kbasefeaturevalues.ClusterHierarchicalParams;
@@ -45,6 +50,7 @@ import us.kbase.kbasefeaturevalues.MatrixDescriptor;
 import us.kbase.kbasefeaturevalues.MatrixStat;
 import us.kbase.kbasefeaturevalues.ReconnectMatrixToGenomeParams;
 import us.kbase.kbasefeaturevalues.SubmatrixStat;
+import us.kbase.kbasefeaturevalues.UploadMatrixParams;
 import us.kbase.kbasefeaturevalues.transform.ExpressionUploader;
 import us.kbase.kbasefeaturevalues.transform.FeatureClustersDownloader;
 import us.kbase.auth.AuthToken;
@@ -71,6 +77,7 @@ public class KBaseFeatureValuesServerTest {
     private static String wsName = null;
     private static KBaseFeatureValuesServer impl = null;
     
+    private static final String commonGenomeObjectName = "Desulfovibrio_vulgaris_Hildenborough.genome";
     private static final String commonExpressionObjectName = "Desulfovibrio_vulgaris_Hildenborough.expression";
     
     @BeforeClass
@@ -90,7 +97,7 @@ public class KBaseFeatureValuesServerTest {
         ////////////////////////////Prepare common data //////////////////////////////
         String testWsName = getWsName();
         String contigsetObjName = "Desulfovibrio_vulgaris_Hildenborough.contigset";
-        String genomeObjName = "Desulfovibrio_vulgaris_Hildenborough.genome";
+        String genomeObjName = commonGenomeObjectName;
         File inputDir = new File("test/data/upload1");
         File inputFile = new File(inputDir, "Desulfovibrio_vulgaris_Hildenborough_microarray_log_level_data.txt");
         Map<String, Object> contigsetData = new LinkedHashMap<String, Object>();
@@ -495,6 +502,36 @@ public class KBaseFeatureValuesServerTest {
         Assert.assertEquals(10, nullCount);
     }
     
+    @Test
+    public void testTsvFileToMatrix() throws Exception {
+        String testWsName = getWsName();
+        String genomeObjName = commonGenomeObjectName;
+        String exprObjName = "Desulfovibrio_vulgaris_Hildenborough.expression.2";
+        File testFile = new File("test/data/upload2",
+                "Desulfovibrio_vulgaris_Hildenborough_microarray_log_level_data.tsv");
+        File tmpDir = Files.createTempDirectory(new File(config.get(
+                KBaseFeatureValuesServer.CONFIG_PARAM_SCRATCH)).toPath(), "FromShock").toFile();
+        try {
+            File inputFile = new File(tmpDir, testFile.getName());
+            FileUtils.copyFile(testFile, inputFile);
+            URL callbackUrl = new URL(System.getenv("SDK_CALLBACK_URL"));
+            DataFileUtilClient dataFileUtil = new DataFileUtilClient(callbackUrl, token);
+            dataFileUtil.setIsInsecureHttpConnectionAllowed(true);
+            String shockId = dataFileUtil.fileToShock(new FileToShockParams().withFilePath(
+                    inputFile.getCanonicalPath())).getShockId();
+            String matrixRef = impl.tsvFileToMatrix(new UploadMatrixParams().withGenomeRef(
+                    testWsName + "/" + genomeObjName).withInputShockId(shockId)
+                    .withFillMissingValues(1L).withOutputWsName(testWsName)
+                    .withOutputObjName(exprObjName), token, getContext()).getOutputMatrixRef();
+            MatrixStat stats = impl.getMatrixStat(new GetMatrixStatParams().withInputData(
+                    matrixRef), token, getContext());
+            Assert.assertEquals("Desulfovibrio vulgaris Hildenborough", 
+                    stats.getMtxDescriptor().getGenomeName());
+        } finally {
+            FileUtils.deleteQuietly(tmpDir);
+        }
+    }
+
     private static FloatMatrix2D getSampleMatrix() {
         List<List<Double>> values = new ArrayList<List<Double>>();
         values.add(Arrays.asList(13.0, 2.0, 3.0));
