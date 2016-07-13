@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import us.kbase.auth.AuthToken;
 import us.kbase.common.service.JsonClientCaller;
 import us.kbase.common.service.JsonClientException;
@@ -467,6 +468,30 @@ public class KBaseFeatureValuesClient {
         args.add(arg1);
         TypeReference<List<SubmatrixStat>> retType = new TypeReference<List<SubmatrixStat>>() {};
         List<SubmatrixStat> res = caller.jsonrpcCall("KBaseFeatureValues.get_submatrix_stat", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res.get(0);
+    }
+
+    /**
+     * <p>Original spec-file function name: tsv_file_to_matrix</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.UploadMatrixParams UploadMatrixParams}
+     * @return   instance of type {@link us.kbase.kbasefeaturevalues.UploadMatrixOutput UploadMatrixOutput}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public UploadMatrixOutput tsvFileToMatrix(UploadMatrixParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<UploadMatrixOutput>> retType = new TypeReference<List<UploadMatrixOutput>>() {};
+        List<UploadMatrixOutput> res = caller.jsonrpcCall("KBaseFeatureValues.tsv_file_to_matrix", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res.get(0);
+    }
+
+    public Map<String, Object> status(RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        TypeReference<List<Map<String, Object>>> retType = new TypeReference<List<Map<String, Object>>>() {};
+        List<Map<String, Object>> res = caller.jsonrpcCall("KBaseFeatureValues.status", args, retType, true, false, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 }

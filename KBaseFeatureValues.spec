@@ -763,5 +763,34 @@ module KBaseFeatureValues {
      
     funcdef get_submatrix_stat(GetSubmatrixStatParams)
     	returns (SubmatrixStat) authentication required;
+
+    /*
+        input_shock_id and input_file_path - alternative intput params,
+        genome_ref - optional reference to a Genome object that will be
+            used for mapping feature IDs to,
+        fill_missing_values - optional flag for filling in missing 
+            values in matrix (default value is false),
+        data_type - optional filed, value is one of 'untransformed',
+            'log2_level', 'log10_level', 'log2_ratio', 'log10_ratio' or
+            'unknown' (last one is default value),
+        data_scale - optional parameter (default value is '1.0').
+    */
+    typedef structure {
+        string input_shock_id;
+        string input_file_path;
+        ws_genome_id genome_ref; 
+        boolean fill_missing_values;
+        string data_type;
+        string data_scale;
+        string output_ws_name;
+        string output_obj_name;
+    } UploadMatrixParams;
+
+    typedef structure {
+        ws_matrix_id output_matrix_ref;
+    } UploadMatrixOutput;
+
+    funcdef tsv_file_to_matrix(UploadMatrixParams params)
+        returns (UploadMatrixOutput) authentication required;
 };
 

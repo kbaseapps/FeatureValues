@@ -32,11 +32,12 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
     private static final long serialVersionUID = 1L;
     private static final String version = "0.0.9";
     private static final String gitUrl = "https://github.com/rsutormin/feature_values";
-    private static final String gitCommitHash = "4723a79c84a355ba03d7e9666889379ee178ce1a";
+    private static final String gitCommitHash = "90f7e1167d005d39a3b074d27eb75c5b404add4c";
 
     //BEGIN_CLASS_HEADER
     public static final String CONFIG_PARAM_WS_URL = "ws.url";
     public static final String CONFIG_PARAM_CLIENT_BIN_DIR = "client.bin.dir";
+    public static final String CONFIG_PARAM_SCRATCH = "scratch";
     
     private KBaseFeatureValuesImpl impl(AuthToken authPart) throws Exception {
         return new KBaseFeatureValuesImpl(null, authPart.toString(), config, null);
@@ -335,6 +336,22 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
         //BEGIN get_submatrix_stat
         returnVal = impl(authPart).getSubmatrixStat(arg1);
         //END get_submatrix_stat
+        return returnVal;
+    }
+
+    /**
+     * <p>Original spec-file function name: tsv_file_to_matrix</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.UploadMatrixParams UploadMatrixParams}
+     * @return   instance of type {@link us.kbase.kbasefeaturevalues.UploadMatrixOutput UploadMatrixOutput}
+     */
+    @JsonServerMethod(rpc = "KBaseFeatureValues.tsv_file_to_matrix", async=true)
+    public UploadMatrixOutput tsvFileToMatrix(UploadMatrixParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
+        UploadMatrixOutput returnVal = null;
+        //BEGIN tsv_file_to_matrix
+        returnVal = impl(authPart).tsvFileToMatrix(params);
+        //END tsv_file_to_matrix
         return returnVal;
     }
     @JsonServerMethod(rpc = "KBaseFeatureValues.status")

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.StringReader;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
 import us.kbase.auth.AuthToken;
@@ -24,6 +26,7 @@ import us.kbase.clusterservice.ClusterServicePyLocalClient;
 import us.kbase.clusterservice.ClusterServiceRLocalClient;
 import us.kbase.common.service.Tuple11;
 import us.kbase.common.service.UObject;
+import us.kbase.kbasefeaturevalues.transform.ExpressionUploader;
 import us.kbase.kbasegenomes.Feature;
 import us.kbase.workspace.ObjectData;
 import us.kbase.workspace.ObjectIdentity;
@@ -38,6 +41,9 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
+
+import datafileutil.DataFileUtilClient;
+import datafileutil.ShockToFileParams;
 
 public class KBaseFeatureValuesImpl {
     private String jobId;
@@ -708,6 +714,56 @@ public class KBaseFeatureValuesImpl {
         	.get(0);		
 	}	
 
+	public UploadMatrixOutput tsvFileToMatrix(UploadMatrixParams params) throws Exception {
+	    File scratchDir = new File(config.get(KBaseFeatureValuesServer.CONFIG_PARAM_SCRATCH));
+	    if (!scratchDir.exists())
+	        scratchDir.mkdirs();
+	    File tmpDir = Files.createTempDirectory(scratchDir.toPath(), "FromShock").toFile();
+	    try {
+	        AuthToken auth = new AuthToken(token);
+	        URL callbackUrl = new URL(System.getenv("SDK_CALLBACK_URL"));
+	        DataFileUtilClient dataFileUtil = new DataFileUtilClient(callbackUrl, auth);
+	        dataFileUtil.setIsInsecureHttpConnectionAllowed(true);
+            File inputFile;
+	        if (params.getInputShockId() != null) {
+	            String fileName = dataFileUtil.shockToFile(
+	                    new ShockToFileParams().withShockId(params.getInputShockId())
+	                    .withFilePath(tmpDir.getCanonicalPath())).getNodeFileName();
+	            inputFile = new File(tmpDir, fileName);
+	        } else if (params.getInputFilePath() != null) {
+	            inputFile = new File(params.getInputFilePath());
+	        } else {
+	            throw new IllegalStateException("One of input_file_path or input_shock_id " +
+	            		"parameters should be defined");
+	        }
+	        boolean fillMissingValues = params.getFillMissingValues() != null &&
+	                params.getFillMissingValues() == 1L;
+	        String dataType = params.getDataType();
+	        if (dataType == null)
+	            dataType = "unknown";
+	        String dataScale = params.getDataScale();
+	        if (dataScale == null)
+	            dataScale = "1.0";
+	        ExpressionMatrix matrix = ExpressionUploader.parse(getWsUrl(), inputFile, 
+	                ExpressionUploader.FORMAT_TYPE_SIMPLE, params.getGenomeRef(), 
+	                fillMissingValues, dataType, dataScale, auth);
+	        File outputFile = File.createTempFile("matrix_", ".json", tmpDir);
+	        UObject.getMapper().writeValue(outputFile, matrix);
+	        Long wsId = dataFileUtil.wsNameToId(params.getOutputWsName());
+	        Tuple11<Long, String, String, String, Long, String, Long, String, String, Long, 
+	                Map<String,String>> info = dataFileUtil.saveObjects(
+	                        new datafileutil.SaveObjectsParams().withId(wsId)
+	                        .withObjects(Arrays.asList(new datafileutil.ObjectSaveData()
+	                        .withType("KBaseFeatureValues.ExpressionMatrix")
+	                        .withName(params.getOutputObjName())
+	                        .withData(new UObject(matrix))))).get(0);
+	        return new UploadMatrixOutput().withOutputMatrixRef(
+	                info.getE7() + "/" + info.getE1() + "/" + info.getE5());
+	    } finally {
+	        FileUtils.deleteQuietly(tmpDir);
+	    }
+	}
+	        
     class MatrixGenomeLoader{
         ObjectData matrixData;
         ExpressionMatrix matrix;
