@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
- * <p>Original spec-file type: UploadMatrixParams</p>
+ * <p>Original spec-file type: TsvFileToMatrixParams</p>
  * <pre>
  * input_shock_id and input_file_path - alternative intput params,
  * genome_ref - optional reference to a Genome object that will be
@@ -38,7 +38,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "output_ws_name",
     "output_obj_name"
 })
-public class UploadMatrixParams {
+public class TsvFileToMatrixParams {
 
     @JsonProperty("input_shock_id")
     private String inputShockId;
@@ -68,7 +68,7 @@ public class UploadMatrixParams {
         this.inputShockId = inputShockId;
     }
 
-    public UploadMatrixParams withInputShockId(String inputShockId) {
+    public TsvFileToMatrixParams withInputShockId(String inputShockId) {
         this.inputShockId = inputShockId;
         return this;
     }
@@ -83,7 +83,7 @@ public class UploadMatrixParams {
         this.inputFilePath = inputFilePath;
     }
 
-    public UploadMatrixParams withInputFilePath(String inputFilePath) {
+    public TsvFileToMatrixParams withInputFilePath(String inputFilePath) {
         this.inputFilePath = inputFilePath;
         return this;
     }
@@ -98,7 +98,7 @@ public class UploadMatrixParams {
         this.genomeRef = genomeRef;
     }
 
-    public UploadMatrixParams withGenomeRef(String genomeRef) {
+    public TsvFileToMatrixParams withGenomeRef(String genomeRef) {
         this.genomeRef = genomeRef;
         return this;
     }
@@ -113,7 +113,7 @@ public class UploadMatrixParams {
         this.fillMissingValues = fillMissingValues;
     }
 
-    public UploadMatrixParams withFillMissingValues(Long fillMissingValues) {
+    public TsvFileToMatrixParams withFillMissingValues(Long fillMissingValues) {
         this.fillMissingValues = fillMissingValues;
         return this;
     }
@@ -128,7 +128,7 @@ public class UploadMatrixParams {
         this.dataType = dataType;
     }
 
-    public UploadMatrixParams withDataType(String dataType) {
+    public TsvFileToMatrixParams withDataType(String dataType) {
         this.dataType = dataType;
         return this;
     }
@@ -143,7 +143,7 @@ public class UploadMatrixParams {
         this.dataScale = dataScale;
     }
 
-    public UploadMatrixParams withDataScale(String dataScale) {
+    public TsvFileToMatrixParams withDataScale(String dataScale) {
         this.dataScale = dataScale;
         return this;
     }
@@ -158,7 +158,7 @@ public class UploadMatrixParams {
         this.outputWsName = outputWsName;
     }
 
-    public UploadMatrixParams withOutputWsName(String outputWsName) {
+    public TsvFileToMatrixParams withOutputWsName(String outputWsName) {
         this.outputWsName = outputWsName;
         return this;
     }
@@ -173,7 +173,7 @@ public class UploadMatrixParams {
         this.outputObjName = outputObjName;
     }
 
-    public UploadMatrixParams withOutputObjName(String outputObjName) {
+    public TsvFileToMatrixParams withOutputObjName(String outputObjName) {
         this.outputObjName = outputObjName;
         return this;
     }
@@ -190,7 +190,7 @@ public class UploadMatrixParams {
 
     @Override
     public String toString() {
-        return ((((((((((((((((((("UploadMatrixParams"+" [inputShockId=")+ inputShockId)+", inputFilePath=")+ inputFilePath)+", genomeRef=")+ genomeRef)+", fillMissingValues=")+ fillMissingValues)+", dataType=")+ dataType)+", dataScale=")+ dataScale)+", outputWsName=")+ outputWsName)+", outputObjName=")+ outputObjName)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((((((((((("TsvFileToMatrixParams"+" [inputShockId=")+ inputShockId)+", inputFilePath=")+ inputFilePath)+", genomeRef=")+ genomeRef)+", fillMissingValues=")+ fillMissingValues)+", dataType=")+ dataType)+", dataScale=")+ dataScale)+", outputWsName=")+ outputWsName)+", outputObjName=")+ outputObjName)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

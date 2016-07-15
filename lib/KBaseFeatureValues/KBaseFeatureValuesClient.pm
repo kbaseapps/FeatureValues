@@ -2265,9 +2265,9 @@ PairwiseComparison is a reference to a hash where the following keys are defined
 =begin html
 
 <pre>
-$params is a KBaseFeatureValues.UploadMatrixParams
-$return is a KBaseFeatureValues.UploadMatrixOutput
-UploadMatrixParams is a reference to a hash where the following keys are defined:
+$params is a KBaseFeatureValues.TsvFileToMatrixParams
+$return is a KBaseFeatureValues.TsvFileToMatrixOutput
+TsvFileToMatrixParams is a reference to a hash where the following keys are defined:
 	input_shock_id has a value which is a string
 	input_file_path has a value which is a string
 	genome_ref has a value which is a KBaseFeatureValues.ws_genome_id
@@ -2278,7 +2278,7 @@ UploadMatrixParams is a reference to a hash where the following keys are defined
 	output_obj_name has a value which is a string
 ws_genome_id is a string
 boolean is an int
-UploadMatrixOutput is a reference to a hash where the following keys are defined:
+TsvFileToMatrixOutput is a reference to a hash where the following keys are defined:
 	output_matrix_ref has a value which is a KBaseFeatureValues.ws_matrix_id
 ws_matrix_id is a string
 
@@ -2288,9 +2288,9 @@ ws_matrix_id is a string
 
 =begin text
 
-$params is a KBaseFeatureValues.UploadMatrixParams
-$return is a KBaseFeatureValues.UploadMatrixOutput
-UploadMatrixParams is a reference to a hash where the following keys are defined:
+$params is a KBaseFeatureValues.TsvFileToMatrixParams
+$return is a KBaseFeatureValues.TsvFileToMatrixOutput
+TsvFileToMatrixParams is a reference to a hash where the following keys are defined:
 	input_shock_id has a value which is a string
 	input_file_path has a value which is a string
 	genome_ref has a value which is a KBaseFeatureValues.ws_genome_id
@@ -2301,7 +2301,7 @@ UploadMatrixParams is a reference to a hash where the following keys are defined
 	output_obj_name has a value which is a string
 ws_genome_id is a string
 boolean is an int
-UploadMatrixOutput is a reference to a hash where the following keys are defined:
+TsvFileToMatrixOutput is a reference to a hash where the following keys are defined:
 	output_matrix_ref has a value which is a KBaseFeatureValues.ws_matrix_id
 ws_matrix_id is a string
 
@@ -2362,6 +2362,198 @@ ws_matrix_id is a string
     }
 }
  
+
+
+=head2 matrix_to_tsv_file
+
+  $return = $obj->matrix_to_tsv_file($params)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$params is a KBaseFeatureValues.MatrixToTsvFileParams
+$return is a KBaseFeatureValues.MatrixToTsvFileOutput
+MatrixToTsvFileParams is a reference to a hash where the following keys are defined:
+	input_ref has a value which is a KBaseFeatureValues.ws_matrix_id
+	to_shock has a value which is a KBaseFeatureValues.boolean
+	file_path has a value which is a string
+ws_matrix_id is a string
+boolean is an int
+MatrixToTsvFileOutput is a reference to a hash where the following keys are defined:
+	file_path has a value which is a string
+	shock_id has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+$params is a KBaseFeatureValues.MatrixToTsvFileParams
+$return is a KBaseFeatureValues.MatrixToTsvFileOutput
+MatrixToTsvFileParams is a reference to a hash where the following keys are defined:
+	input_ref has a value which is a KBaseFeatureValues.ws_matrix_id
+	to_shock has a value which is a KBaseFeatureValues.boolean
+	file_path has a value which is a string
+ws_matrix_id is a string
+boolean is an int
+MatrixToTsvFileOutput is a reference to a hash where the following keys are defined:
+	file_path has a value which is a string
+	shock_id has a value which is a string
+
+
+=end text
+
+=item Description
+
+
+
+=back
+
+=cut
+
+ sub matrix_to_tsv_file
+{
+    my($self, @args) = @_;
+
+# Authentication: required
+
+    if ((my $n = @args) != 1)
+    {
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+							       "Invalid argument count for function matrix_to_tsv_file (received $n, expecting 1)");
+    }
+    {
+	my($params) = @args;
+
+	my @_bad_arguments;
+        (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"params\" (value was \"$params\")");
+        if (@_bad_arguments) {
+	    my $msg = "Invalid arguments passed to matrix_to_tsv_file:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+								   method_name => 'matrix_to_tsv_file');
+	}
+    }
+
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "KBaseFeatureValues.matrix_to_tsv_file",
+	    params => \@args,
+    });
+    if ($result) {
+	if ($result->is_error) {
+	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+					       code => $result->content->{error}->{code},
+					       method_name => 'matrix_to_tsv_file',
+					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+					      );
+	} else {
+	    return wantarray ? @{$result->result} : $result->result->[0];
+	}
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method matrix_to_tsv_file",
+					    status_line => $self->{client}->status_line,
+					    method_name => 'matrix_to_tsv_file',
+				       );
+    }
+}
+ 
+
+
+=head2 export_matrix
+
+  $return = $obj->export_matrix($params)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$params is a KBaseFeatureValues.ExportMatrixParams
+$return is a KBaseFeatureValues.ExportMatrixOutput
+ExportMatrixParams is a reference to a hash where the following keys are defined:
+	input_ref has a value which is a KBaseFeatureValues.ws_matrix_id
+ws_matrix_id is a string
+ExportMatrixOutput is a reference to a hash where the following keys are defined:
+	shock_id has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+$params is a KBaseFeatureValues.ExportMatrixParams
+$return is a KBaseFeatureValues.ExportMatrixOutput
+ExportMatrixParams is a reference to a hash where the following keys are defined:
+	input_ref has a value which is a KBaseFeatureValues.ws_matrix_id
+ws_matrix_id is a string
+ExportMatrixOutput is a reference to a hash where the following keys are defined:
+	shock_id has a value which is a string
+
+
+=end text
+
+=item Description
+
+
+
+=back
+
+=cut
+
+ sub export_matrix
+{
+    my($self, @args) = @_;
+
+# Authentication: required
+
+    if ((my $n = @args) != 1)
+    {
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+							       "Invalid argument count for function export_matrix (received $n, expecting 1)");
+    }
+    {
+	my($params) = @args;
+
+	my @_bad_arguments;
+        (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"params\" (value was \"$params\")");
+        if (@_bad_arguments) {
+	    my $msg = "Invalid arguments passed to export_matrix:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+								   method_name => 'export_matrix');
+	}
+    }
+
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "KBaseFeatureValues.export_matrix",
+	    params => \@args,
+    });
+    if ($result) {
+	if ($result->is_error) {
+	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+					       code => $result->content->{error}->{code},
+					       method_name => 'export_matrix',
+					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+					      );
+	} else {
+	    return wantarray ? @{$result->result} : $result->result->[0];
+	}
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method export_matrix",
+					    status_line => $self->{client}->status_line,
+					    method_name => 'export_matrix',
+				       );
+    }
+}
+ 
   
 sub status
 {
@@ -2405,16 +2597,16 @@ sub version {
             Bio::KBase::Exceptions::JSONRPC->throw(
                 error => $result->error_message,
                 code => $result->content->{code},
-                method_name => 'tsv_file_to_matrix',
+                method_name => 'export_matrix',
             );
         } else {
             return wantarray ? @{$result->result} : $result->result->[0];
         }
     } else {
         Bio::KBase::Exceptions::HTTP->throw(
-            error => "Error invoking method tsv_file_to_matrix",
+            error => "Error invoking method export_matrix",
             status_line => $self->{client}->status_line,
-            method_name => 'tsv_file_to_matrix',
+            method_name => 'export_matrix',
         );
     }
 }
@@ -4218,7 +4410,7 @@ fl_values has a value which is a KBaseFeatureValues.boolean
 
 
 
-=head2 UploadMatrixParams
+=head2 TsvFileToMatrixParams
 
 =over 4
 
@@ -4275,7 +4467,7 @@ output_obj_name has a value which is a string
 
 
 
-=head2 UploadMatrixOutput
+=head2 TsvFileToMatrixOutput
 
 =over 4
 
@@ -4297,6 +4489,132 @@ output_matrix_ref has a value which is a KBaseFeatureValues.ws_matrix_id
 
 a reference to a hash where the following keys are defined:
 output_matrix_ref has a value which is a KBaseFeatureValues.ws_matrix_id
+
+
+=end text
+
+=back
+
+
+
+=head2 MatrixToTsvFileParams
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+input_ref has a value which is a KBaseFeatureValues.ws_matrix_id
+to_shock has a value which is a KBaseFeatureValues.boolean
+file_path has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+input_ref has a value which is a KBaseFeatureValues.ws_matrix_id
+to_shock has a value which is a KBaseFeatureValues.boolean
+file_path has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 MatrixToTsvFileOutput
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+file_path has a value which is a string
+shock_id has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+file_path has a value which is a string
+shock_id has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 ExportMatrixParams
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+input_ref has a value which is a KBaseFeatureValues.ws_matrix_id
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+input_ref has a value which is a KBaseFeatureValues.ws_matrix_id
+
+
+=end text
+
+=back
+
+
+
+=head2 ExportMatrixOutput
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+shock_id has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+shock_id has a value which is a string
 
 
 =end text

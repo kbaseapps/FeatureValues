@@ -2,6 +2,7 @@ package us.kbase.kbasefeaturevalues;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.net.URL;
 import java.nio.file.Files;
@@ -26,6 +27,7 @@ import us.kbase.clusterservice.ClusterServicePyLocalClient;
 import us.kbase.clusterservice.ClusterServiceRLocalClient;
 import us.kbase.common.service.Tuple11;
 import us.kbase.common.service.UObject;
+import us.kbase.kbasefeaturevalues.transform.ExpressionDownloader;
 import us.kbase.kbasefeaturevalues.transform.ExpressionUploader;
 import us.kbase.kbasegenomes.Feature;
 import us.kbase.workspace.ObjectData;
@@ -43,6 +45,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import datafileutil.DataFileUtilClient;
+import datafileutil.FileToShockParams;
 import datafileutil.ShockToFileParams;
 
 public class KBaseFeatureValuesImpl {
@@ -713,12 +716,16 @@ public class KBaseFeatureValuesImpl {
         	.getObjects(Arrays.asList(mtxIndentity))
         	.get(0);		
 	}	
-
-	public UploadMatrixOutput tsvFileToMatrix(UploadMatrixParams params) throws Exception {
+	
+	private File getScratchDir() {
 	    File scratchDir = new File(config.get(KBaseFeatureValuesServer.CONFIG_PARAM_SCRATCH));
 	    if (!scratchDir.exists())
 	        scratchDir.mkdirs();
-	    File tmpDir = Files.createTempDirectory(scratchDir.toPath(), "FromShock").toFile();
+	    return scratchDir;
+	}
+
+	public TsvFileToMatrixOutput tsvFileToMatrix(TsvFileToMatrixParams params) throws Exception {
+	    File tmpDir = Files.createTempDirectory(getScratchDir().toPath(), "FromShock").toFile();
 	    try {
 	        AuthToken auth = new AuthToken(token);
 	        URL callbackUrl = new URL(System.getenv("SDK_CALLBACK_URL"));
@@ -757,12 +764,47 @@ public class KBaseFeatureValuesImpl {
 	                        .withType("KBaseFeatureValues.ExpressionMatrix")
 	                        .withName(params.getOutputObjName())
 	                        .withData(new UObject(matrix))))).get(0);
-	        return new UploadMatrixOutput().withOutputMatrixRef(
+	        return new TsvFileToMatrixOutput().withOutputMatrixRef(
 	                info.getE7() + "/" + info.getE1() + "/" + info.getE5());
 	    } finally {
 	        FileUtils.deleteQuietly(tmpDir);
 	    }
 	}
+	
+    public MatrixToTsvFileOutput matrixToTsvFile(MatrixToTsvFileParams params) throws Exception {
+        File tmpDir = Files.createTempDirectory(getScratchDir().toPath(), "FromShock").toFile();
+        try {
+            MatrixToTsvFileOutput ret = new MatrixToTsvFileOutput();
+            AuthToken auth = new AuthToken(token);
+            File matrixFile = new File(tmpDir, "matrix.tsv");
+            try (PrintWriter pw = new PrintWriter(matrixFile)) {
+                ExpressionDownloader.generate(getWsUrl(), params.getInputRef(), auth, pw);
+            }
+            if (params.getToShock() != null && params.getToShock() == 1L) {
+                URL callbackUrl = new URL(System.getenv("SDK_CALLBACK_URL"));
+                DataFileUtilClient dataFileUtil = new DataFileUtilClient(callbackUrl, auth);
+                dataFileUtil.setIsInsecureHttpConnectionAllowed(true);
+                String shockId = dataFileUtil.fileToShock(new FileToShockParams().withFilePath(
+                        matrixFile.getCanonicalPath())).getShockId();
+                ret.withShockId(shockId);
+            } else {
+                File target = new File(params.getFilePath());
+                if (target.exists() && target.isDirectory())
+                    target = new File(target, matrixFile.getName());
+                FileUtils.copyFile(matrixFile, target);
+                ret.withFilePath(target.getCanonicalPath());
+            }
+            return ret;
+        } finally {
+            FileUtils.deleteQuietly(tmpDir);
+        }
+    }
+    
+    public ExportMatrixOutput exportMatrix(ExportMatrixParams params) throws Exception {
+        return new ExportMatrixOutput().withShockId(matrixToTsvFile(
+                new MatrixToTsvFileParams().withInputRef(params.getInputRef())
+                .withToShock(1L)).getShockId());
+    }
 	        
     class MatrixGenomeLoader{
         ObjectData matrixData;

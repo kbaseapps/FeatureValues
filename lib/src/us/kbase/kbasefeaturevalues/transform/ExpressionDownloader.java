@@ -54,15 +54,18 @@ public class ExpressionDownloader {
         generate(parsedArgs.wsUrl, parsedArgs.wsName, parsedArgs.objName, parsedArgs.version, 
                 token, new PrintWriter(outputFile));
     }
-    
+
     public static void generate(String wsUrl, String wsName, String objName, Integer version,
+            AuthToken token, PrintWriter pw) throws Exception {
+        String ref = wsName + "/" + objName + (version == null ? "" : ("/" + version));
+        generate(wsUrl, ref, token, pw);
+    }
+    
+    public static void generate(String wsUrl, String ref,
             AuthToken token, PrintWriter pw) throws Exception {
         BioMatrix matrix = null;
         try {
             WorkspaceClient client = getWsClient(wsUrl, token);
-            String ref = wsName + "/" + objName;
-            if (version != null)
-                ref += "/" + version;
             matrix = client.getObjects(Arrays.asList(new ObjectIdentity().withRef(ref)))
                     .get(0).getData().asClassInstance(BioMatrix.class);
             generate(matrix.getData(), matrix.getFeatureMapping(), pw);

@@ -1,0 +1,19 @@
+{
+    "name" : "Export an Expression Matrix object into Shock node as TSV file",
+    "short_description" : 
+        "Use this method to export an Expression Matrix object into Shock node as TSV file.",
+
+    "long_description" : "todo: write longer description",
+
+    "tags" : {
+        "categories" : ["exporters"],
+        "input": {
+            "file_types": [],
+            "kb_types": ["KBaseFeatureValues.ExpressionMatrix"]
+        },
+        "output": {
+            "file_types": ["tsv"],
+            "kb_types": []
+        }
+    }
+}
