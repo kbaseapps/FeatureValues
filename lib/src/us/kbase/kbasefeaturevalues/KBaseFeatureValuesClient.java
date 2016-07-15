@@ -475,16 +475,50 @@ public class KBaseFeatureValuesClient {
      * <p>Original spec-file function name: tsv_file_to_matrix</p>
      * <pre>
      * </pre>
-     * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.UploadMatrixParams UploadMatrixParams}
-     * @return   instance of type {@link us.kbase.kbasefeaturevalues.UploadMatrixOutput UploadMatrixOutput}
+     * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.TsvFileToMatrixParams TsvFileToMatrixParams}
+     * @return   instance of type {@link us.kbase.kbasefeaturevalues.TsvFileToMatrixOutput TsvFileToMatrixOutput}
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
-    public UploadMatrixOutput tsvFileToMatrix(UploadMatrixParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+    public TsvFileToMatrixOutput tsvFileToMatrix(TsvFileToMatrixParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
         args.add(params);
-        TypeReference<List<UploadMatrixOutput>> retType = new TypeReference<List<UploadMatrixOutput>>() {};
-        List<UploadMatrixOutput> res = caller.jsonrpcCall("KBaseFeatureValues.tsv_file_to_matrix", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        TypeReference<List<TsvFileToMatrixOutput>> retType = new TypeReference<List<TsvFileToMatrixOutput>>() {};
+        List<TsvFileToMatrixOutput> res = caller.jsonrpcCall("KBaseFeatureValues.tsv_file_to_matrix", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res.get(0);
+    }
+
+    /**
+     * <p>Original spec-file function name: matrix_to_tsv_file</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.MatrixToTsvFileParams MatrixToTsvFileParams}
+     * @return   instance of type {@link us.kbase.kbasefeaturevalues.MatrixToTsvFileOutput MatrixToTsvFileOutput}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public MatrixToTsvFileOutput matrixToTsvFile(MatrixToTsvFileParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<MatrixToTsvFileOutput>> retType = new TypeReference<List<MatrixToTsvFileOutput>>() {};
+        List<MatrixToTsvFileOutput> res = caller.jsonrpcCall("KBaseFeatureValues.matrix_to_tsv_file", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res.get(0);
+    }
+
+    /**
+     * <p>Original spec-file function name: export_matrix</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ExportMatrixParams ExportMatrixParams}
+     * @return   instance of type {@link us.kbase.kbasefeaturevalues.ExportMatrixOutput ExportMatrixOutput}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public ExportMatrixOutput exportMatrix(ExportMatrixParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<ExportMatrixOutput>> retType = new TypeReference<List<ExportMatrixOutput>>() {};
+        List<ExportMatrixOutput> res = caller.jsonrpcCall("KBaseFeatureValues.export_matrix", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 

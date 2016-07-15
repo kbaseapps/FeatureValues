@@ -870,23 +870,24 @@ class KBaseFeatureValues(object):
 
     def tsv_file_to_matrix(self, params, context=None):
         """
-        :param params: instance of type "UploadMatrixParams" (input_shock_id
-           and input_file_path - alternative intput params, genome_ref -
-           optional reference to a Genome object that will be used for
-           mapping feature IDs to, fill_missing_values - optional flag for
-           filling in missing values in matrix (default value is false),
-           data_type - optional filed, value is one of 'untransformed',
-           'log2_level', 'log10_level', 'log2_ratio', 'log10_ratio' or
-           'unknown' (last one is default value), data_scale - optional
-           parameter (default value is '1.0').) -> structure: parameter
-           "input_shock_id" of String, parameter "input_file_path" of String,
-           parameter "genome_ref" of type "ws_genome_id" (The workspace ID
-           for a Genome data object. @id ws KBaseGenomes.Genome), parameter
-           "fill_missing_values" of type "boolean" (Indicates true or false
-           values, false = 0, true = 1 @range [0,1]), parameter "data_type"
-           of String, parameter "data_scale" of String, parameter
-           "output_ws_name" of String, parameter "output_obj_name" of String
-        :returns: instance of type "UploadMatrixOutput" -> structure:
+        :param params: instance of type "TsvFileToMatrixParams"
+           (input_shock_id and input_file_path - alternative intput params,
+           genome_ref - optional reference to a Genome object that will be
+           used for mapping feature IDs to, fill_missing_values - optional
+           flag for filling in missing values in matrix (default value is
+           false), data_type - optional filed, value is one of
+           'untransformed', 'log2_level', 'log10_level', 'log2_ratio',
+           'log10_ratio' or 'unknown' (last one is default value), data_scale
+           - optional parameter (default value is '1.0').) -> structure:
+           parameter "input_shock_id" of String, parameter "input_file_path"
+           of String, parameter "genome_ref" of type "ws_genome_id" (The
+           workspace ID for a Genome data object. @id ws
+           KBaseGenomes.Genome), parameter "fill_missing_values" of type
+           "boolean" (Indicates true or false values, false = 0, true = 1
+           @range [0,1]), parameter "data_type" of String, parameter
+           "data_scale" of String, parameter "output_ws_name" of String,
+           parameter "output_obj_name" of String
+        :returns: instance of type "TsvFileToMatrixOutput" -> structure:
            parameter "output_matrix_ref" of type "ws_matrix_id" (A workspace
            ID that references a Float2DMatrix wrapper data object. @id ws
            KBaseFeatureValues.ExpressionMatrix
@@ -894,6 +895,36 @@ class KBaseFeatureValues(object):
         """
         return self._client.call_method(
             'KBaseFeatureValues.tsv_file_to_matrix',
+            [params], self._service_ver, context)
+
+    def matrix_to_tsv_file(self, params, context=None):
+        """
+        :param params: instance of type "MatrixToTsvFileParams" -> structure:
+           parameter "input_ref" of type "ws_matrix_id" (A workspace ID that
+           references a Float2DMatrix wrapper data object. @id ws
+           KBaseFeatureValues.ExpressionMatrix
+           KBaseFeatureValues.SingleKnockoutFitnessMatrix), parameter
+           "to_shock" of type "boolean" (Indicates true or false values,
+           false = 0, true = 1 @range [0,1]), parameter "file_path" of String
+        :returns: instance of type "MatrixToTsvFileOutput" -> structure:
+           parameter "file_path" of String, parameter "shock_id" of String
+        """
+        return self._client.call_method(
+            'KBaseFeatureValues.matrix_to_tsv_file',
+            [params], self._service_ver, context)
+
+    def export_matrix(self, params, context=None):
+        """
+        :param params: instance of type "ExportMatrixParams" -> structure:
+           parameter "input_ref" of type "ws_matrix_id" (A workspace ID that
+           references a Float2DMatrix wrapper data object. @id ws
+           KBaseFeatureValues.ExpressionMatrix
+           KBaseFeatureValues.SingleKnockoutFitnessMatrix)
+        :returns: instance of type "ExportMatrixOutput" -> structure:
+           parameter "shock_id" of String
+        """
+        return self._client.call_method(
+            'KBaseFeatureValues.export_matrix',
             [params], self._service_ver, context)
 
     def status(self, context=None):

@@ -784,13 +784,39 @@ module KBaseFeatureValues {
         string data_scale;
         string output_ws_name;
         string output_obj_name;
-    } UploadMatrixParams;
+    } TsvFileToMatrixParams;
 
     typedef structure {
         ws_matrix_id output_matrix_ref;
-    } UploadMatrixOutput;
+    } TsvFileToMatrixOutput;
 
-    funcdef tsv_file_to_matrix(UploadMatrixParams params)
-        returns (UploadMatrixOutput) authentication required;
+    funcdef tsv_file_to_matrix(TsvFileToMatrixParams params)
+        returns (TsvFileToMatrixOutput) authentication required;
+
+    typedef structure {
+        ws_matrix_id input_ref;
+        boolean to_shock;
+        string file_path;
+    } MatrixToTsvFileParams;
+
+    typedef structure {
+        string file_path;
+        string shock_id;
+    } MatrixToTsvFileOutput;
+
+    funcdef matrix_to_tsv_file(MatrixToTsvFileParams params)
+        returns (MatrixToTsvFileOutput) authentication required;
+
+    typedef structure {
+        ws_matrix_id input_ref;
+    } ExportMatrixParams;
+
+    typedef structure {
+        string shock_id;
+    } ExportMatrixOutput;
+
+    funcdef export_matrix(ExportMatrixParams params)
+        returns (ExportMatrixOutput) authentication required;
+
 };
 

@@ -1,0 +1,19 @@
+{
+    "name" : "Convert an Expression Matrix object into a TSV file",
+    "short_description" : 
+        "Use this method to convert an Expression Matrix object into TSV file.",
+
+    "long_description" : "todo: write longer description",
+
+    "tags" : {
+        "categories" : [],
+        "input": {
+            "file_types": [],
+            "kb_types": ["KBaseFeatureValues.ExpressionMatrix"]
+        },
+        "output": {
+            "file_types": ["tsv"],
+            "kb_types": []
+        }
+    }
+}

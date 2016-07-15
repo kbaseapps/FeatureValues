@@ -1,11 +1,13 @@
 package us.kbase.kbasefeaturevalues.test;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -37,6 +39,7 @@ import us.kbase.kbasefeaturevalues.CorrectMatrixParams;
 import us.kbase.kbasefeaturevalues.EstimateKParams;
 import us.kbase.kbasefeaturevalues.EstimateKParamsNew;
 import us.kbase.kbasefeaturevalues.EstimateKResult;
+import us.kbase.kbasefeaturevalues.ExportMatrixParams;
 import us.kbase.kbasefeaturevalues.ExpressionMatrix;
 import us.kbase.kbasefeaturevalues.FeatureClusters;
 import us.kbase.kbasefeaturevalues.FloatMatrix2D;
@@ -50,16 +53,21 @@ import us.kbase.kbasefeaturevalues.MatrixDescriptor;
 import us.kbase.kbasefeaturevalues.MatrixStat;
 import us.kbase.kbasefeaturevalues.ReconnectMatrixToGenomeParams;
 import us.kbase.kbasefeaturevalues.SubmatrixStat;
-import us.kbase.kbasefeaturevalues.UploadMatrixParams;
+import us.kbase.kbasefeaturevalues.TsvFileToMatrixParams;
 import us.kbase.kbasefeaturevalues.transform.ExpressionUploader;
 import us.kbase.kbasefeaturevalues.transform.FeatureClustersDownloader;
 import us.kbase.auth.AuthToken;
+import us.kbase.auth.TokenExpiredException;
 import us.kbase.clusterservice.ClusterResults;
 import us.kbase.common.service.JsonServerSyslog;
 import us.kbase.common.service.RpcContext;
 import us.kbase.common.service.ServerException;
 import us.kbase.common.service.Tuple2;
 import us.kbase.common.service.UObject;
+import us.kbase.shock.client.BasicShockClient;
+import us.kbase.shock.client.ShockNodeId;
+import us.kbase.shock.client.exceptions.InvalidShockUrlException;
+import us.kbase.shock.client.exceptions.ShockHttpException;
 import us.kbase.workspace.CreateWorkspaceParams;
 import us.kbase.workspace.ObjectData;
 import us.kbase.workspace.ObjectIdentity;
@@ -76,6 +84,7 @@ public class KBaseFeatureValuesServerTest {
     private static String wsUrl = null;
     private static String wsName = null;
     private static KBaseFeatureValuesServer impl = null;
+    private static List<String> tempShockIdsToDelete = new ArrayList<>();
     
     private static final String commonGenomeObjectName = "Desulfovibrio_vulgaris_Hildenborough.genome";
     private static final String commonExpressionObjectName = "Desulfovibrio_vulgaris_Hildenborough.expression";
@@ -141,7 +150,7 @@ public class KBaseFeatureValuesServerTest {
     }
     
     @AfterClass
-    public static void cleanup() {
+    public static void cleanup() throws Exception {
         if (wsName != null) {
             try {
                 wsClient.deleteWorkspace(new WorkspaceIdentity().withWorkspace(wsName));
@@ -150,6 +159,23 @@ public class KBaseFeatureValuesServerTest {
                 ex.printStackTrace();
             }
         }
+        if (tempShockIdsToDelete.size() > 0) {
+            BasicShockClient shCl = createShockClient();
+            for (String shockId : tempShockIdsToDelete) {
+                try {
+                    shCl.deleteNode(new ShockNodeId(shockId));
+                    System.out.println("Shock node [" + shockId + "] was deleted");
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private static BasicShockClient createShockClient() throws IOException,
+            InvalidShockUrlException, TokenExpiredException,
+            ShockHttpException, MalformedURLException {
+        return new BasicShockClient(new URL(config.get("shock.url")), token);
     }
         
     private static WorkspaceClient getWsClient() {
@@ -519,7 +545,8 @@ public class KBaseFeatureValuesServerTest {
             dataFileUtil.setIsInsecureHttpConnectionAllowed(true);
             String shockId = dataFileUtil.fileToShock(new FileToShockParams().withFilePath(
                     inputFile.getCanonicalPath())).getShockId();
-            String matrixRef = impl.tsvFileToMatrix(new UploadMatrixParams().withGenomeRef(
+            tempShockIdsToDelete.add(shockId);
+            String matrixRef = impl.tsvFileToMatrix(new TsvFileToMatrixParams().withGenomeRef(
                     testWsName + "/" + genomeObjName).withInputShockId(shockId)
                     .withFillMissingValues(1L).withOutputWsName(testWsName)
                     .withOutputObjName(exprObjName), token, getContext()).getOutputMatrixRef();
@@ -532,6 +559,33 @@ public class KBaseFeatureValuesServerTest {
         }
     }
 
+    @Test
+    public void testExportMatrix() throws Exception {
+        File tmpDir = Files.createTempDirectory(new File(config.get(
+                KBaseFeatureValuesServer.CONFIG_PARAM_SCRATCH)).toPath(), "FromShock").toFile();
+        try {
+            String testWsName = getWsName();
+            String matrixObjName = "matrix.1";
+            File inputMatrixFile = new File(tmpDir, "input.tsv");
+            String inputMatrix = "feature_ids\tval1\ngene.1\t1.234\n";
+            FileUtils.writeStringToFile(inputMatrixFile, inputMatrix);
+            String matrixRef = impl.tsvFileToMatrix(new TsvFileToMatrixParams().withInputFilePath(
+                    inputMatrixFile.getCanonicalPath()).withFillMissingValues(0L)
+                    .withOutputWsName(testWsName).withOutputObjName(matrixObjName), token, 
+                    getContext()).getOutputMatrixRef();
+            String shockId = impl.exportMatrix(new ExportMatrixParams().withInputRef(matrixRef), 
+                    token, getContext()).getShockId();
+            tempShockIdsToDelete.add(shockId);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            createShockClient().getFile(new ShockNodeId(shockId), baos);
+            baos.close();
+            String outputMatrix = new String(baos.toByteArray());
+            Assert.assertEquals(inputMatrix, outputMatrix);
+        } finally {
+            FileUtils.deleteQuietly(tmpDir);
+        }
+    }
+    
     private static FloatMatrix2D getSampleMatrix() {
         List<List<Double>> values = new ArrayList<List<Double>>();
         values.add(Arrays.asList(13.0, 2.0, 3.0));

@@ -32,7 +32,7 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
     private static final long serialVersionUID = 1L;
     private static final String version = "0.0.9";
     private static final String gitUrl = "https://github.com/rsutormin/feature_values";
-    private static final String gitCommitHash = "90f7e1167d005d39a3b074d27eb75c5b404add4c";
+    private static final String gitCommitHash = "2c41a13a025364a1e50c1a273ed03778a0068148";
 
     //BEGIN_CLASS_HEADER
     public static final String CONFIG_PARAM_WS_URL = "ws.url";
@@ -343,15 +343,47 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * <p>Original spec-file function name: tsv_file_to_matrix</p>
      * <pre>
      * </pre>
-     * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.UploadMatrixParams UploadMatrixParams}
-     * @return   instance of type {@link us.kbase.kbasefeaturevalues.UploadMatrixOutput UploadMatrixOutput}
+     * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.TsvFileToMatrixParams TsvFileToMatrixParams}
+     * @return   instance of type {@link us.kbase.kbasefeaturevalues.TsvFileToMatrixOutput TsvFileToMatrixOutput}
      */
     @JsonServerMethod(rpc = "KBaseFeatureValues.tsv_file_to_matrix", async=true)
-    public UploadMatrixOutput tsvFileToMatrix(UploadMatrixParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
-        UploadMatrixOutput returnVal = null;
+    public TsvFileToMatrixOutput tsvFileToMatrix(TsvFileToMatrixParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
+        TsvFileToMatrixOutput returnVal = null;
         //BEGIN tsv_file_to_matrix
         returnVal = impl(authPart).tsvFileToMatrix(params);
         //END tsv_file_to_matrix
+        return returnVal;
+    }
+
+    /**
+     * <p>Original spec-file function name: matrix_to_tsv_file</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.MatrixToTsvFileParams MatrixToTsvFileParams}
+     * @return   instance of type {@link us.kbase.kbasefeaturevalues.MatrixToTsvFileOutput MatrixToTsvFileOutput}
+     */
+    @JsonServerMethod(rpc = "KBaseFeatureValues.matrix_to_tsv_file", async=true)
+    public MatrixToTsvFileOutput matrixToTsvFile(MatrixToTsvFileParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
+        MatrixToTsvFileOutput returnVal = null;
+        //BEGIN matrix_to_tsv_file
+        returnVal = impl(authPart).matrixToTsvFile(params);
+        //END matrix_to_tsv_file
+        return returnVal;
+    }
+
+    /**
+     * <p>Original spec-file function name: export_matrix</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ExportMatrixParams ExportMatrixParams}
+     * @return   instance of type {@link us.kbase.kbasefeaturevalues.ExportMatrixOutput ExportMatrixOutput}
+     */
+    @JsonServerMethod(rpc = "KBaseFeatureValues.export_matrix", async=true)
+    public ExportMatrixOutput exportMatrix(ExportMatrixParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
+        ExportMatrixOutput returnVal = null;
+        //BEGIN export_matrix
+        returnVal = impl(authPart).exportMatrix(params);
+        //END export_matrix
         return returnVal;
     }
     @JsonServerMethod(rpc = "KBaseFeatureValues.status")

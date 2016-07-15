@@ -12,33 +12,33 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
- * <p>Original spec-file type: UploadMatrixOutput</p>
+ * <p>Original spec-file type: ExportMatrixParams</p>
  * 
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
-    "output_matrix_ref"
+    "input_ref"
 })
-public class UploadMatrixOutput {
+public class ExportMatrixParams {
 
-    @JsonProperty("output_matrix_ref")
-    private String outputMatrixRef;
+    @JsonProperty("input_ref")
+    private String inputRef;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("output_matrix_ref")
-    public String getOutputMatrixRef() {
-        return outputMatrixRef;
+    @JsonProperty("input_ref")
+    public String getInputRef() {
+        return inputRef;
     }
 
-    @JsonProperty("output_matrix_ref")
-    public void setOutputMatrixRef(String outputMatrixRef) {
-        this.outputMatrixRef = outputMatrixRef;
+    @JsonProperty("input_ref")
+    public void setInputRef(String inputRef) {
+        this.inputRef = inputRef;
     }
 
-    public UploadMatrixOutput withOutputMatrixRef(String outputMatrixRef) {
-        this.outputMatrixRef = outputMatrixRef;
+    public ExportMatrixParams withInputRef(String inputRef) {
+        this.inputRef = inputRef;
         return this;
     }
 
@@ -54,7 +54,7 @@ public class UploadMatrixOutput {
 
     @Override
     public String toString() {
-        return ((((("UploadMatrixOutput"+" [outputMatrixRef=")+ outputMatrixRef)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((("ExportMatrixParams"+" [inputRef=")+ inputRef)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }
