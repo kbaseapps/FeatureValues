@@ -16,7 +16,15 @@ import us.kbase.common.service.UObject;
  * <p>Original spec-file type: ShockToFileOutput</p>
  * <pre>
  * Output from the shock_to_file function.
- *    node_file_name - the filename of the file stored in Shock.
+ *    node_file_name - the filename of the file as stored in Shock.
+ *    file_path - the path to the downloaded file. If a directory was
+ *        specified in the input, this will be the directory appended with the
+ *        shock file name. If a file was specified, it will be that file path.
+ *        In either case, if the file is uncompressed any compression file
+ *        extensions will be removed (e.g. .gz) and or altered (e.g. .tgz ->
+ *        .tar) as appropriate.
+ *    size - the size of the file in bytes as stored in Shock, prior to
+ *        unpacking.
  *    attributes - the file attributes, if any, stored in Shock.
  * </pre>
  * 
@@ -25,12 +33,18 @@ import us.kbase.common.service.UObject;
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "node_file_name",
+    "file_path",
+    "size",
     "attributes"
 })
 public class ShockToFileOutput {
 
     @JsonProperty("node_file_name")
     private java.lang.String nodeFileName;
+    @JsonProperty("file_path")
+    private java.lang.String filePath;
+    @JsonProperty("size")
+    private Long size;
     @JsonProperty("attributes")
     private Map<String, UObject> attributes;
     private Map<java.lang.String, Object> additionalProperties = new HashMap<java.lang.String, Object>();
@@ -47,6 +61,36 @@ public class ShockToFileOutput {
 
     public ShockToFileOutput withNodeFileName(java.lang.String nodeFileName) {
         this.nodeFileName = nodeFileName;
+        return this;
+    }
+
+    @JsonProperty("file_path")
+    public java.lang.String getFilePath() {
+        return filePath;
+    }
+
+    @JsonProperty("file_path")
+    public void setFilePath(java.lang.String filePath) {
+        this.filePath = filePath;
+    }
+
+    public ShockToFileOutput withFilePath(java.lang.String filePath) {
+        this.filePath = filePath;
+        return this;
+    }
+
+    @JsonProperty("size")
+    public Long getSize() {
+        return size;
+    }
+
+    @JsonProperty("size")
+    public void setSize(Long size) {
+        this.size = size;
+    }
+
+    public ShockToFileOutput withSize(Long size) {
+        this.size = size;
         return this;
     }
 
@@ -77,7 +121,7 @@ public class ShockToFileOutput {
 
     @Override
     public java.lang.String toString() {
-        return ((((((("ShockToFileOutput"+" [nodeFileName=")+ nodeFileName)+", attributes=")+ attributes)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((("ShockToFileOutput"+" [nodeFileName=")+ nodeFileName)+", filePath=")+ filePath)+", size=")+ size)+", attributes=")+ attributes)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

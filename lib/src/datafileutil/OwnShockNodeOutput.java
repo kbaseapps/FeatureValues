@@ -12,13 +12,11 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
- * <p>Original spec-file type: FileToShockOutput</p>
+ * <p>Original spec-file type: OwnShockNodeOutput</p>
  * <pre>
- * Output of the file_to_shock function.
- *     shock_id - the ID of the new Shock node.
- *     handle - the new handle, if created. Null otherwise.
- *     node_file_name - the name of the file stored in Shock.
- *     size - the size of the file stored in shock.
+ * Output of the own_shock_node function.
+ *  shock_id - the id of the (possibly new) Shock node.
+ *  handle - the handle, if requested. Null otherwise.
  * </pre>
  * 
  */
@@ -26,11 +24,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "shock_id",
-    "handle",
-    "node_file_name",
-    "size"
+    "handle"
 })
-public class FileToShockOutput {
+public class OwnShockNodeOutput {
 
     @JsonProperty("shock_id")
     private String shockId;
@@ -50,10 +46,6 @@ public class FileToShockOutput {
      */
     @JsonProperty("handle")
     private Handle handle;
-    @JsonProperty("node_file_name")
-    private String nodeFileName;
-    @JsonProperty("size")
-    private String size;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("shock_id")
@@ -66,7 +58,7 @@ public class FileToShockOutput {
         this.shockId = shockId;
     }
 
-    public FileToShockOutput withShockId(String shockId) {
+    public OwnShockNodeOutput withShockId(String shockId) {
         this.shockId = shockId;
         return this;
     }
@@ -109,38 +101,8 @@ public class FileToShockOutput {
         this.handle = handle;
     }
 
-    public FileToShockOutput withHandle(Handle handle) {
+    public OwnShockNodeOutput withHandle(Handle handle) {
         this.handle = handle;
-        return this;
-    }
-
-    @JsonProperty("node_file_name")
-    public String getNodeFileName() {
-        return nodeFileName;
-    }
-
-    @JsonProperty("node_file_name")
-    public void setNodeFileName(String nodeFileName) {
-        this.nodeFileName = nodeFileName;
-    }
-
-    public FileToShockOutput withNodeFileName(String nodeFileName) {
-        this.nodeFileName = nodeFileName;
-        return this;
-    }
-
-    @JsonProperty("size")
-    public String getSize() {
-        return size;
-    }
-
-    @JsonProperty("size")
-    public void setSize(String size) {
-        this.size = size;
-    }
-
-    public FileToShockOutput withSize(String size) {
-        this.size = size;
         return this;
     }
 
@@ -156,7 +118,7 @@ public class FileToShockOutput {
 
     @Override
     public String toString() {
-        return ((((((((((("FileToShockOutput"+" [shockId=")+ shockId)+", handle=")+ handle)+", nodeFileName=")+ nodeFileName)+", size=")+ size)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((("OwnShockNodeOutput"+" [shockId=")+ shockId)+", handle=")+ handle)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

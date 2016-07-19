@@ -1,6 +1,7 @@
 package us.kbase.kbasefeaturevalues.test;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,10 +20,13 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import junit.framework.Assert;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.ini4j.Ini;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -579,8 +583,25 @@ public class KBaseFeatureValuesServerTest {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             createShockClient().getFile(new ShockNodeId(shockId), baos);
             baos.close();
-            String outputMatrix = new String(baos.toByteArray());
+            ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(baos.toByteArray()));
+            String outputMatrix = null;  //new String(baos.toByteArray());
+            String infoJson = null;
+            while (true) {
+                ZipEntry ze = zis.getNextEntry();
+                if (ze == null)
+                    break;
+                byte[] data = IOUtils.toByteArray(zis);
+                if (ze.getName().endsWith(".tsv")) {
+                    outputMatrix = new String(data);
+                } else if (ze.getName().endsWith(".json")) {
+                    infoJson = new String(data);
+                } else {
+                    throw new IllegalStateException("Unexpected zip entry: " + ze.getName());
+                }
+            }
             Assert.assertEquals(inputMatrix, outputMatrix);
+            Assert.assertTrue(infoJson,infoJson.contains("\"metadata\": [") &&
+                    infoJson.contains("\"provenance\": ["));
         } finally {
             FileUtils.deleteQuietly(tmpDir);
         }

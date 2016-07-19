@@ -46,6 +46,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 import datafileutil.DataFileUtilClient;
 import datafileutil.FileToShockParams;
+import datafileutil.PackageForDownloadParams;
 import datafileutil.ShockToFileParams;
 
 public class KBaseFeatureValuesImpl {
@@ -784,8 +785,9 @@ public class KBaseFeatureValuesImpl {
                 URL callbackUrl = new URL(System.getenv("SDK_CALLBACK_URL"));
                 DataFileUtilClient dataFileUtil = new DataFileUtilClient(callbackUrl, auth);
                 dataFileUtil.setIsInsecureHttpConnectionAllowed(true);
-                String shockId = dataFileUtil.fileToShock(new FileToShockParams().withFilePath(
-                        matrixFile.getCanonicalPath())).getShockId();
+                String shockId = dataFileUtil.packageForDownload(new PackageForDownloadParams().withFilePath(
+                        matrixFile.getCanonicalPath()).withWsRefs(Arrays.asList(
+                                params.getInputRef()))).getShockId();
                 ret.withShockId(shockId);
             } else {
                 File target = new File(params.getFilePath());

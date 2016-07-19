@@ -354,6 +354,54 @@ public class DataFileUtilClient {
     }
 
     /**
+     * <p>Original spec-file function name: package_for_download</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link datafileutil.PackageForDownloadParams PackageForDownloadParams}
+     * @return   instance of type {@link datafileutil.PackageForDownloadOutput PackageForDownloadOutput}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    protected String _packageForDownloadSubmit(PackageForDownloadParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        if (this.serviceVersion != null) {
+            if (jsonRpcContext == null || jsonRpcContext.length == 0 || jsonRpcContext[0] == null)
+                jsonRpcContext = new RpcContext[] {new RpcContext()};
+            jsonRpcContext[0].getAdditionalProperties().put("service_ver", this.serviceVersion);
+        }
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<String>> retType = new TypeReference<List<String>>() {};
+        List<String> res = caller.jsonrpcCall("DataFileUtil._package_for_download_submit", args, retType, true, true, jsonRpcContext);
+        return res.get(0);
+    }
+
+    /**
+     * <p>Original spec-file function name: package_for_download</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link datafileutil.PackageForDownloadParams PackageForDownloadParams}
+     * @return   instance of type {@link datafileutil.PackageForDownloadOutput PackageForDownloadOutput}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public PackageForDownloadOutput packageForDownload(PackageForDownloadParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        String jobId = _packageForDownloadSubmit(params, jsonRpcContext);
+        TypeReference<List<JobState<List<PackageForDownloadOutput>>>> retType = new TypeReference<List<JobState<List<PackageForDownloadOutput>>>>() {};
+        while (true) {
+            if (Thread.currentThread().isInterrupted())
+                throw new JsonClientException("Thread was interrupted");
+            try { 
+                Thread.sleep(this.asyncJobCheckTimeMs);
+            } catch(Exception ex) {
+                throw new JsonClientException("Thread was interrupted", ex);
+            }
+            JobState<List<PackageForDownloadOutput>> res = _checkJob(jobId, retType);
+            if (res.getFinished() != 0L)
+                return res.getResult().get(0);
+        }
+    }
+
+    /**
      * <p>Original spec-file function name: file_to_shock_mass</p>
      * <pre>
      * Load multiple files to Shock.
@@ -448,6 +496,72 @@ public class DataFileUtilClient {
                 throw new JsonClientException("Thread was interrupted", ex);
             }
             JobState<List<CopyShockNodeOutput>> res = _checkJob(jobId, retType);
+            if (res.getFinished() != 0L)
+                return res.getResult().get(0);
+        }
+    }
+
+    /**
+     * <p>Original spec-file function name: own_shock_node</p>
+     * <pre>
+     * Gain ownership of a Shock node.
+     * Returns a shock node id which is owned by the caller, given a shock
+     * node id.
+     * If the shock node is already owned by the caller, returns the same
+     * shock node ID. If not, the ID of a copy of the original node will be
+     * returned.
+     * If a handle is requested, the node is already owned by the caller, and
+     * a handle already exists, that handle will be returned. Otherwise a new
+     * handle will be created and returned.
+     * </pre>
+     * @param   params   instance of type {@link datafileutil.OwnShockNodeParams OwnShockNodeParams}
+     * @return   parameter "out" of type {@link datafileutil.OwnShockNodeOutput OwnShockNodeOutput}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    protected String _ownShockNodeSubmit(OwnShockNodeParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        if (this.serviceVersion != null) {
+            if (jsonRpcContext == null || jsonRpcContext.length == 0 || jsonRpcContext[0] == null)
+                jsonRpcContext = new RpcContext[] {new RpcContext()};
+            jsonRpcContext[0].getAdditionalProperties().put("service_ver", this.serviceVersion);
+        }
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<String>> retType = new TypeReference<List<String>>() {};
+        List<String> res = caller.jsonrpcCall("DataFileUtil._own_shock_node_submit", args, retType, true, true, jsonRpcContext);
+        return res.get(0);
+    }
+
+    /**
+     * <p>Original spec-file function name: own_shock_node</p>
+     * <pre>
+     * Gain ownership of a Shock node.
+     * Returns a shock node id which is owned by the caller, given a shock
+     * node id.
+     * If the shock node is already owned by the caller, returns the same
+     * shock node ID. If not, the ID of a copy of the original node will be
+     * returned.
+     * If a handle is requested, the node is already owned by the caller, and
+     * a handle already exists, that handle will be returned. Otherwise a new
+     * handle will be created and returned.
+     * </pre>
+     * @param   params   instance of type {@link datafileutil.OwnShockNodeParams OwnShockNodeParams}
+     * @return   parameter "out" of type {@link datafileutil.OwnShockNodeOutput OwnShockNodeOutput}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public OwnShockNodeOutput ownShockNode(OwnShockNodeParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        String jobId = _ownShockNodeSubmit(params, jsonRpcContext);
+        TypeReference<List<JobState<List<OwnShockNodeOutput>>>> retType = new TypeReference<List<JobState<List<OwnShockNodeOutput>>>>() {};
+        while (true) {
+            if (Thread.currentThread().isInterrupted())
+                throw new JsonClientException("Thread was interrupted");
+            try { 
+                Thread.sleep(this.asyncJobCheckTimeMs);
+            } catch(Exception ex) {
+                throw new JsonClientException("Thread was interrupted", ex);
+            }
+            JobState<List<OwnShockNodeOutput>> res = _checkJob(jobId, retType);
             if (res.getFinished() != 0L)
                 return res.getResult().get(0);
         }
