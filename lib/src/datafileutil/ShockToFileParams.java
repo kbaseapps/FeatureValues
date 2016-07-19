@@ -20,10 +20,18 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * file_path - the location to save the file output. If this is a
  *     directory, the file will be named as per the filename in Shock.
  * Optional parameters:
- * unpack - if the file is compressed and / or a file bundle, it will be
- *     decompressed and unbundled into the directory containing the
- *     original output file. unpack supports gzip, bzip2, tar, and zip
- *     files. Default false. Currently unsupported.
+ * unpack - either null, 'uncompress', or 'unpack'. 'uncompress' will cause
+ *     any bzip or gzip files to be uncompressed. 'unpack' will behave the
+ *     same way, but it will also unpack tar and zip archive files
+ *     (uncompressing gzipped or bzipped archive files if necessary). If
+ *     'uncompress' is specified and an archive file is encountered, an
+ *     error will be thrown. If the file is an archive, it will be
+ *     unbundled into the directory containing the original output file.
+ *     
+ *     Note that if the file name (either as provided by the user or by
+ *     Shock) without the a decompression extension (e.g. .gz, .zip or
+ *     .tgz -> .tar) points to an existing file and unpack is specified,
+ *     that file will be overwritten by the decompressed Shock file.
  * </pre>
  * 
  */
@@ -41,7 +49,7 @@ public class ShockToFileParams {
     @JsonProperty("file_path")
     private String filePath;
     @JsonProperty("unpack")
-    private Long unpack;
+    private String unpack;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("shock_id")
@@ -75,16 +83,16 @@ public class ShockToFileParams {
     }
 
     @JsonProperty("unpack")
-    public Long getUnpack() {
+    public String getUnpack() {
         return unpack;
     }
 
     @JsonProperty("unpack")
-    public void setUnpack(Long unpack) {
+    public void setUnpack(String unpack) {
         this.unpack = unpack;
     }
 
-    public ShockToFileParams withUnpack(Long unpack) {
+    public ShockToFileParams withUnpack(String unpack) {
         this.unpack = unpack;
         return this;
     }
