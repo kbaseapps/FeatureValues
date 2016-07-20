@@ -45,10 +45,12 @@ public class FeatureClustersDownloader {
         if (outputFileName == null) {
             outputFileName = "clusters.";
             if (parsedArgs.format != null) {
-                if (parsedArgs.format.equalsIgnoreCase("TSV") || parsedArgs.format.equalsIgnoreCase("SIF")) {
+                if (parsedArgs.format.equalsIgnoreCase("TSV") || 
+                        parsedArgs.format.equalsIgnoreCase("SIF")) {
                     outputFileName += parsedArgs.format.toLowerCase();
                 } else {
-                    throw new IllegalStateException("Unsupported output format: " + parsedArgs.format);
+                    throw new IllegalStateException("Unsupported output format: " + 
+                            parsedArgs.format);
                 }
             } else {
                 outputFileName += "tsv";
@@ -61,13 +63,17 @@ public class FeatureClustersDownloader {
     
     public static void generate(String wsUrl, String wsName, String objName, Integer version,
             String format, AuthToken token, PrintWriter pw) throws Exception {
+        String ref = wsName + "/" + objName + (version == null ? "" : ("/" + version));
+        generate(wsUrl, ref, format, token, pw);
+    }
+    
+    public static void generate(String wsUrl, String ref, String format,
+            AuthToken token, PrintWriter pw) throws Exception {
         try {
             boolean isTsv = format == null || format.equalsIgnoreCase("TSV");
             WorkspaceClient client = getWsClient(wsUrl, token);
-            String ref = wsName + "/" + objName;
-            if (version != null)
-                ref += "/" + version;
-            FeatureClusters data = client.getObjects(Arrays.asList(new ObjectIdentity().withRef(ref)))
+            FeatureClusters data = client.getObjects(Arrays.asList(
+                    new ObjectIdentity().withRef(ref)))
                     .get(0).getData().asClassInstance(FeatureClusters.class);
             for (int clustPos = 0; clustPos < data.getFeatureClusters().size(); clustPos++) {
                 LabeledCluster cluster = data.getFeatureClusters().get(clustPos);

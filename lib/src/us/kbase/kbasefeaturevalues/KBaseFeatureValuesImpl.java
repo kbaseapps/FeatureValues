@@ -29,6 +29,7 @@ import us.kbase.common.service.Tuple11;
 import us.kbase.common.service.UObject;
 import us.kbase.kbasefeaturevalues.transform.ExpressionDownloader;
 import us.kbase.kbasefeaturevalues.transform.ExpressionUploader;
+import us.kbase.kbasefeaturevalues.transform.FeatureClustersDownloader;
 import us.kbase.kbasegenomes.Feature;
 import us.kbase.workspace.ObjectData;
 import us.kbase.workspace.ObjectIdentity;
@@ -785,9 +786,9 @@ public class KBaseFeatureValuesImpl {
                 URL callbackUrl = new URL(System.getenv("SDK_CALLBACK_URL"));
                 DataFileUtilClient dataFileUtil = new DataFileUtilClient(callbackUrl, auth);
                 dataFileUtil.setIsInsecureHttpConnectionAllowed(true);
-                String shockId = dataFileUtil.packageForDownload(new PackageForDownloadParams().withFilePath(
-                        matrixFile.getCanonicalPath()).withWsRefs(Arrays.asList(
-                                params.getInputRef()))).getShockId();
+                String shockId = dataFileUtil.packageForDownload(
+                        new PackageForDownloadParams().withFilePath(matrixFile.getCanonicalPath())
+                        .withWsRefs(Arrays.asList(params.getInputRef()))).getShockId();
                 ret.withShockId(shockId);
             } else {
                 File target = new File(params.getFilePath());
@@ -807,7 +808,45 @@ public class KBaseFeatureValuesImpl {
                 new MatrixToTsvFileParams().withInputRef(params.getInputRef())
                 .withToShock(1L)).getShockId());
     }
-	        
+
+    public ClustersToTsvFileOutput clustersToTsvFile(ClustersToTsvFileParams params) 
+            throws Exception {
+        File tmpDir = Files.createTempDirectory(getScratchDir().toPath(), "FromShock").toFile();
+        try {
+            ClustersToTsvFileOutput ret = new ClustersToTsvFileOutput();
+            AuthToken auth = new AuthToken(token);
+            File clustFile = new File(tmpDir, "clusters.tsv");
+            try (PrintWriter pw = new PrintWriter(clustFile)) {
+                FeatureClustersDownloader.generate(getWsUrl(), params.getInputRef(), null, auth, 
+                        pw);
+            }
+            if (params.getToShock() != null && params.getToShock() == 1L) {
+                URL callbackUrl = new URL(System.getenv("SDK_CALLBACK_URL"));
+                DataFileUtilClient dataFileUtil = new DataFileUtilClient(callbackUrl, auth);
+                dataFileUtil.setIsInsecureHttpConnectionAllowed(true);
+                String shockId = dataFileUtil.packageForDownload(
+                        new PackageForDownloadParams().withFilePath(clustFile.getCanonicalPath())
+                        .withWsRefs(Arrays.asList(params.getInputRef()))).getShockId();
+                ret.withShockId(shockId);
+            } else {
+                File target = new File(params.getFilePath());
+                if (target.exists() && target.isDirectory())
+                    target = new File(target, clustFile.getName());
+                FileUtils.copyFile(clustFile, target);
+                ret.withFilePath(target.getCanonicalPath());
+            }
+            return ret;
+        } finally {
+            FileUtils.deleteQuietly(tmpDir);
+        }
+    }
+    
+    public ExportClustersOutput exportClusters(ExportClustersParams params) throws Exception {
+        return new ExportClustersOutput().withShockId(clustersToTsvFile(
+                new ClustersToTsvFileParams().withInputRef(params.getInputRef())
+                .withToShock(1L)).getShockId());
+    }
+
     class MatrixGenomeLoader{
         ObjectData matrixData;
         ExpressionMatrix matrix;

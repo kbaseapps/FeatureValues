@@ -1,0 +1,19 @@
+{
+    "name" : "Export a Feature Clusters object into Shock node as TSV file",
+    "short_description" : 
+        "Use this method to export an Feature Clusters object into Shock node as TSV file.",
+
+    "long_description" : "todo: write longer description",
+
+    "tags" : {
+        "categories" : ["exporters"],
+        "input": {
+            "file_types": [],
+            "kb_types": ["KBaseFeatureValues.FeatureClusters"]
+        },
+        "output": {
+            "file_types": ["tsv"],
+            "kb_types": []
+        }
+    }
+}

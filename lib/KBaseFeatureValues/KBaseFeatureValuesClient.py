@@ -927,6 +927,34 @@ class KBaseFeatureValues(object):
             'KBaseFeatureValues.export_matrix',
             [params], self._service_ver, context)
 
+    def clusters_to_tsv_file(self, params, context=None):
+        """
+        :param params: instance of type "ClustersToTsvFileParams" ->
+           structure: parameter "input_ref" of type "ws_featureclusters_id"
+           (The workspace ID of a FeatureClusters data object. @id ws
+           KBaseFeatureValues.FeatureClusters), parameter "to_shock" of type
+           "boolean" (Indicates true or false values, false = 0, true = 1
+           @range [0,1]), parameter "file_path" of String
+        :returns: instance of type "ClustersToTsvFileOutput" -> structure:
+           parameter "file_path" of String, parameter "shock_id" of String
+        """
+        return self._client.call_method(
+            'KBaseFeatureValues.clusters_to_tsv_file',
+            [params], self._service_ver, context)
+
+    def export_clusters(self, params, context=None):
+        """
+        :param params: instance of type "ExportClustersParams" -> structure:
+           parameter "input_ref" of type "ws_featureclusters_id" (The
+           workspace ID of a FeatureClusters data object. @id ws
+           KBaseFeatureValues.FeatureClusters)
+        :returns: instance of type "ExportClustersOutput" -> structure:
+           parameter "shock_id" of String
+        """
+        return self._client.call_method(
+            'KBaseFeatureValues.export_clusters',
+            [params], self._service_ver, context)
+
     def status(self, context=None):
         return self._client.call_method('KBaseFeatureValues.status',
             [], self._service_ver, context)

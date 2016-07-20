@@ -818,5 +818,30 @@ module KBaseFeatureValues {
     funcdef export_matrix(ExportMatrixParams params)
         returns (ExportMatrixOutput) authentication required;
 
+    typedef structure {
+        ws_featureclusters_id input_ref;
+        boolean to_shock;
+        string file_path;
+    } ClustersToTsvFileParams;
+
+    typedef structure {
+        string file_path;
+        string shock_id;
+    } ClustersToTsvFileOutput;
+
+    funcdef clusters_to_tsv_file(ClustersToTsvFileParams params)
+        returns (ClustersToTsvFileOutput) authentication required;
+
+    typedef structure {
+        ws_featureclusters_id input_ref;
+    } ExportClustersParams;
+
+    typedef structure {
+        string shock_id;
+    } ExportClustersOutput;
+
+    funcdef export_clusters(ExportClustersParams params)
+        returns (ExportClustersOutput) authentication required;
+
 };
 

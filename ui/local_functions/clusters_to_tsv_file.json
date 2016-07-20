@@ -1,0 +1,19 @@
+{
+    "name" : "Convert a Feature Clusters object into a TSV file",
+    "short_description" : 
+        "Use this method to convert a Feature Clusters object into TSV file.",
+
+    "long_description" : "todo: write longer description",
+
+    "tags" : {
+        "categories" : [],
+        "input": {
+            "file_types": [],
+            "kb_types": ["KBaseFeatureValues.FeatureClusters"]
+        },
+        "output": {
+            "file_types": ["tsv"],
+            "kb_types": []
+        }
+    }
+}
