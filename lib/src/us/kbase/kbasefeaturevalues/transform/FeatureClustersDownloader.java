@@ -71,6 +71,7 @@ public class FeatureClustersDownloader {
             AuthToken token, PrintWriter pw) throws Exception {
         try {
             boolean isTsv = format == null || format.equalsIgnoreCase("TSV");
+            boolean isSif = format != null && format.equalsIgnoreCase("SIF");
             WorkspaceClient client = getWsClient(wsUrl, token);
             FeatureClusters data = client.getObjects(Arrays.asList(
                     new ObjectIdentity().withRef(ref)))
@@ -80,8 +81,11 @@ public class FeatureClustersDownloader {
                 for (String featureId : cluster.getIdToPos().keySet()) {
                     if (isTsv) {
                         pw.println(featureId + "\t" + clustPos);
-                    } else {
+                    } else if (isSif) {
                         pw.println(featureId.replace(' ', '_') + " pc " + clustPos);
+                    } else {
+                        throw new IllegalStateException("Unsupported format: " + format + ". " +
+                        		"Only TSV or SIF value is allowed.");
                     }
                 }
             }
