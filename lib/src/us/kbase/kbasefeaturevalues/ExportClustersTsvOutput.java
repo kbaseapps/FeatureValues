@@ -12,33 +12,33 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
- * <p>Original spec-file type: ExportClustersParams</p>
+ * <p>Original spec-file type: ExportClustersTsvOutput</p>
  * 
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
-    "input_ref"
+    "shock_id"
 })
-public class ExportClustersParams {
+public class ExportClustersTsvOutput {
 
-    @JsonProperty("input_ref")
-    private String inputRef;
+    @JsonProperty("shock_id")
+    private String shockId;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("input_ref")
-    public String getInputRef() {
-        return inputRef;
+    @JsonProperty("shock_id")
+    public String getShockId() {
+        return shockId;
     }
 
-    @JsonProperty("input_ref")
-    public void setInputRef(String inputRef) {
-        this.inputRef = inputRef;
+    @JsonProperty("shock_id")
+    public void setShockId(String shockId) {
+        this.shockId = shockId;
     }
 
-    public ExportClustersParams withInputRef(String inputRef) {
-        this.inputRef = inputRef;
+    public ExportClustersTsvOutput withShockId(String shockId) {
+        this.shockId = shockId;
         return this;
     }
 
@@ -54,7 +54,7 @@ public class ExportClustersParams {
 
     @Override
     public String toString() {
-        return ((((("ExportClustersParams"+" [inputRef=")+ inputRef)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((("ExportClustersTsvOutput"+" [shockId=")+ shockId)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

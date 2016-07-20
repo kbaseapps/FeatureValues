@@ -32,7 +32,7 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
     private static final long serialVersionUID = 1L;
     private static final String version = "0.0.9";
     private static final String gitUrl = "https://github.com/rsutormin/feature_values";
-    private static final String gitCommitHash = "024a734645bf64adb230e97837efaf8ec1b59ff1";
+    private static final String gitCommitHash = "693553dde4e7d1e7449d0a87a480afdc7d89c71d";
 
     //BEGIN_CLASS_HEADER
     public static final String CONFIG_PARAM_WS_URL = "ws.url";
@@ -388,34 +388,50 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
     }
 
     /**
-     * <p>Original spec-file function name: clusters_to_tsv_file</p>
+     * <p>Original spec-file function name: clusters_to_file</p>
      * <pre>
      * </pre>
-     * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ClustersToTsvFileParams ClustersToTsvFileParams}
-     * @return   instance of type {@link us.kbase.kbasefeaturevalues.ClustersToTsvFileOutput ClustersToTsvFileOutput}
+     * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ClustersToFileParams ClustersToFileParams}
+     * @return   instance of type {@link us.kbase.kbasefeaturevalues.ClustersToFileOutput ClustersToFileOutput}
      */
-    @JsonServerMethod(rpc = "KBaseFeatureValues.clusters_to_tsv_file", async=true)
-    public ClustersToTsvFileOutput clustersToTsvFile(ClustersToTsvFileParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
-        ClustersToTsvFileOutput returnVal = null;
-        //BEGIN clusters_to_tsv_file
-        returnVal = impl(authPart).clustersToTsvFile(params);
-        //END clusters_to_tsv_file
+    @JsonServerMethod(rpc = "KBaseFeatureValues.clusters_to_file", async=true)
+    public ClustersToFileOutput clustersToFile(ClustersToFileParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
+        ClustersToFileOutput returnVal = null;
+        //BEGIN clusters_to_file
+        returnVal = impl(authPart).clustersToFile(params);
+        //END clusters_to_file
         return returnVal;
     }
 
     /**
-     * <p>Original spec-file function name: export_clusters</p>
+     * <p>Original spec-file function name: export_clusters_tsv</p>
      * <pre>
      * </pre>
-     * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ExportClustersParams ExportClustersParams}
-     * @return   instance of type {@link us.kbase.kbasefeaturevalues.ExportClustersOutput ExportClustersOutput}
+     * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ExportClustersTsvParams ExportClustersTsvParams}
+     * @return   instance of type {@link us.kbase.kbasefeaturevalues.ExportClustersTsvOutput ExportClustersTsvOutput}
      */
-    @JsonServerMethod(rpc = "KBaseFeatureValues.export_clusters", async=true)
-    public ExportClustersOutput exportClusters(ExportClustersParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
-        ExportClustersOutput returnVal = null;
-        //BEGIN export_clusters
-        returnVal = impl(authPart).exportClusters(params);
-        //END export_clusters
+    @JsonServerMethod(rpc = "KBaseFeatureValues.export_clusters_tsv", async=true)
+    public ExportClustersTsvOutput exportClustersTsv(ExportClustersTsvParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
+        ExportClustersTsvOutput returnVal = null;
+        //BEGIN export_clusters_tsv
+        returnVal = impl(authPart).exportClustersTsv(params);
+        //END export_clusters_tsv
+        return returnVal;
+    }
+
+    /**
+     * <p>Original spec-file function name: export_clusters_sif</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ExportClustersSifParams ExportClustersSifParams}
+     * @return   instance of type {@link us.kbase.kbasefeaturevalues.ExportClustersSifOutput ExportClustersSifOutput}
+     */
+    @JsonServerMethod(rpc = "KBaseFeatureValues.export_clusters_sif", async=true)
+    public ExportClustersSifOutput exportClustersSif(ExportClustersSifParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
+        ExportClustersSifOutput returnVal = null;
+        //BEGIN export_clusters_sif
+        returnVal = impl(authPart).exportClustersSif(params);
+        //END export_clusters_sif
         return returnVal;
     }
     @JsonServerMethod(rpc = "KBaseFeatureValues.status")

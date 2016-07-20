@@ -818,30 +818,45 @@ module KBaseFeatureValues {
     funcdef export_matrix(ExportMatrixParams params)
         returns (ExportMatrixOutput) authentication required;
 
+    /*
+        format - optional field, can be one of "TSV" or "SIF" ("TSV" is default value).
+    */
     typedef structure {
         ws_featureclusters_id input_ref;
         boolean to_shock;
         string file_path;
-    } ClustersToTsvFileParams;
+        string format;
+    } ClustersToFileParams;
 
     typedef structure {
         string file_path;
         string shock_id;
-    } ClustersToTsvFileOutput;
+    } ClustersToFileOutput;
 
-    funcdef clusters_to_tsv_file(ClustersToTsvFileParams params)
-        returns (ClustersToTsvFileOutput) authentication required;
+    funcdef clusters_to_file(ClustersToFileParams params)
+        returns (ClustersToFileOutput) authentication required;
 
     typedef structure {
         ws_featureclusters_id input_ref;
-    } ExportClustersParams;
+    } ExportClustersTsvParams;
 
     typedef structure {
         string shock_id;
-    } ExportClustersOutput;
+    } ExportClustersTsvOutput;
 
-    funcdef export_clusters(ExportClustersParams params)
-        returns (ExportClustersOutput) authentication required;
+    funcdef export_clusters_tsv(ExportClustersTsvParams params)
+        returns (ExportClustersTsvOutput) authentication required;
+
+    typedef structure {
+        ws_featureclusters_id input_ref;
+    } ExportClustersSifParams;
+
+    typedef structure {
+        string shock_id;
+    } ExportClustersSifOutput;
+
+    funcdef export_clusters_sif(ExportClustersSifParams params)
+        returns (ExportClustersSifOutput) authentication required;
 
 };
 

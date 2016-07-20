@@ -46,7 +46,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import datafileutil.DataFileUtilClient;
-import datafileutil.FileToShockParams;
 import datafileutil.PackageForDownloadParams;
 import datafileutil.ShockToFileParams;
 
@@ -809,16 +808,17 @@ public class KBaseFeatureValuesImpl {
                 .withToShock(1L)).getShockId());
     }
 
-    public ClustersToTsvFileOutput clustersToTsvFile(ClustersToTsvFileParams params) 
+    public ClustersToFileOutput clustersToFile(ClustersToFileParams params) 
             throws Exception {
         File tmpDir = Files.createTempDirectory(getScratchDir().toPath(), "FromShock").toFile();
         try {
-            ClustersToTsvFileOutput ret = new ClustersToTsvFileOutput();
+            ClustersToFileOutput ret = new ClustersToFileOutput();
             AuthToken auth = new AuthToken(token);
-            File clustFile = new File(tmpDir, "clusters.tsv");
+            String ext = params.getFormat() == null ? "tsv" : params.getFormat().toLowerCase();
+            File clustFile = new File(tmpDir, "clusters." + ext);
             try (PrintWriter pw = new PrintWriter(clustFile)) {
-                FeatureClustersDownloader.generate(getWsUrl(), params.getInputRef(), null, auth, 
-                        pw);
+                FeatureClustersDownloader.generate(getWsUrl(), params.getInputRef(), 
+                        params.getFormat(), auth, pw);
             }
             if (params.getToShock() != null && params.getToShock() == 1L) {
                 URL callbackUrl = new URL(System.getenv("SDK_CALLBACK_URL"));
@@ -841,10 +841,16 @@ public class KBaseFeatureValuesImpl {
         }
     }
     
-    public ExportClustersOutput exportClusters(ExportClustersParams params) throws Exception {
-        return new ExportClustersOutput().withShockId(clustersToTsvFile(
-                new ClustersToTsvFileParams().withInputRef(params.getInputRef())
-                .withToShock(1L)).getShockId());
+    public ExportClustersTsvOutput exportClustersTsv(ExportClustersTsvParams params) throws Exception {
+        return new ExportClustersTsvOutput().withShockId(clustersToFile(
+                new ClustersToFileParams().withInputRef(params.getInputRef())
+                .withToShock(1L).withFormat("TSV")).getShockId());
+    }
+
+    public ExportClustersSifOutput exportClustersSif(ExportClustersSifParams params) throws Exception {
+        return new ExportClustersSifOutput().withShockId(clustersToFile(
+                new ClustersToFileParams().withInputRef(params.getInputRef())
+                .withToShock(1L).withFormat("SIF")).getShockId());
     }
 
     class MatrixGenomeLoader{

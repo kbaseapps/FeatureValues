@@ -12,56 +12,23 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
- * <p>Original spec-file type: ClustersToTsvFileParams</p>
+ * <p>Original spec-file type: ClustersToFileOutput</p>
  * 
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
-    "input_ref",
-    "to_shock",
-    "file_path"
+    "file_path",
+    "shock_id"
 })
-public class ClustersToTsvFileParams {
+public class ClustersToFileOutput {
 
-    @JsonProperty("input_ref")
-    private String inputRef;
-    @JsonProperty("to_shock")
-    private Long toShock;
     @JsonProperty("file_path")
     private String filePath;
+    @JsonProperty("shock_id")
+    private String shockId;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
-
-    @JsonProperty("input_ref")
-    public String getInputRef() {
-        return inputRef;
-    }
-
-    @JsonProperty("input_ref")
-    public void setInputRef(String inputRef) {
-        this.inputRef = inputRef;
-    }
-
-    public ClustersToTsvFileParams withInputRef(String inputRef) {
-        this.inputRef = inputRef;
-        return this;
-    }
-
-    @JsonProperty("to_shock")
-    public Long getToShock() {
-        return toShock;
-    }
-
-    @JsonProperty("to_shock")
-    public void setToShock(Long toShock) {
-        this.toShock = toShock;
-    }
-
-    public ClustersToTsvFileParams withToShock(Long toShock) {
-        this.toShock = toShock;
-        return this;
-    }
 
     @JsonProperty("file_path")
     public String getFilePath() {
@@ -73,8 +40,23 @@ public class ClustersToTsvFileParams {
         this.filePath = filePath;
     }
 
-    public ClustersToTsvFileParams withFilePath(String filePath) {
+    public ClustersToFileOutput withFilePath(String filePath) {
         this.filePath = filePath;
+        return this;
+    }
+
+    @JsonProperty("shock_id")
+    public String getShockId() {
+        return shockId;
+    }
+
+    @JsonProperty("shock_id")
+    public void setShockId(String shockId) {
+        this.shockId = shockId;
+    }
+
+    public ClustersToFileOutput withShockId(String shockId) {
+        this.shockId = shockId;
         return this;
     }
 
@@ -90,7 +72,7 @@ public class ClustersToTsvFileParams {
 
     @Override
     public String toString() {
-        return ((((((((("ClustersToTsvFileParams"+" [inputRef=")+ inputRef)+", toShock=")+ toShock)+", filePath=")+ filePath)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((("ClustersToFileOutput"+" [filePath=")+ filePath)+", shockId=")+ shockId)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

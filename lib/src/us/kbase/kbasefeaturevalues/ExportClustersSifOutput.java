@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
- * <p>Original spec-file type: ExportClustersOutput</p>
+ * <p>Original spec-file type: ExportClustersSifOutput</p>
  * 
  * 
  */
@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
     "shock_id"
 })
-public class ExportClustersOutput {
+public class ExportClustersSifOutput {
 
     @JsonProperty("shock_id")
     private String shockId;
@@ -37,7 +37,7 @@ public class ExportClustersOutput {
         this.shockId = shockId;
     }
 
-    public ExportClustersOutput withShockId(String shockId) {
+    public ExportClustersSifOutput withShockId(String shockId) {
         this.shockId = shockId;
         return this;
     }
@@ -54,7 +54,7 @@ public class ExportClustersOutput {
 
     @Override
     public String toString() {
-        return ((((("ExportClustersOutput"+" [shockId=")+ shockId)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((("ExportClustersSifOutput"+" [shockId=")+ shockId)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

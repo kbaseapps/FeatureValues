@@ -523,36 +523,53 @@ public class KBaseFeatureValuesClient {
     }
 
     /**
-     * <p>Original spec-file function name: clusters_to_tsv_file</p>
+     * <p>Original spec-file function name: clusters_to_file</p>
      * <pre>
      * </pre>
-     * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ClustersToTsvFileParams ClustersToTsvFileParams}
-     * @return   instance of type {@link us.kbase.kbasefeaturevalues.ClustersToTsvFileOutput ClustersToTsvFileOutput}
+     * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ClustersToFileParams ClustersToFileParams}
+     * @return   instance of type {@link us.kbase.kbasefeaturevalues.ClustersToFileOutput ClustersToFileOutput}
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
-    public ClustersToTsvFileOutput clustersToTsvFile(ClustersToTsvFileParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+    public ClustersToFileOutput clustersToFile(ClustersToFileParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
         args.add(params);
-        TypeReference<List<ClustersToTsvFileOutput>> retType = new TypeReference<List<ClustersToTsvFileOutput>>() {};
-        List<ClustersToTsvFileOutput> res = caller.jsonrpcCall("KBaseFeatureValues.clusters_to_tsv_file", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        TypeReference<List<ClustersToFileOutput>> retType = new TypeReference<List<ClustersToFileOutput>>() {};
+        List<ClustersToFileOutput> res = caller.jsonrpcCall("KBaseFeatureValues.clusters_to_file", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 
     /**
-     * <p>Original spec-file function name: export_clusters</p>
+     * <p>Original spec-file function name: export_clusters_tsv</p>
      * <pre>
      * </pre>
-     * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ExportClustersParams ExportClustersParams}
-     * @return   instance of type {@link us.kbase.kbasefeaturevalues.ExportClustersOutput ExportClustersOutput}
+     * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ExportClustersTsvParams ExportClustersTsvParams}
+     * @return   instance of type {@link us.kbase.kbasefeaturevalues.ExportClustersTsvOutput ExportClustersTsvOutput}
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
-    public ExportClustersOutput exportClusters(ExportClustersParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+    public ExportClustersTsvOutput exportClustersTsv(ExportClustersTsvParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
         args.add(params);
-        TypeReference<List<ExportClustersOutput>> retType = new TypeReference<List<ExportClustersOutput>>() {};
-        List<ExportClustersOutput> res = caller.jsonrpcCall("KBaseFeatureValues.export_clusters", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        TypeReference<List<ExportClustersTsvOutput>> retType = new TypeReference<List<ExportClustersTsvOutput>>() {};
+        List<ExportClustersTsvOutput> res = caller.jsonrpcCall("KBaseFeatureValues.export_clusters_tsv", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res.get(0);
+    }
+
+    /**
+     * <p>Original spec-file function name: export_clusters_sif</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ExportClustersSifParams ExportClustersSifParams}
+     * @return   instance of type {@link us.kbase.kbasefeaturevalues.ExportClustersSifOutput ExportClustersSifOutput}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public ExportClustersSifOutput exportClustersSif(ExportClustersSifParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<ExportClustersSifOutput>> retType = new TypeReference<List<ExportClustersSifOutput>>() {};
+        List<ExportClustersSifOutput> res = caller.jsonrpcCall("KBaseFeatureValues.export_clusters_sif", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 

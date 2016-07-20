@@ -927,32 +927,47 @@ class KBaseFeatureValues(object):
             'KBaseFeatureValues.export_matrix',
             [params], self._service_ver, context)
 
-    def clusters_to_tsv_file(self, params, context=None):
+    def clusters_to_file(self, params, context=None):
         """
-        :param params: instance of type "ClustersToTsvFileParams" ->
-           structure: parameter "input_ref" of type "ws_featureclusters_id"
-           (The workspace ID of a FeatureClusters data object. @id ws
-           KBaseFeatureValues.FeatureClusters), parameter "to_shock" of type
-           "boolean" (Indicates true or false values, false = 0, true = 1
-           @range [0,1]), parameter "file_path" of String
-        :returns: instance of type "ClustersToTsvFileOutput" -> structure:
+        :param params: instance of type "ClustersToFileParams" (format -
+           optional field, can be one of "TSV" or "SIF" ("TSV" is default
+           value).) -> structure: parameter "input_ref" of type
+           "ws_featureclusters_id" (The workspace ID of a FeatureClusters
+           data object. @id ws KBaseFeatureValues.FeatureClusters), parameter
+           "to_shock" of type "boolean" (Indicates true or false values,
+           false = 0, true = 1 @range [0,1]), parameter "file_path" of
+           String, parameter "format" of String
+        :returns: instance of type "ClustersToFileOutput" -> structure:
            parameter "file_path" of String, parameter "shock_id" of String
         """
         return self._client.call_method(
-            'KBaseFeatureValues.clusters_to_tsv_file',
+            'KBaseFeatureValues.clusters_to_file',
             [params], self._service_ver, context)
 
-    def export_clusters(self, params, context=None):
+    def export_clusters_tsv(self, params, context=None):
         """
-        :param params: instance of type "ExportClustersParams" -> structure:
-           parameter "input_ref" of type "ws_featureclusters_id" (The
-           workspace ID of a FeatureClusters data object. @id ws
+        :param params: instance of type "ExportClustersTsvParams" ->
+           structure: parameter "input_ref" of type "ws_featureclusters_id"
+           (The workspace ID of a FeatureClusters data object. @id ws
            KBaseFeatureValues.FeatureClusters)
-        :returns: instance of type "ExportClustersOutput" -> structure:
+        :returns: instance of type "ExportClustersTsvOutput" -> structure:
            parameter "shock_id" of String
         """
         return self._client.call_method(
-            'KBaseFeatureValues.export_clusters',
+            'KBaseFeatureValues.export_clusters_tsv',
+            [params], self._service_ver, context)
+
+    def export_clusters_sif(self, params, context=None):
+        """
+        :param params: instance of type "ExportClustersSifParams" ->
+           structure: parameter "input_ref" of type "ws_featureclusters_id"
+           (The workspace ID of a FeatureClusters data object. @id ws
+           KBaseFeatureValues.FeatureClusters)
+        :returns: instance of type "ExportClustersSifOutput" -> structure:
+           parameter "shock_id" of String
+        """
+        return self._client.call_method(
+            'KBaseFeatureValues.export_clusters_sif',
             [params], self._service_ver, context)
 
     def status(self, context=None):
