@@ -43,6 +43,7 @@ import us.kbase.kbasefeaturevalues.CorrectMatrixParams;
 import us.kbase.kbasefeaturevalues.EstimateKParams;
 import us.kbase.kbasefeaturevalues.EstimateKParamsNew;
 import us.kbase.kbasefeaturevalues.EstimateKResult;
+import us.kbase.kbasefeaturevalues.ExportClustersParams;
 import us.kbase.kbasefeaturevalues.ExportMatrixParams;
 import us.kbase.kbasefeaturevalues.ExpressionMatrix;
 import us.kbase.kbasefeaturevalues.FeatureClusters;
@@ -606,7 +607,57 @@ public class KBaseFeatureValuesServerTest {
             FileUtils.deleteQuietly(tmpDir);
         }
     }
-    
+
+    @Test
+    public void testExportClusters() throws Exception {
+        File tmpDir = Files.createTempDirectory(new File(config.get(
+                KBaseFeatureValuesServer.CONFIG_PARAM_SCRATCH)).toPath(), "FromShock").toFile();
+        try {
+            String testWsName = getWsName();
+            String matrixObjName = "matrix_for_export_clusters";
+            ExpressionMatrix mdata = new ExpressionMatrix().withType("log-ratio").withScale("1.0")
+                    .withData(getSampleMatrix());
+            WorkspaceClient wscl = getWsClient();
+            wscl.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
+                    new ObjectSaveData().withName(matrixObjName)
+                    .withType("KBaseFeatureValues.ExpressionMatrix")
+                    .withData(new UObject(mdata)))));
+            String clustersObjName = "export_clusters";
+            impl.clusterKMeans(new ClusterKMeansParams().withInputData(testWsName + "/" + 
+                    matrixObjName).withK(3L).withOutWorkspace(testWsName)
+                    .withOutClustersetId(clustersObjName),
+                    token, getContext());
+
+            String shockId = impl.exportClusters(new ExportClustersParams().withInputRef(
+                    testWsName + "/" + clustersObjName), token, getContext()).getShockId();
+            tempShockIdsToDelete.add(shockId);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            createShockClient().getFile(new ShockNodeId(shockId), baos);
+            baos.close();
+            ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(baos.toByteArray()));
+            String outputClusters = null;  //new String(baos.toByteArray());
+            String infoJson = null;
+            while (true) {
+                ZipEntry ze = zis.getNextEntry();
+                if (ze == null)
+                    break;
+                byte[] data = IOUtils.toByteArray(zis);
+                if (ze.getName().endsWith(".tsv")) {
+                    outputClusters = new String(data);
+                } else if (ze.getName().endsWith(".json")) {
+                    infoJson = new String(data);
+                } else {
+                    throw new IllegalStateException("Unexpected zip entry: " + ze.getName());
+                }
+            }
+            Assert.assertTrue(outputClusters, outputClusters.contains("g1\t"));
+            Assert.assertTrue(infoJson,infoJson.contains("\"metadata\": [") &&
+                    infoJson.contains("\"provenance\": ["));
+        } finally {
+            FileUtils.deleteQuietly(tmpDir);
+        }
+    }
+
     private static FloatMatrix2D getSampleMatrix() {
         List<List<Double>> values = new ArrayList<List<Double>>();
         values.add(Arrays.asList(13.0, 2.0, 3.0));

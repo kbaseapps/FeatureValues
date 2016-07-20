@@ -2554,6 +2554,198 @@ ExportMatrixOutput is a reference to a hash where the following keys are defined
     }
 }
  
+
+
+=head2 clusters_to_tsv_file
+
+  $return = $obj->clusters_to_tsv_file($params)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$params is a KBaseFeatureValues.ClustersToTsvFileParams
+$return is a KBaseFeatureValues.ClustersToTsvFileOutput
+ClustersToTsvFileParams is a reference to a hash where the following keys are defined:
+	input_ref has a value which is a KBaseFeatureValues.ws_featureclusters_id
+	to_shock has a value which is a KBaseFeatureValues.boolean
+	file_path has a value which is a string
+ws_featureclusters_id is a string
+boolean is an int
+ClustersToTsvFileOutput is a reference to a hash where the following keys are defined:
+	file_path has a value which is a string
+	shock_id has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+$params is a KBaseFeatureValues.ClustersToTsvFileParams
+$return is a KBaseFeatureValues.ClustersToTsvFileOutput
+ClustersToTsvFileParams is a reference to a hash where the following keys are defined:
+	input_ref has a value which is a KBaseFeatureValues.ws_featureclusters_id
+	to_shock has a value which is a KBaseFeatureValues.boolean
+	file_path has a value which is a string
+ws_featureclusters_id is a string
+boolean is an int
+ClustersToTsvFileOutput is a reference to a hash where the following keys are defined:
+	file_path has a value which is a string
+	shock_id has a value which is a string
+
+
+=end text
+
+=item Description
+
+
+
+=back
+
+=cut
+
+ sub clusters_to_tsv_file
+{
+    my($self, @args) = @_;
+
+# Authentication: required
+
+    if ((my $n = @args) != 1)
+    {
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+							       "Invalid argument count for function clusters_to_tsv_file (received $n, expecting 1)");
+    }
+    {
+	my($params) = @args;
+
+	my @_bad_arguments;
+        (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"params\" (value was \"$params\")");
+        if (@_bad_arguments) {
+	    my $msg = "Invalid arguments passed to clusters_to_tsv_file:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+								   method_name => 'clusters_to_tsv_file');
+	}
+    }
+
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "KBaseFeatureValues.clusters_to_tsv_file",
+	    params => \@args,
+    });
+    if ($result) {
+	if ($result->is_error) {
+	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+					       code => $result->content->{error}->{code},
+					       method_name => 'clusters_to_tsv_file',
+					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+					      );
+	} else {
+	    return wantarray ? @{$result->result} : $result->result->[0];
+	}
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method clusters_to_tsv_file",
+					    status_line => $self->{client}->status_line,
+					    method_name => 'clusters_to_tsv_file',
+				       );
+    }
+}
+ 
+
+
+=head2 export_clusters
+
+  $return = $obj->export_clusters($params)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$params is a KBaseFeatureValues.ExportClustersParams
+$return is a KBaseFeatureValues.ExportClustersOutput
+ExportClustersParams is a reference to a hash where the following keys are defined:
+	input_ref has a value which is a KBaseFeatureValues.ws_featureclusters_id
+ws_featureclusters_id is a string
+ExportClustersOutput is a reference to a hash where the following keys are defined:
+	shock_id has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+$params is a KBaseFeatureValues.ExportClustersParams
+$return is a KBaseFeatureValues.ExportClustersOutput
+ExportClustersParams is a reference to a hash where the following keys are defined:
+	input_ref has a value which is a KBaseFeatureValues.ws_featureclusters_id
+ws_featureclusters_id is a string
+ExportClustersOutput is a reference to a hash where the following keys are defined:
+	shock_id has a value which is a string
+
+
+=end text
+
+=item Description
+
+
+
+=back
+
+=cut
+
+ sub export_clusters
+{
+    my($self, @args) = @_;
+
+# Authentication: required
+
+    if ((my $n = @args) != 1)
+    {
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+							       "Invalid argument count for function export_clusters (received $n, expecting 1)");
+    }
+    {
+	my($params) = @args;
+
+	my @_bad_arguments;
+        (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"params\" (value was \"$params\")");
+        if (@_bad_arguments) {
+	    my $msg = "Invalid arguments passed to export_clusters:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+								   method_name => 'export_clusters');
+	}
+    }
+
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "KBaseFeatureValues.export_clusters",
+	    params => \@args,
+    });
+    if ($result) {
+	if ($result->is_error) {
+	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+					       code => $result->content->{error}->{code},
+					       method_name => 'export_clusters',
+					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+					      );
+	} else {
+	    return wantarray ? @{$result->result} : $result->result->[0];
+	}
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method export_clusters",
+					    status_line => $self->{client}->status_line,
+					    method_name => 'export_clusters',
+				       );
+    }
+}
+ 
   
 sub status
 {
@@ -2597,16 +2789,16 @@ sub version {
             Bio::KBase::Exceptions::JSONRPC->throw(
                 error => $result->error_message,
                 code => $result->content->{code},
-                method_name => 'export_matrix',
+                method_name => 'export_clusters',
             );
         } else {
             return wantarray ? @{$result->result} : $result->result->[0];
         }
     } else {
         Bio::KBase::Exceptions::HTTP->throw(
-            error => "Error invoking method export_matrix",
+            error => "Error invoking method export_clusters",
             status_line => $self->{client}->status_line,
-            method_name => 'export_matrix',
+            method_name => 'export_clusters',
         );
     }
 }
@@ -4594,6 +4786,132 @@ input_ref has a value which is a KBaseFeatureValues.ws_matrix_id
 
 
 =head2 ExportMatrixOutput
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+shock_id has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+shock_id has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 ClustersToTsvFileParams
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+input_ref has a value which is a KBaseFeatureValues.ws_featureclusters_id
+to_shock has a value which is a KBaseFeatureValues.boolean
+file_path has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+input_ref has a value which is a KBaseFeatureValues.ws_featureclusters_id
+to_shock has a value which is a KBaseFeatureValues.boolean
+file_path has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 ClustersToTsvFileOutput
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+file_path has a value which is a string
+shock_id has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+file_path has a value which is a string
+shock_id has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 ExportClustersParams
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+input_ref has a value which is a KBaseFeatureValues.ws_featureclusters_id
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+input_ref has a value which is a KBaseFeatureValues.ws_featureclusters_id
+
+
+=end text
+
+=back
+
+
+
+=head2 ExportClustersOutput
 
 =over 4
 
