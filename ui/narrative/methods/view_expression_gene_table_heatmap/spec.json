@@ -28,8 +28,6 @@
     "field_type" : "textsubdata",
     "textsubdata_options" : {
       "subdata_selection": {
-        "service_function": "SubdataSelectionTester.get_object_subset",
-        "service_version": "dev",
         "parameter_id" : "input_expression_matrix",
         "subdata_included" : ["data/col_ids"],
         "path_to_subdata": ["data","col_ids"]
