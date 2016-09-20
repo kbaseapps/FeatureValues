@@ -1,7 +1,7 @@
 #
 # Define basic display information
 #
-name     : Build a Feature Set from a Genome
+name     : Build Feature Set from Genome
 tooltip  : |
     Create a new Feature Set by selecting features from a Genome.
 
