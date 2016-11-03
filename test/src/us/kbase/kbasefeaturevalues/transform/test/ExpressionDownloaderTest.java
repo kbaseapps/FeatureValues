@@ -55,7 +55,7 @@ public class ExpressionDownloaderTest {
         classPath.append(":" + searchForSubstring(cp, "jackson/jackson-databind-2.2.3.jar")); 
         classPath.append(":" + searchForSubstring(cp, "kbase/auth/kbase-auth-0.3.1.jar")); 
         classPath.append(":" + searchForSubstring(cp, "kbase/common/kbase-common-0.0.17.jar")); 
-        classPath.append(":" + searchForSubstring(cp, "kbase/workspace/WorkspaceClient-0.2.0.jar")); 
+        classPath.append(":" + searchForSubstring(cp, "kbase/workspace/WorkspaceClient-0.4.1.jar")); 
         classPath.append(":" + searchForSubstring(cp, "kohsuke/args4j-2.0.21.jar"));
         writeFileLines(Arrays.asList(
                 "#!/bin/bash",
@@ -109,7 +109,7 @@ public class ExpressionDownloaderTest {
         String exprObjName = "Desulfovibrio_vulgaris_Hildenborough.expression";
         File inputDir = new File("test/data/upload2");
         File exprInputFile = ExpressionUploader.findTabFile(inputDir);
-        ExpressionMatrix matrix = ExpressionUploader.parse(null, null, exprInputFile, "Simple", 
+        ExpressionMatrix matrix = ExpressionUploader.parse(null, exprInputFile, "Simple", 
                 null, false, null, null, null);
         wscl.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(exprObjName).withType("KBaseFeatureValues.ExpressionMatrix")

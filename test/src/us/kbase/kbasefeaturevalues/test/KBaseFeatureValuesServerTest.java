@@ -133,7 +133,7 @@ public class KBaseFeatureValuesServerTest {
         wsClient.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(genomeObjName).withType("KBaseGenomes.Genome")
                 .withData(new UObject(genomeData)))));
-        ExpressionMatrix data = ExpressionUploader.parse(wsUrl, testWsName, inputFile, "MO", 
+        ExpressionMatrix data = ExpressionUploader.parse(testWsName, inputFile, "MO", 
                 genomeObjName, true, null, null, token);
         wsClient.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(commonExpressionObjectName)
@@ -278,6 +278,7 @@ public class KBaseFeatureValuesServerTest {
         Assert.assertEquals(3, clSet4.getFeatureClusters().get(2).getIdToPos().size());
         /////////////// Clusters download ///////////////
         File tempDir = new File("test/temp");
+        tempDir.mkdir();
         File tsvTempFile = new File(tempDir, "clusters.tsv");
         try {
             FeatureClustersDownloader.generate(wsUrl, testWsName, clustObj1Name, 1, "TSV", token,
@@ -295,6 +296,7 @@ public class KBaseFeatureValuesServerTest {
             if (tsvTempFile.exists())
                 try {
                     tsvTempFile.delete();
+                    tempDir.delete();
                 } catch (Exception ignore) {}
         }
     }
@@ -363,7 +365,7 @@ public class KBaseFeatureValuesServerTest {
         String genomeObjName = "Desulfovibrio_vulgaris_Hildenborough.genome";
         File inputDir = new File("test/data/upload1");
         File inputFile = new File(inputDir, "Desulfovibrio_vulgaris_Hildenborough_microarray_log_level_data.txt");
-        ExpressionMatrix data = ExpressionUploader.parse(null, null, inputFile, "MO", 
+        ExpressionMatrix data = ExpressionUploader.parse(null, inputFile, "MO", 
                 null, true, null, null, null);
         String matrixId = "connected_matrix.1";
         getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
@@ -514,7 +516,7 @@ public class KBaseFeatureValuesServerTest {
         String matrixId = "hierarchical_matrix.1";
         String clustObjName = "hierarchical_clusters.1";
         File inputFile = new File("test/data/upload6/E_coli_v4_Build_6_subdata.tsv");
-        ExpressionMatrix data = ExpressionUploader.parse(null, null, inputFile, "Simple", 
+        ExpressionMatrix data = ExpressionUploader.parse(null, inputFile, "Simple", 
                 null, true, null, null, null);
         getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(matrixId).withType("KBaseFeatureValues.ExpressionMatrix")

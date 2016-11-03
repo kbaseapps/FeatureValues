@@ -1,51 +1,63 @@
 package us.kbase.kbasefeaturevalues;
 
+import genomeannotationapi.GenomeAnnotationAPIClient;
+import genomeannotationapi.GenomeDataV1;
+import genomeannotationapi.GenomeSelectorV1;
+import genomeannotationapi.GetGenomeParamsV1;
+
+import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import us.kbase.common.service.UObject;
-import us.kbase.workspace.SubObjectIdentity;
-import us.kbase.workspace.WorkspaceClient;
+import us.kbase.auth.AuthToken;
+
+import kbasegenomes.Feature;
+import kbasegenomes.Genome;
 
 public class MatrixUtil {
 
-    @SuppressWarnings("unchecked")
-    public static Map<String, Object> loadGenomeFeatures(WorkspaceClient cl, 
+    public static Genome loadGenomeFeatures(AuthToken token, String matrixRef, 
             String genomeRef) throws Exception {
-        //UObject genomeObj = cl.getObjects(Arrays.asList(
-        //        new ObjectIdentity().withRef(genomeRef))).get(0).getData();
-        UObject genomeObj = cl.getObjectSubset(Arrays.asList(
-                new SubObjectIdentity().withRef(genomeRef).withIncluded(
-                        Arrays.asList("features/[*]/id", 
-                                "features/[*]/aliases")))).get(0).getData();
-        return genomeObj.asClassInstance(Map.class);
+        return loadGenome(token, matrixRef, genomeRef, Collections.<String>emptyList(),
+                Arrays.asList("id", "aliases")).getData();
     }
     
-    @SuppressWarnings("unchecked")
+    public static GenomeDataV1 loadGenome(AuthToken token, String matrixRef, String genomeRef,
+            List<String> includedFields, List<String> includedFeatureFields) throws Exception {
+        URL callbackUrl = new URL(System.getenv("SDK_CALLBACK_URL"));
+        GenomeAnnotationAPIClient gaapi = new GenomeAnnotationAPIClient(callbackUrl, token);
+        gaapi.setIsInsecureHttpConnectionAllowed(true);
+        List<String> refPathToGenome = matrixRef == null ? null : Arrays.asList(matrixRef);
+        List<GenomeSelectorV1> genomes = Arrays.asList(new GenomeSelectorV1().withRef(genomeRef)
+                .withRefPathToGenome(refPathToGenome));
+        return gaapi.getGenomeV1(new GetGenomeParamsV1().withGenomes(genomes)
+                .withIncludedFeatureFields(includedFeatureFields)
+                .withIncludedFields(includedFields)).getGenomes().get(0);
+    }
+    
     public static Map<String, String> constructFeatureMapping(FloatMatrix2D matrix, 
-            Map<String, Object> genome) {
+            Genome genome) {
         List<String> rowIds = matrix.getRowIds();
         Map<String, String> featureMapping = null; // maps row ID to genome feature ID
         Set<String> rowIdSet = new HashSet<String>(rowIds);
         featureMapping = new LinkedHashMap<String, String>();
-        List<Map<String, Object>> features = 
-                (List<Map<String, Object>>)genome.get("features");
-        for (Map<String, Object> feature: features) {
-            String id = (String)feature.get("id");
+        for (Feature feature : genome.getFeatures()) {
+            String id = feature.getId();
             if (rowIdSet.contains(id)) {
                 featureMapping.put(id, id);
                 rowIdSet.remove(id);
             }
         }
         if (rowIdSet.size() > 0) {
-            for (Map<String, Object> feature: features) {
-                String id = (String)feature.get("id");
-                if (feature.containsKey("aliases")) {
-                    for (String alias : (List<String>)feature.get("aliases")) {
+            for (Feature feature: genome.getFeatures()) {
+                String id = feature.getId();
+                if (feature.getAliases() != null) {
+                    for (String alias : feature.getAliases()) {
                         if (rowIdSet.contains(alias)) {
                             featureMapping.put(alias, id);
                             rowIdSet.remove(alias);

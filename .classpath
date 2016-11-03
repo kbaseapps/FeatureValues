@@ -14,12 +14,12 @@
 	<classpathentry kind="lib" path="../jars/lib/jars/jna/jna-3.4.0.jar"/>
 	<classpathentry kind="lib" path="../jars/lib/jars/kbase/common/kbase-common-0.0.17.jar"/>
 	<classpathentry kind="lib" path="../jars/lib/jars/junit/junit-4.9.jar"/>
-	<classpathentry kind="lib" path="../jars/lib/jars/kbase/workspace/WorkspaceClient-0.2.0.jar"/>
 	<classpathentry kind="lib" path="../jars/lib/jars/kbase/genomes/kbase-genomes-20140411.jar"/>
 	<classpathentry kind="lib" path="../jars/lib/jars/apache_commons/commons-math-2.2.jar"/>
 	<classpathentry kind="lib" path="../jars/lib/jars/apache_commons/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="../jars/lib/jars/kohsuke/args4j-2.0.21.jar"/>
 	<classpathentry kind="lib" path="../jars/lib/jars/apache_commons/commons-io-2.4.jar"/>
 	<classpathentry kind="lib" path="../jars/lib/jars/kbase/shock/shock-client-0.0.11.jar"/>
+	<classpathentry kind="lib" path="../jars/lib/jars/kbase/workspace/WorkspaceClient-0.4.1.jar"/>
 	<classpathentry kind="output" path="eclipse_classes"/>
 </classpath>

@@ -38,9 +38,10 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
     public static final String CONFIG_PARAM_WS_URL = "ws.url";
     public static final String CONFIG_PARAM_CLIENT_BIN_DIR = "client.bin.dir";
     public static final String CONFIG_PARAM_SCRATCH = "scratch";
+    public static final String CONFIG_PARAM_SRV_WIZ_URL = "service.wizard.url";
     
     private KBaseFeatureValuesImpl impl(AuthToken authPart) throws Exception {
-        return new KBaseFeatureValuesImpl(null, authPart.toString(), config, null);
+        return new KBaseFeatureValuesImpl(null, authPart, config, null);
     }
     
     @SuppressWarnings("unchecked")
