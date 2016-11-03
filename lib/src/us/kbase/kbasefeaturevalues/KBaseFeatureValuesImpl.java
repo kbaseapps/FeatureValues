@@ -1,5 +1,10 @@
 package us.kbase.kbasefeaturevalues;
 
+import genomeannotationapi.GenomeAnnotationAPIServiceClient;
+import genomeannotationapi.GenomeDataV1;
+import genomeannotationapi.GenomeSelectorV1;
+import genomeannotationapi.GetGenomeParamsV1;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.PrintWriter;
@@ -8,6 +13,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -16,6 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+
+import kbasegenomes.Feature;
+import kbasegenomes.Genome;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -30,20 +39,18 @@ import us.kbase.common.service.UObject;
 import us.kbase.kbasefeaturevalues.transform.ExpressionDownloader;
 import us.kbase.kbasefeaturevalues.transform.ExpressionUploader;
 import us.kbase.kbasefeaturevalues.transform.FeatureClustersDownloader;
-import us.kbase.kbasegenomes.Feature;
+import us.kbase.workspace.GetObjects2Params;
 import us.kbase.workspace.ObjectData;
-import us.kbase.workspace.ObjectIdentity;
 import us.kbase.workspace.ObjectSaveData;
+import us.kbase.workspace.ObjectSpecification;
 import us.kbase.workspace.ProvenanceAction;
 import us.kbase.workspace.SaveObjectsParams;
-import us.kbase.workspace.SubObjectIdentity;
 import us.kbase.workspace.WorkspaceClient;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.type.TypeReference;
 
 import datafileutil.DataFileUtilClient;
 import datafileutil.PackageForDownloadParams;
@@ -51,13 +58,14 @@ import datafileutil.ShockToFileParams;
 
 public class KBaseFeatureValuesImpl {
     private String jobId;
-    private String token;
+    private AuthToken token;
     private Map<String, String> config;
     private File workDir;
     private String wsUrl = null;
     private WorkspaceClient wsClient = null;
+    private String srvWizUrl = null;
     
-    public KBaseFeatureValuesImpl(String jobId, String token, Map<String, String> config,
+    public KBaseFeatureValuesImpl(String jobId, AuthToken token, Map<String, String> config,
             File workDir) throws Exception {
         this.jobId = jobId;
         this.token = token;
@@ -70,12 +78,18 @@ public class KBaseFeatureValuesImpl {
             wsUrl = config.get(KBaseFeatureValuesServer.CONFIG_PARAM_WS_URL);
         return wsUrl;
     }
-    
+
+    public String getSrvWizUrl() {
+        if (srvWizUrl == null)
+            srvWizUrl = config.get(KBaseFeatureValuesServer.CONFIG_PARAM_SRV_WIZ_URL);
+        return srvWizUrl;
+    }
+
     public WorkspaceClient getWsClient() throws Exception {
         if (wsClient != null)
             return wsClient;
-        wsClient = new WorkspaceClient(new URL(getWsUrl()), new AuthToken(token));
-        wsClient.setAuthAllowedForHttp(true);
+        wsClient = new WorkspaceClient(new URL(getWsUrl()), token);
+        wsClient.setIsInsecureHttpConnectionAllowed(true);
         return wsClient;
     }
     
@@ -93,8 +107,9 @@ public class KBaseFeatureValuesImpl {
     
     public void estimateK(EstimateKParams params, 
             List<ProvenanceAction> provenance) throws Exception {
-        ObjectData objData = getWsClient().getObjects(Arrays.asList(
-                new ObjectIdentity().withRef(params.getInputMatrix()))).get(0);
+        ObjectData objData = getWsClient().getObjects2(new GetObjects2Params().withObjects(
+                Arrays.asList(new ObjectSpecification().withRef(params.getInputMatrix()))))
+                .getData().get(0);
         BioMatrix matrix = objData.getData().asClassInstance(BioMatrix.class);
         ClusterServiceLocalClient mathClient = getMathClient();
         EstimateKResult toSave = mathClient.estimateK(matrix.getData(), params.getMinK(), 
@@ -110,8 +125,9 @@ public class KBaseFeatureValuesImpl {
 
     public void estimateKNew(EstimateKParamsNew params,
             List<ProvenanceAction> provenance) throws Exception {
-        ObjectData objData = getWsClient().getObjects(Arrays.asList(
-                new ObjectIdentity().withRef(params.getInputMatrix()))).get(0);
+        ObjectData objData = getWsClient().getObjects2(new GetObjects2Params().withObjects(
+                Arrays.asList(new ObjectSpecification().withRef(params.getInputMatrix()))))
+                .getData().get(0);
         BioMatrix matrix = objData.getData().asClassInstance(BioMatrix.class);
         ClusterServiceLocalClient mathClient = getMathClient();
         EstimateKResult toSave = mathClient.estimateKNew(matrix.getData(), params.getMinK(),
@@ -127,8 +143,9 @@ public class KBaseFeatureValuesImpl {
     
     public void clusterKMeans(ClusterKMeansParams params, 
             List<ProvenanceAction> provenance) throws Exception {
-        ObjectData objData = getWsClient().getObjects(Arrays.asList(
-                new ObjectIdentity().withRef(params.getInputData()))).get(0);
+        ObjectData objData = getWsClient().getObjects2(new GetObjects2Params().withObjects(
+                Arrays.asList(new ObjectSpecification().withRef(params.getInputData()))))
+                .getData().get(0);
         BioMatrix matrix = objData.getData().asClassInstance(BioMatrix.class);
         ClusterServiceLocalClient mathClient = getMathClient();
         ClusterResults res = null;
@@ -195,8 +212,9 @@ public class KBaseFeatureValuesImpl {
     
     public void clusterHierarchical(ClusterHierarchicalParams params,
             List<ProvenanceAction> provenance) throws Exception {
-        ObjectData objData = getWsClient().getObjects(Arrays.asList(
-                new ObjectIdentity().withRef(params.getInputData()))).get(0);
+        ObjectData objData = getWsClient().getObjects2(new GetObjects2Params().withObjects(
+                Arrays.asList(new ObjectSpecification().withRef(params.getInputData()))))
+                .getData().get(0);
         BioMatrix matrix = objData.getData().asClassInstance(BioMatrix.class);
         ClusterServiceLocalClient mathClient = getMathClient();
         ClusterResults res = mathClient.clusterHierarchical(matrix.getData(), params.getDistanceMetric(), 
@@ -214,11 +232,15 @@ public class KBaseFeatureValuesImpl {
 
     public void clustersFromDendrogram(ClustersFromDendrogramParams params,
             List<ProvenanceAction> provenance) throws Exception {
-        ObjectData objData = getWsClient().getObjects(Arrays.asList(
-                new ObjectIdentity().withRef(params.getInputData()))).get(0);
+        ObjectData objData = getWsClient().getObjects2(new GetObjects2Params().withObjects(
+                Arrays.asList(new ObjectSpecification().withRef(params.getInputData()))))
+                .getData().get(0);
         FeatureClusters input = objData.getData().asClassInstance(FeatureClusters.class);
-        ObjectData objData2 = getWsClient().getObjects(Arrays.asList(
-                new ObjectIdentity().withRef(input.getOriginalData()))).get(0);
+        // We don't actually load FeatureClusters object referred by params.getInputData() 
+        // reference, we load matrix object listed in withObjRefPath() instead!
+        ObjectData objData2 = getWsClient().getObjects2(new GetObjects2Params().withObjects(
+                Arrays.asList(new ObjectSpecification().withRef(params.getInputData())
+                        .withObjRefPath(Arrays.asList(input.getOriginalData()))))).getData().get(0);
         BioMatrix matrix = objData2.getData().asClassInstance(BioMatrix.class);
         ClusterServiceLocalClient mathClient = getMathClient();
         ClusterResults res = mathClient.clustersFromDendrogram(matrix.getData(), 
@@ -246,8 +268,9 @@ public class KBaseFeatureValuesImpl {
 
     public void correctMatrix(CorrectMatrixParams params, 
             List<ProvenanceAction> provenance) throws Exception {
-        ObjectData objData = getWsClient().getObjects(Arrays.asList(
-                new ObjectIdentity().withRef(params.getInputData()))).get(0);
+        ObjectData objData = getWsClient().getObjects2(new GetObjects2Params().withObjects(
+                Arrays.asList(new ObjectSpecification().withRef(params.getInputData()))))
+                .getData().get(0);
         String inputType = objData.getInfo().getE3();
         BioMatrix matrix = objData.getData().asClassInstance(BioMatrix.class);
         String transType = params.getTransformType();
@@ -267,11 +290,12 @@ public class KBaseFeatureValuesImpl {
 
     public void reconnectMatrixToGenome(ReconnectMatrixToGenomeParams params,
             List<ProvenanceAction> provenance) throws Exception {
-        ObjectData objData = getWsClient().getObjects(Arrays.asList(
-                new ObjectIdentity().withRef(params.getInputData()))).get(0);
+        ObjectData objData = getWsClient().getObjects2(new GetObjects2Params().withObjects(
+                Arrays.asList(new ObjectSpecification().withRef(params.getInputData()))))
+                .getData().get(0);
         String inputType = objData.getInfo().getE3();
         BioMatrix matrix = objData.getData().asClassInstance(BioMatrix.class);
-        Map<String, Object> genome = MatrixUtil.loadGenomeFeatures(getWsClient(), params.getGenomeRef());
+        Genome genome = MatrixUtil.loadGenomeFeatures(token, null, params.getGenomeRef());
         matrix.setFeatureMapping(MatrixUtil.constructFeatureMapping(matrix.getData(), genome));
         matrix.setGenomeRef(params.getGenomeRef());
         String outMatrixId = params.getOutMatrixId();
@@ -297,24 +321,23 @@ public class KBaseFeatureValuesImpl {
         */
         Map<String, List<String>> elements = new LinkedHashMap<String, List<String>>();
         if (params.getBaseFeatureSet() != null) {
-            Map<String, Object> baseMap = getWsClient().getObjects(Arrays.asList(
-                    new ObjectIdentity().withRef(params.getBaseFeatureSet()))).get(0)
-                    .getData().asClassInstance(Map.class);
+            Map<String, Object> baseMap = getWsClient().getObjects2(new GetObjects2Params().withObjects(
+                    Arrays.asList(new ObjectSpecification().withRef(params.getBaseFeatureSet()))))
+                    .getData().get(0).getData().asClassInstance(Map.class);
             Map<String, List<String>> baseElements = (Map<String, List<String>>)baseMap.get("elements");           
             if (baseElements != null)
                 elements.putAll(baseElements);
         }
-        ObjectData genomeObj = getWsClient().getObjectSubset(Arrays.asList(
-                new SubObjectIdentity().withRef(params.getGenome()).withIncluded(
-                        Arrays.asList("features/[*]/id")))).get(0);
+        GenomeDataV1 genomeObj = MatrixUtil.loadGenome(token, null, params.getGenome(), 
+                Collections.<String>emptyList(), Arrays.asList("id"));
         Tuple11<Long, String, String, String, Long, String, Long, String, String, Long, Map<String,String>> info = 
                 genomeObj.getInfo();
         String genomeRef = info.getE7() + "/" + info.getE1() + "/" + info.getE5();
-        Map<String, Object> genomeMap = genomeObj.getData().asClassInstance(Map.class);
-        List<Map<String, Object>> featureList = (List<Map<String, Object>>)genomeMap.get("features");
+        Genome genome = genomeObj.getData();
+        List<Feature> featureList = genome.getFeatures();
         Set<String> featureIdSet = new HashSet<String>();
-        for (Map<String, Object> feature : featureList) {
-            String featureId = (String)feature.get("id");
+        for (Feature feature : featureList) {
+            String featureId = feature.getId();
             featureIdSet.add(featureId);
         }
         String featureIdsText = params.getFeatureIds();
@@ -379,12 +402,13 @@ public class KBaseFeatureValuesImpl {
             list.add(item);
     }
     
-    @SuppressWarnings("unchecked")
     public MatrixDescriptor getMatrixDescriptor(GetMatrixDescriptorParams params) throws Exception {
         WorkspaceClient wsCl = getWsClient();
-        ObjectData obj = wsCl.getObjectSubset(Arrays.asList(new SubObjectIdentity().withRef(
-                params.getInputData()).withIncluded(Arrays.asList("data/col_ids", "data/row_ids", 
-                        "genome_ref", "scale", "type","row_normalization", "col_normalization")))).get(0);
+        ObjectData obj = wsCl.getObjects2(new GetObjects2Params().withObjects(Arrays.asList(
+                new ObjectSpecification().withRef(params.getInputData()).withIncluded(
+                        Arrays.asList("data/col_ids", "data/row_ids", "genome_ref", "scale", 
+                                "type", "row_normalization", "col_normalization")))))
+                                .getData().get(0);
         BioMatrix matrix = obj.getData().asClassInstance(BioMatrix.class);
         String matrixId = obj.getInfo().getE2();
         String matrixName = obj.getInfo().getE2();
@@ -412,11 +436,10 @@ public class KBaseFeatureValuesImpl {
         }
         String genomeRef = (String)matrix.getGenomeRef();
         if (genomeRef != null) {
-            ObjectData genomeObj = wsCl.getObjectSubset(Arrays.asList(new SubObjectIdentity().withRef(
-                    genomeRef).withIncluded(Arrays.asList("scientific_name")))).get(0);
-            Map<String, Object> genomeMap = genomeObj.getData().asClassInstance(Map.class);
-            genomeId = genomeObj.getInfo().getE2();
-            genomeName = (String)genomeMap.get("scientific_name");
+            GenomeDataV1 genomeRet = loadGenomeDynamic(token, params.getInputData(), genomeRef, 
+                    Arrays.asList("scientific_name"), null);
+            genomeId = genomeRet.getInfo().getE2();
+            genomeName = genomeRet.getData().getScientificName();
         }
         return new MatrixDescriptor().withMatrixId(matrixId).withMatrixName(matrixName)
                 .withMatrixDescription(matrixDescription).withGenomeId(genomeId)
@@ -425,6 +448,22 @@ public class KBaseFeatureValuesImpl {
                 .withRowNormalization(rowNormalization).withColNormalization(colNormalization);
     }
     
+    
+    public GenomeDataV1 loadGenomeDynamic(AuthToken token, String matrixRef, 
+            String genomeRef, List<String> includedFields, 
+            List<String> includedFeatureFields) throws Exception {
+        URL swUrl = new URL(getSrvWizUrl());
+        GenomeAnnotationAPIServiceClient gaapi = 
+                new GenomeAnnotationAPIServiceClient(swUrl, token);
+        gaapi.setIsInsecureHttpConnectionAllowed(true);
+        List<String> refPathToGenome = matrixRef == null ? null : Arrays.asList(matrixRef);
+        List<GenomeSelectorV1> genomes = Arrays.asList(new GenomeSelectorV1().withRef(genomeRef)
+                .withRefPathToGenome(refPathToGenome));
+        return gaapi.getGenomeV1(new GetGenomeParamsV1().withGenomes(genomes)
+                .withIncludedFeatureFields(includedFeatureFields)
+                .withIncludedFields(includedFields)).getGenomes().get(0);
+    }
+
     
 	public MatrixStat getMatrixStat(GetMatrixStatParams params) throws Exception {
 
@@ -712,10 +751,8 @@ public class KBaseFeatureValuesImpl {
 	
 	private ObjectData getExpressionMatrixObject(String mtxRef) throws Exception{
         WorkspaceClient wsClient = getWsClient();
-		ObjectIdentity mtxIndentity = new ObjectIdentity().withRef(mtxRef);
-		return wsClient
-        	.getObjects(Arrays.asList(mtxIndentity))
-        	.get(0);		
+		return wsClient.getObjects2(new GetObjects2Params().withObjects(
+                Arrays.asList(new ObjectSpecification().withRef(mtxRef)))).getData().get(0);
 	}	
 	
 	private File getScratchDir() {
@@ -728,9 +765,8 @@ public class KBaseFeatureValuesImpl {
 	public TsvFileToMatrixOutput tsvFileToMatrix(TsvFileToMatrixParams params) throws Exception {
 	    File tmpDir = Files.createTempDirectory(getScratchDir().toPath(), "FromShock").toFile();
 	    try {
-	        AuthToken auth = new AuthToken(token);
 	        URL callbackUrl = new URL(System.getenv("SDK_CALLBACK_URL"));
-	        DataFileUtilClient dataFileUtil = new DataFileUtilClient(callbackUrl, auth);
+	        DataFileUtilClient dataFileUtil = new DataFileUtilClient(callbackUrl, token);
 	        dataFileUtil.setIsInsecureHttpConnectionAllowed(true);
             File inputFile;
 	        if (params.getInputShockId() != null) {
@@ -752,9 +788,9 @@ public class KBaseFeatureValuesImpl {
 	        String dataScale = params.getDataScale();
 	        if (dataScale == null)
 	            dataScale = "1.0";
-	        ExpressionMatrix matrix = ExpressionUploader.parse(getWsUrl(), inputFile, 
-	                ExpressionUploader.FORMAT_TYPE_SIMPLE, params.getGenomeRef(), 
-	                fillMissingValues, dataType, dataScale, auth);
+	        ExpressionMatrix matrix = ExpressionUploader.parse(params.getGenomeRef(), inputFile,
+	                ExpressionUploader.FORMAT_TYPE_SIMPLE, fillMissingValues, dataType, 
+	                dataScale, token);
 	        File outputFile = File.createTempFile("matrix_", ".json", tmpDir);
 	        UObject.getMapper().writeValue(outputFile, matrix);
 	        Long wsId = dataFileUtil.wsNameToId(params.getOutputWsName());
@@ -776,14 +812,13 @@ public class KBaseFeatureValuesImpl {
         File tmpDir = Files.createTempDirectory(getScratchDir().toPath(), "FromShock").toFile();
         try {
             MatrixToTsvFileOutput ret = new MatrixToTsvFileOutput();
-            AuthToken auth = new AuthToken(token);
             File matrixFile = new File(tmpDir, "matrix.tsv");
             try (PrintWriter pw = new PrintWriter(matrixFile)) {
-                ExpressionDownloader.generate(getWsUrl(), params.getInputRef(), auth, pw);
+                ExpressionDownloader.generate(getWsUrl(), params.getInputRef(), token, pw);
             }
             if (params.getToShock() != null && params.getToShock() == 1L) {
                 URL callbackUrl = new URL(System.getenv("SDK_CALLBACK_URL"));
-                DataFileUtilClient dataFileUtil = new DataFileUtilClient(callbackUrl, auth);
+                DataFileUtilClient dataFileUtil = new DataFileUtilClient(callbackUrl, token);
                 dataFileUtil.setIsInsecureHttpConnectionAllowed(true);
                 String shockId = dataFileUtil.packageForDownload(
                         new PackageForDownloadParams().withFilePath(matrixFile.getCanonicalPath())
@@ -813,16 +848,15 @@ public class KBaseFeatureValuesImpl {
         File tmpDir = Files.createTempDirectory(getScratchDir().toPath(), "FromShock").toFile();
         try {
             ClustersToFileOutput ret = new ClustersToFileOutput();
-            AuthToken auth = new AuthToken(token);
             String ext = params.getFormat() == null ? "tsv" : params.getFormat().toLowerCase();
             File clustFile = new File(tmpDir, "clusters." + ext);
             try (PrintWriter pw = new PrintWriter(clustFile)) {
                 FeatureClustersDownloader.generate(getWsUrl(), params.getInputRef(), 
-                        params.getFormat(), auth, pw);
+                        params.getFormat(), token, pw);
             }
             if (params.getToShock() != null && params.getToShock() == 1L) {
                 URL callbackUrl = new URL(System.getenv("SDK_CALLBACK_URL"));
-                DataFileUtilClient dataFileUtil = new DataFileUtilClient(callbackUrl, auth);
+                DataFileUtilClient dataFileUtil = new DataFileUtilClient(callbackUrl, token);
                 dataFileUtil.setIsInsecureHttpConnectionAllowed(true);
                 String shockId = dataFileUtil.packageForDownload(
                         new PackageForDownloadParams().withFilePath(clustFile.getCanonicalPath())
@@ -861,9 +895,9 @@ public class KBaseFeatureValuesImpl {
         Hashtable<String,Feature> featureId2Feature = null;
         
         
-        @SuppressWarnings("unchecked")
         public void load(String mtxRef) throws Exception{
-            WorkspaceClient wsClient = getWsClient();
+            //WorkspaceClient wsClient = getWsClient();
+            // We should go through dynamic service.
 
             // Get expression matrix
             matrixData = getExpressionMatrixObject(mtxRef);
@@ -872,21 +906,13 @@ public class KBaseFeatureValuesImpl {
                 .asClassInstance(ExpressionMatrix.class);
                                         
             if (matrix.getGenomeRef() != null) {
-                SubObjectIdentity genomeIndentity = new SubObjectIdentity()
-                    .withRef( matrix.getGenomeRef() )
-                    .withIncluded( Arrays.asList("id", "scientific_name", "features") );
-                
-                ObjectData genomeData = wsClient
-                    .getObjectSubset(Arrays.asList(genomeIndentity))
-                    .get(0);
-                
-                Map<String, Object> genomeDataMap = (Map<String, Object>) genomeData
-                    .getData()
-                    .asClassInstance(Map.class);
-                
-                genomeId = (String) genomeDataMap.get("id");
-                genomeName = (String) genomeDataMap.get("scientific_name");  
-                List<Feature> features = UObject.transformObjectToObject(genomeDataMap.get("features"), new TypeReference<List<Feature>>() {}); 
+                GenomeDataV1 genomeRet = loadGenomeDynamic(token, mtxRef, matrix.getGenomeRef(), 
+                        Arrays.asList("id", "scientific_name"), Arrays.asList("id", "function", 
+                                "aliases"));
+                Genome genome = genomeRet.getData();
+                genomeId = genome.getId();
+                genomeName = genome.getScientificName();  
+                List<Feature> features = genome.getFeatures(); 
 //                  Gives: java.lang.TypeNotPresentException: Type us.kbase.common.service.Tuple3 not present            
 //                List<Feature> features = new ArrayList<Feature>();  
                 featureId2Feature = buildFeatureId2FeatureHash(features);            

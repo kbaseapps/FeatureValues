@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.PrintStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -12,6 +11,8 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.management.ObjectName;
+
+import kbasegenomes.Genome;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -23,7 +24,6 @@ import us.kbase.common.service.UObject;
 import us.kbase.kbasefeaturevalues.ExpressionMatrix;
 import us.kbase.kbasefeaturevalues.FloatMatrix2D;
 import us.kbase.kbasefeaturevalues.MatrixUtil;
-import us.kbase.workspace.WorkspaceClient;
 
 public class ExpressionUploader {
     private static Pattern tabDiv = Pattern.compile(Pattern.quote("\t"));
@@ -56,7 +56,7 @@ public class ExpressionUploader {
                 new AuthToken(tokenString);
         }
         File inputFile = findTabFile(parsedArgs.inDir);
-        ExpressionMatrix matrix = parse(parsedArgs.wsUrl, parsedArgs.wsName, inputFile, 
+        ExpressionMatrix matrix = parse(parsedArgs.wsName, inputFile, 
                 parsedArgs.fmtType, parsedArgs.goName, parsedArgs.fillMissingValues, 
                 parsedArgs.dataType, parsedArgs.dataScale, token);
         String outputFileName = parsedArgs.outName;
@@ -93,21 +93,20 @@ public class ExpressionUploader {
         return inputFile;
     }
     
-    public static ExpressionMatrix parse(String wsUrl, String wsName, File inputFile, 
+    public static ExpressionMatrix parse(String wsName, File inputFile, 
             String fmtType, String goName, boolean fillMissingValues, String dataType, 
             String dataScale, AuthToken token) throws Exception {
         String genomeRef = goName == null ? null : (wsName + "/" + goName);
-        return parse(wsUrl, inputFile, fmtType, genomeRef, fillMissingValues, dataType,
+        return parse(genomeRef, inputFile, fmtType, fillMissingValues, dataType,
                 dataScale, token);
     }
     
-    public static ExpressionMatrix parse(String wsUrl, File inputFile, 
-            String fmtType, String genomeRef, boolean fillMissingValues, String dataType, 
+    public static ExpressionMatrix parse(String genomeRef, File inputFile, 
+            String fmtType, boolean fillMissingValues, String dataType, 
             String dataScale, AuthToken token) throws Exception {
-        Map<String, Object> genome = null;
+        Genome genome = null;
         if (genomeRef != null) {
-            WorkspaceClient cl = getWsClient(wsUrl, token);
-            genome = MatrixUtil.loadGenomeFeatures(cl, genomeRef);
+            genome = MatrixUtil.loadGenomeFeatures(token, null, genomeRef);
         }
         String formatType = fmtType;
         if (formatType == null || formatType.trim().isEmpty())
@@ -133,12 +132,6 @@ public class ExpressionUploader {
         return matrix;
     }
     
-    private static WorkspaceClient getWsClient(String wsUrl, AuthToken token) throws Exception {
-        WorkspaceClient wsClient = new WorkspaceClient(new URL(wsUrl), token);
-        wsClient.setAuthAllowedForHttp(true);
-        return wsClient;
-    }
-
     private static void showUsage(CmdLineParser parser, String message) {
         showUsage(parser, message, System.err);
     }
@@ -300,9 +293,6 @@ public class ExpressionUploader {
     }
     
     public static class Args {
-        @Option(name="-ws", aliases={"--workspace_service_url"}, usage="Workspace service URL", metaVar="<ws-url>")
-        String wsUrl;
-        
         @Option(name="-wn", aliases={"--workspace_name"}, usage="Workspace name", metaVar="<ws-name>")
         String wsName;
 

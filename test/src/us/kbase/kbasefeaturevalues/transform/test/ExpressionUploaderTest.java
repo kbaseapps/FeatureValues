@@ -55,7 +55,7 @@ public class ExpressionUploaderTest {
         classPath.append(":" + searchForSubstring(cp, "jackson/jackson-databind-2.2.3.jar")); 
         classPath.append(":" + searchForSubstring(cp, "kbase/auth/kbase-auth-0.3.1.jar")); 
         classPath.append(":" + searchForSubstring(cp, "kbase/common/kbase-common-0.0.17.jar")); 
-        classPath.append(":" + searchForSubstring(cp, "kbase/workspace/WorkspaceClient-0.2.0.jar")); 
+        classPath.append(":" + searchForSubstring(cp, "kbase/workspace/WorkspaceClient-0.4.1.jar")); 
         classPath.append(":" + searchForSubstring(cp, "kohsuke/args4j-2.0.21.jar"));
         writeFileLines(Arrays.asList(
                 "#!/bin/bash",
@@ -130,7 +130,6 @@ public class ExpressionUploaderTest {
                 .withData(new UObject(genomeData)))));
         File exprTempFile = new File(workDir, "expression_output1.json");
         ProcessHelper.cmd("bash", uploadCLI.getAbsolutePath(), 
-                "--workspace_service_url", wsUrl, 
                 "--workspace_name", testWsName, 
                 "--genome_object_name", genomeObjName, 
                 "--input_directory", inputDir.getAbsolutePath(), 
@@ -170,7 +169,7 @@ public class ExpressionUploaderTest {
             File inputDir = new File("test/data/upload" + i);
             File inputFile = ExpressionUploader.findTabFile(inputDir);
             try {
-                ExpressionMatrix matrix = ExpressionUploader.parse(null, null, inputFile, "Simple", 
+                ExpressionMatrix matrix = ExpressionUploader.parse(null, inputFile, "Simple", 
                         null, false, null, null, null);
                 //System.out.println("Parsing expression matrix in " + inputFile + ":");
                 //System.out.println(matrix);
@@ -206,7 +205,7 @@ public class ExpressionUploaderTest {
         wscl.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(genomeObjName).withType("KBaseGenomes.Genome")
                 .withData(new UObject(genomeData)))));
-        ExpressionMatrix data = ExpressionUploader.parse(wsUrl, testWsName, inputFile, "Simple", 
+        ExpressionMatrix data = ExpressionUploader.parse(testWsName, inputFile, "Simple", 
                 genomeObjName, true, "Unknown", "1.0", token);
         wscl.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(expressionObjName)
