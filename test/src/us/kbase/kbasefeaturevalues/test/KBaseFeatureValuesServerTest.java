@@ -104,7 +104,7 @@ public class KBaseFeatureValuesServerTest {
         config = ini.get("KBaseFeatureValues");
         wsUrl = config.get("ws.url");
         wsClient = new WorkspaceClient(new URL(wsUrl), token);
-        wsClient.setAuthAllowedForHttp(true);
+        wsClient.setIsInsecureHttpConnectionAllowed(true);
         // These lines are necessary because we don't want to start linux syslog bridge service
         JsonServerSyslog.setStaticUseSyslog(false);
         JsonServerSyslog.setStaticMlogFile(new File(config.get("scratch"), "test.log").getAbsolutePath());
