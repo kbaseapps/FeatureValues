@@ -5,6 +5,8 @@ tooltip  : Upload an expression data matrix from a TSV file.
 screenshots :
     []
 
+icon: kb_expr-yellow.png
+
 method-suggestions :
     related :
         []
