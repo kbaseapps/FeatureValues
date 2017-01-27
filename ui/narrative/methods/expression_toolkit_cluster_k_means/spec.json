@@ -1,7 +1,7 @@
 {
   "ver": "0.0.1",
   "name" : "Expression Toolkit cluster k_means",
-  "authors" : [ ],
+  "authors" : [ "rsutormin", "msneddon", "psnovichkov", "marcin", "srividya22" ],
   "contact" : "help@kbase.us",
   "visble" : true,
   "categories" : ["active", "expression"],
