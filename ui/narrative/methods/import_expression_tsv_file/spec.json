@@ -1,6 +1,6 @@
 {
   "ver" : "1.0.0",
-  "authors" : [ ],
+  "authors" : [ "rsutormin", "msneddon", "psnovichkov", "marcin", "srividya22" ],
   "contact" : "help@kbase.us",
   "visble" : true,
   "categories" : [ "importers" ],
