@@ -4,7 +4,7 @@
   "authors" : [ "rsutormin", "msneddon", "psnovichkov", "marcin", "srividya22" ],
   "contact" : "help@kbase.us",
   "visble" : true,
-  "categories" : ["active"],
+  "categories" : ["active", "expression"],
   "app_type" : "viewer",
   "widgets" : {
     "input" : null,
