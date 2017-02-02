@@ -11,7 +11,7 @@ service-language:
     java
 
 module-version:
-    0.0.14
+    0.0.15
 
 owners:
     [rsutormin, msneddon, psnovichkov, marcin, srividya22]

@@ -25,6 +25,12 @@ RUN R -q -e 'if(!require(flashClust)) install.packages("flashClust", repos="http
 RUN R -q -e 'if(!require(fpc)) install.packages("fpc", dependencies=TRUE, repos="http://cran.us.r-project.org")'
 RUN R -q -e 'if(!require(cluster)) install.packages("cluster", repos="http://cran.us.r-project.org")'
 
+# Fix for 'ape' R-lib
+RUN cd /kb && \
+    wget http://cran.r-project.org/src/contrib/Archive/ape/ape_3.5.tar.gz && \
+    R -q -e 'if(!require(ape)) install.packages(pkgs="/kb/ape_3.5.tar.gz", type="source", repos=NULL)' && \
+    rm ape_3.5.tar.gz
+
 # -----------------------------------------
 
 COPY ./ /kb/module
