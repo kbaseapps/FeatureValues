@@ -20,10 +20,13 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import us.kbase.auth.AuthConfig;
 import us.kbase.auth.AuthToken;
+import us.kbase.auth.ConfigurableAuthService;
 import us.kbase.common.service.UObject;
 import us.kbase.common.utils.ProcessHelper;
 import us.kbase.kbasefeaturevalues.ExpressionMatrix;
+import us.kbase.kbasefeaturevalues.transform.ExpressionDownloader;
 import us.kbase.kbasefeaturevalues.transform.ExpressionUploader;
 import us.kbase.workspace.CreateWorkspaceParams;
 import us.kbase.workspace.ObjectSaveData;
@@ -36,33 +39,23 @@ public class ExpressionDownloaderTest {
     private static File workDir = null;
     private static String wsUrl = null;
     private static String testWsName = null;
-    private static File downloadCLI = null;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
         workDir = prepareWorkDir("downloader");
-        token = new AuthToken(System.getenv("KB_AUTH_TOKEN"));
         String configFilePath = System.getenv("KB_DEPLOYMENT_CONFIG");
         File deploy = new File(configFilePath);
         Ini ini = new Ini(deploy);
         Map<String, String> config = ini.get("KBaseFeatureValues");
+        // Token validation
+        String authUrl = config.get("auth-service-url");
+        String authUrlInsecure = config.get("auth-service-url-allow-insecure");
+        ConfigurableAuthService authService = new ConfigurableAuthService(
+                new AuthConfig().withKBaseAuthServerURL(new URL(authUrl))
+                .withAllowInsecureURLs("true".equals(authUrlInsecure)));
+        token = authService.validateToken(System.getenv("KB_AUTH_TOKEN"));
+        // Reading URLs from config
         wsUrl = config.get("ws.url");
-        downloadCLI = new File(workDir, "download.sh");
-        String[] cp = System.getProperty("java.class.path").split(":");
-        StringBuilder classPath = new StringBuilder(searchForSubstring(cp, "KBaseFeatureValues.jar"));
-        classPath.append(":" + searchForSubstring(cp, "jackson/jackson-annotations-2.2.3.jar")); 
-        classPath.append(":" + searchForSubstring(cp, "jackson/jackson-core-2.2.3.jar")); 
-        classPath.append(":" + searchForSubstring(cp, "jackson/jackson-databind-2.2.3.jar")); 
-        classPath.append(":" + searchForSubstring(cp, "kbase/auth/kbase-auth-0.3.1.jar")); 
-        classPath.append(":" + searchForSubstring(cp, "kbase/common/kbase-common-0.0.17.jar")); 
-        classPath.append(":" + searchForSubstring(cp, "kbase/workspace/WorkspaceClient-0.4.1.jar")); 
-        classPath.append(":" + searchForSubstring(cp, "kohsuke/args4j-2.0.21.jar"));
-        writeFileLines(Arrays.asList(
-                "#!/bin/bash",
-                "export KB_AUTH_TOKEN=\"" + token.toString() + "\"",
-                "java -cp " + classPath + " us.kbase.kbasefeaturevalues.transform.ExpressionDownloader $*"
-                ), downloadCLI);
-        ProcessHelper.cmd("chmod", "a+x", downloadCLI.getAbsolutePath()).exec(workDir);
         /// Temporary workspace
         String machineName = java.net.InetAddress.getLocalHost().getHostName();
         machineName = machineName == null ? "nowhere" : machineName.toLowerCase().replaceAll("[^\\dA-Za-z_]|\\s", "_");
@@ -115,12 +108,12 @@ public class ExpressionDownloaderTest {
                 new ObjectSaveData().withName(exprObjName).withType("KBaseFeatureValues.ExpressionMatrix")
                 .withData(new UObject(matrix)))));
         File tsvTempFile = new File(workDir, "matrix.tsv");
-        ProcessHelper.cmd("bash", downloadCLI.getAbsolutePath(), 
+        ExpressionDownloader.main(new String[] { 
                 "--workspace_service_url", wsUrl, 
                 "--workspace_name", testWsName, 
                 "--object_name", exprObjName, 
                 "--working_directory", tsvTempFile.getParent(), 
-                "--output_file_name", tsvTempFile.getName()).exec(workDir).getExitCode();
+                "--output_file_name", tsvTempFile.getName()});
         List<String> lines = readFileLines(tsvTempFile);
         Assert.assertEquals(2681, lines.size());
         Assert.assertEquals(12, lines.get(0).split(Pattern.quote("\t")).length);

@@ -46,7 +46,7 @@ public class ExpressionDownloader {
         String pwd = System.getProperty("test.pwd");
         String tokenString = System.getenv("KB_AUTH_TOKEN");
         AuthToken token = tokenString == null ? AuthService.login(user, pwd).getToken() :
-            new AuthToken(tokenString);
+            new AuthToken(tokenString, "<unknown>");
         String outputFileName = parsedArgs.outName;
         if (outputFileName == null)
             outputFileName = "matrix.tsv";
