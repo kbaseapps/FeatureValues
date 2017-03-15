@@ -62,8 +62,9 @@ import us.kbase.kbasefeaturevalues.SubmatrixStat;
 import us.kbase.kbasefeaturevalues.TsvFileToMatrixParams;
 import us.kbase.kbasefeaturevalues.transform.ExpressionUploader;
 import us.kbase.kbasefeaturevalues.transform.FeatureClustersDownloader;
+import us.kbase.auth.AuthConfig;
 import us.kbase.auth.AuthToken;
-import us.kbase.auth.TokenExpiredException;
+import us.kbase.auth.ConfigurableAuthService;
 import us.kbase.clusterservice.ClusterResults;
 import us.kbase.common.service.JsonServerSyslog;
 import us.kbase.common.service.RpcContext;
@@ -97,11 +98,19 @@ public class KBaseFeatureValuesServerTest {
     
     @BeforeClass
     public static void init() throws Exception {
-        token = new AuthToken(System.getenv("KB_AUTH_TOKEN"));
+        // Config loading
         String configFilePath = System.getenv("KB_DEPLOYMENT_CONFIG");
         File deploy = new File(configFilePath);
         Ini ini = new Ini(deploy);
         config = ini.get("KBaseFeatureValues");
+        // Token validation
+        String authUrl = config.get("auth-service-url");
+        String authUrlInsecure = config.get("auth-service-url-allow-insecure");
+        ConfigurableAuthService authService = new ConfigurableAuthService(
+                new AuthConfig().withKBaseAuthServerURL(new URL(authUrl))
+                .withAllowInsecureURLs("true".equals(authUrlInsecure)));
+        token = authService.validateToken(System.getenv("KB_AUTH_TOKEN"));
+        // Reading URLs from config
         wsUrl = config.get("ws.url");
         wsClient = new WorkspaceClient(new URL(wsUrl), token);
         wsClient.setIsInsecureHttpConnectionAllowed(true);
@@ -179,8 +188,7 @@ public class KBaseFeatureValuesServerTest {
     }
 
     private static BasicShockClient createShockClient() throws IOException,
-            InvalidShockUrlException, TokenExpiredException,
-            ShockHttpException, MalformedURLException {
+            InvalidShockUrlException, ShockHttpException, MalformedURLException {
         return new BasicShockClient(new URL(config.get("shock.url")), token);
     }
         
