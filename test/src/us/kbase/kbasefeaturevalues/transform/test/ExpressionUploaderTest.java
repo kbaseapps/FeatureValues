@@ -20,7 +20,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import us.kbase.auth.AuthConfig;
 import us.kbase.auth.AuthToken;
+import us.kbase.auth.ConfigurableAuthService;
 import us.kbase.common.service.UObject;
 import us.kbase.common.utils.ProcessHelper;
 import us.kbase.kbasefeaturevalues.ExpressionMatrix;
@@ -36,33 +38,23 @@ public class ExpressionUploaderTest {
     private static File workDir = null;
     private static String wsUrl = null;
     private static String testWsName = null;
-    private static File uploadCLI = null;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
         workDir = prepareWorkDir("uploader");
-        token = new AuthToken(System.getenv("KB_AUTH_TOKEN"));
         String configFilePath = System.getenv("KB_DEPLOYMENT_CONFIG");
         File deploy = new File(configFilePath);
         Ini ini = new Ini(deploy);
         Map<String, String> config = ini.get("KBaseFeatureValues");
+        // Token validation
+        String authUrl = config.get("auth-service-url");
+        String authUrlInsecure = config.get("auth-service-url-allow-insecure");
+        ConfigurableAuthService authService = new ConfigurableAuthService(
+                new AuthConfig().withKBaseAuthServerURL(new URL(authUrl))
+                .withAllowInsecureURLs("true".equals(authUrlInsecure)));
+        token = authService.validateToken(System.getenv("KB_AUTH_TOKEN"));
+        // Reading URLs from config
         wsUrl = config.get("ws.url");
-        uploadCLI = new File(workDir, "upload.sh");
-        String[] cp = System.getProperty("java.class.path").split(":");
-        StringBuilder classPath = new StringBuilder(searchForSubstring(cp, "KBaseFeatureValues.jar"));
-        classPath.append(":" + searchForSubstring(cp, "jackson/jackson-annotations-2.2.3.jar")); 
-        classPath.append(":" + searchForSubstring(cp, "jackson/jackson-core-2.2.3.jar")); 
-        classPath.append(":" + searchForSubstring(cp, "jackson/jackson-databind-2.2.3.jar")); 
-        classPath.append(":" + searchForSubstring(cp, "kbase/auth/kbase-auth-0.3.1.jar")); 
-        classPath.append(":" + searchForSubstring(cp, "kbase/common/kbase-common-0.0.17.jar")); 
-        classPath.append(":" + searchForSubstring(cp, "kbase/workspace/WorkspaceClient-0.4.1.jar")); 
-        classPath.append(":" + searchForSubstring(cp, "kohsuke/args4j-2.0.21.jar"));
-        writeFileLines(Arrays.asList(
-                "#!/bin/bash",
-                "export KB_AUTH_TOKEN=\"" + token.toString() + "\"",
-                "java -cp " + classPath + " us.kbase.kbasefeaturevalues.transform.ExpressionUploader $*"
-                ), uploadCLI);
-        ProcessHelper.cmd("chmod", "a+x", uploadCLI.getAbsolutePath()).exec(workDir);
         /// Temporary workspace
         String machineName = java.net.InetAddress.getLocalHost().getHostName();
         machineName = machineName == null ? "nowhere" : machineName.toLowerCase().replaceAll("[^\\dA-Za-z_]|\\s", "_");
@@ -129,14 +121,14 @@ public class ExpressionUploaderTest {
                 new ObjectSaveData().withName(genomeObjName).withType("KBaseGenomes.Genome")
                 .withData(new UObject(genomeData)))));
         File exprTempFile = new File(workDir, "expression_output1.json");
-        ProcessHelper.cmd("bash", uploadCLI.getAbsolutePath(), 
+        ExpressionUploader.main(new String[] { 
                 "--workspace_name", testWsName, 
                 "--genome_object_name", genomeObjName, 
                 "--input_directory", inputDir.getAbsolutePath(), 
                 "--fill_missing_values",
                 "--working_directory", exprTempFile.getParentFile().getAbsolutePath(), 
                 "--output_file_name", exprTempFile.getName(),
-                "--format_type", "MO").exec(workDir);
+                "--format_type", "MO"});
         ExpressionMatrix data = UObject.getMapper().readValue(exprTempFile, ExpressionMatrix.class);
         wscl.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(exprObjName).withType("KBaseFeatureValues.ExpressionMatrix")
@@ -147,13 +139,13 @@ public class ExpressionUploaderTest {
     public void testUploader2() throws Exception {
         File inputDir = new File("test/data/upload2");
         File exprTempFile = new File(workDir, "expression_output2.json");
-        ProcessHelper.cmd("bash", uploadCLI.getAbsolutePath(), 
+        ExpressionUploader.main(new String[] { 
                 "--input_directory", inputDir.getAbsolutePath(), 
                 "--working_directory", exprTempFile.getParentFile().getAbsolutePath(), 
                 "--output_file_name", exprTempFile.getName(),
                 "--format_type", "Simple",
                 "--data_type", "log-ratio2",
-                "--data_scale", "2.0").exec(workDir);
+                "--data_scale", "2.0"});
         ExpressionMatrix matrix = UObject.getMapper().readValue(exprTempFile, ExpressionMatrix.class);
         Assert.assertNotNull(matrix.getData());
         Assert.assertEquals(11, matrix.getData().getColIds().size());

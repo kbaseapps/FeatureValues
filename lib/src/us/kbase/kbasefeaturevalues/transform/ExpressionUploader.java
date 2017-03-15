@@ -53,7 +53,7 @@ public class ExpressionUploader {
             String pwd = System.getProperty("test.pwd");
             String tokenString = System.getenv("KB_AUTH_TOKEN");
             token = tokenString == null ? AuthService.login(user, pwd).getToken() :
-                new AuthToken(tokenString);
+                new AuthToken(tokenString, "<unknown>");
         }
         File inputFile = findTabFile(parsedArgs.inDir);
         ExpressionMatrix matrix = parse(parsedArgs.wsName, inputFile, 
