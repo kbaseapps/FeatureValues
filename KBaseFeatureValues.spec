@@ -117,9 +117,9 @@ module KBaseFeatureValues {
 
 
     /*
-        A wrapper around a FloatMatrix2D designed for simple matricies of Expression
-        data.  Rows map to features, and columns map to conditions.  The data type 
-        includes some information about normalization factors and contains
+        A wrapper around a FloatMatrix2D designed for simple matricies of Differential
+        Expression data.  Rows map to features, and columns map to conditions.  The 
+        data type includes some information about normalization factors and contains
         mappings from row ids to features and col ids to conditions.
 
         description - short optional description of the dataset
