@@ -83,9 +83,11 @@ module KBaseFeatureValues {
         data - contains values for (feature,condition) pairs, where 
             features correspond to rows and conditions are columns
             (ie data.values[feature][condition])
+        diff_expr_matrix_ref - added to connect filtered expression matrix to differential expression matrix
+            used for filtering
 
         @optional description row_normalization col_normalization
-        @optional genome_ref feature_mapping conditionset_ref condition_mapping report
+        @optional genome_ref feature_mapping conditionset_ref condition_mapping report diff_expr_matrix_ref
 
         @metadata ws type
         @metadata ws scale
@@ -111,6 +113,7 @@ module KBaseFeatureValues {
         ws_conditionset_id conditionset_ref;
         mapping<string, string> condition_mapping;
 
+        string        diff_expr_matrix_ref;
         FloatMatrix2D data;
         AnalysisReport report;
     } ExpressionMatrix;
