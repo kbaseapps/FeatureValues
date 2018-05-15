@@ -68,6 +68,12 @@ module KBaseFeatureValues {
         list<string> errors;
     } AnalysisReport;
 
+/*
+   The workspace id for a single end or paired end reads object
+   @id ws KBaseFeatureValues.DifferentialExpressionMatrix
+   */
+   typedef string differential_expression_matrix_ref;
+
     /*
         A wrapper around a FloatMatrix2D designed for simple matricies of Expression
         data.  Rows map to features, and columns map to conditions.  The data type 
@@ -113,7 +119,8 @@ module KBaseFeatureValues {
         ws_conditionset_id conditionset_ref;
         mapping<string, string> condition_mapping;
 
-        string        diff_expr_matrix_ref;
+        differential_expression_matrix_ref  diff_expr_matrix_ref;
+
         FloatMatrix2D data;
         AnalysisReport report;
     } ExpressionMatrix;
