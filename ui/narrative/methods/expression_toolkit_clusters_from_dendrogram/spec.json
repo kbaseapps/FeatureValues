@@ -1,6 +1,6 @@
 {
   "ver": "0.0.1",
-  "name" : "Expression Toolkit clusters from dendrogram",
+  "name" : "Clusters from Dendrogram",
   "authors" : [ "rsutormin", "msneddon", "psnovichkov", "marcin", "srividya22" ],
   "contact" : "help@kbase.us",
   "visble" : true,

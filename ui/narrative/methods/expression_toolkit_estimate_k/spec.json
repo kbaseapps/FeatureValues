@@ -1,6 +1,6 @@
 {
   "ver": "0.0.1",
-  "name" : "Expression Toolkit estimate k",
+  "name" : "Estimate k for clustering",
   "authors" : [ "rsutormin", "msneddon", "psnovichkov", "marcin", "srividya22" ],
   "contact" : "help@kbase.us",
   "visble" : true,
@@ -10,14 +10,14 @@
     "output" : "kbaseExpressionEstimateK"
   },
   "parameters" : [ {
-    "id" : "input_expression_matrix",
+    "id" : "input_matrix",
     "optional" : false,
     "advanced" : false,
     "allow_multiple" : false,
     "default_values" : [ "" ],
     "field_type" : "text",
     "text_options" : {
-      "valid_ws_types" : [ "KBaseFeatureValues.ExpressionMatrix" ]
+      "valid_ws_types" : [ "KBaseFeatureValues.ExpressionMatrix", "KBaseMatrices" ]
     }
   }, {
     "id" : "output_estimated_k",
@@ -135,7 +135,7 @@
       "method" : "estimate_k_new",
       "input_mapping" : [
         {
-          "input_parameter": "input_expression_matrix",
+          "input_parameter": "input_matrix",
           "target_property": "input_matrix",
           "target_type_transform": "ref"
         },
@@ -178,7 +178,7 @@
       ],
       "output_mapping" : [
         {
-          "input_parameter": "input_expression_matrix",
+          "input_parameter": "input_matrix",
           "target_property": "expressionMatrix"
         },
         {

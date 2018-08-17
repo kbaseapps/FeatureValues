@@ -1,10 +1,10 @@
 #
 # Define basic display information
 #
-name     : Cluster Expression Data - Hierarchical
+name     : Cluster Data - Hierarchical
 
 tooltip  : |
-    Perform hierarchical clustering to group gene expression data into a dendrogram.
+    Perform hierarchical clustering to group matrix data into a dendrogram.
 
 screenshots :
     []
@@ -25,13 +25,13 @@ method-suggestions :
 # Configure the display and description of the parameters
 #
 parameters :
-    input_expression_matrix:
+    input_matrix:
         ui-name : |
-            Expression Matrix
+            Data Matrix
         short-hint : |
-            Select the Expression Matrix to use for hierarchical clustering
+            Select the Data Matrix to use for hierarchical clustering
         long-hint  : |
-            Choose an Expression Matrix from your Data Panel to use with this method. You can upload an Expression Matrix into your Narrative by clicking the <i>Add Data</i> button and selecting the <i>Import</i> tab.
+            Choose an Data Matrix from your Data Panel to use with this method. You can upload an Matrix into your Narrative by clicking the <i>Add Data</i> button and selecting the <i>Import</i> tab.
 
     feature_height_cutoff:
         ui-name : |
@@ -61,7 +61,7 @@ parameters :
 
 
 description : |
-    <p>This method organizes gene expression data into a dendrogram (cluster tree) by using distance and linkage criteria to analyze dissimilarity between observations in the data and sorting these observations into the branches of the tree. Agglomerative clustering is used to build a hierarchy of clusters by progressively merging individual clusters into groups. This is useful for understanding the similarities and dissimilarities between sets of data based on their grouping patterns throughout the cluster tree.</p>
+    <p>This method organizes matrix data into a dendrogram (cluster tree) by using distance and linkage criteria to analyze dissimilarity between observations in the data and sorting these observations into the branches of the tree. Agglomerative clustering is used to build a hierarchy of clusters by progressively merging individual clusters into groups. This is useful for understanding the similarities and dissimilarities between sets of data based on their grouping patterns throughout the cluster tree.</p>
 
     <p>Begin by selecting or importing both the expression dataset to analyze and the genome associated with the expression dataset using the Add Data button. Provide a name for the output set of clusters. Define the height to cut the branches of the tree, set the parameters for computing the dissimilarity between sets, and select the hierarchical clustering algorithm to use for the analysis.</p>
     

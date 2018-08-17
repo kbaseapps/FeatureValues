@@ -1,6 +1,6 @@
 {
   "ver": "0.0.1",
-  "name" : "Expression Toolkit cluster hierarchical",
+  "name" : "Cluster Hierarchical",
   "authors" : [ "rsutormin", "msneddon", "psnovichkov", "marcin", "srividya22" ],
   "contact" : "help@kbase.us",
   "visble" : true,
@@ -10,14 +10,14 @@
     "output" : "kbaseExpressionFeatureClusters"
   },
   "parameters" : [ {
-    "id" : "input_expression_matrix",
+    "id" : "input_matrix",
     "optional" : false,
     "advanced" : false,
     "allow_multiple" : false,
     "default_values" : [ "" ],
     "field_type" : "text",
     "text_options" : {
-      "valid_ws_types" : [ "KBaseFeatureValues.ExpressionMatrix" ]
+      "valid_ws_types" : [ "KBaseFeatureValues.ExpressionMatrix", "KBaseMatrices" ]
     }
   },{
     "id" : "feature_height_cutoff",
@@ -89,7 +89,7 @@
           "target_property": "feature_height_cutoff"
         },
         {
-          "input_parameter": "input_expression_matrix",
+          "input_parameter": "input_matrix",
           "target_property": "input_data",
           "target_type_transform": "ref"
         },

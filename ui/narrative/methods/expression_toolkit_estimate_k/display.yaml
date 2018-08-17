@@ -25,13 +25,13 @@ method-suggestions :
 # Configure the display and description of the parameters
 #
 parameters :
-    input_expression_matrix:
+    input_matrix:
         ui-name : |
-            Expression Matrix
+            Data Matrix
         short-hint : |
-            Select the Expression Matrix to use for estimating value of k
+            Select the Data Matrix to use for estimating value of k
         long-hint  : |
-            Predict reasonable values of k for the selected Expression Matrix. You can upload an Expression Matrix into your Narrative by clicking the <i>Add Data</i> button and selecting the <i>Import</i> tab.
+            Predict reasonable values of k for the selected Data Matrix. You can upload an Matrix into your Narrative by clicking the <i>Add Data</i> button and selecting the <i>Import</i> tab.
 
     output_estimated_k :
         ui-name : |
@@ -78,7 +78,7 @@ parameters :
 
 
 description : |
-    <p>This method generates reasonable numbers of clusters (k) for use in the Cluster Expression Data - K-Means method. Reasonable values of k are computed by minimizing both the number of clusters (k) and the average variance between the clusters. Begin by selecting or importing an expression dataset to analyze using the Add Data button. Provide a name for the output estimate, a valid number for the maximum number of clusters, and select a criterion for running estimate k. Run the method to generate a graph with peaks that represent reasonable values for k calculated by the algorithm.</p>
+    <p>This method generates reasonable numbers of clusters (k) for use in the Cluster Data - K-Means method. Reasonable values of k are computed by minimizing both the number of clusters (k) and the average variance between the clusters. Begin by selecting or importing an expression dataset to analyze using the Add Data button. Provide a name for the output estimate, a valid number for the maximum number of clusters, and select a criterion for running estimate k. Run the method to generate a graph with peaks that represent reasonable values for k calculated by the algorithm.</p>
     
     <p>The input is a .tsv file with "gene-id" listed in the A1 cell, the gene ids listed in the A column, the sample/conditions identifiers in the 1 row, and expression values that correspond to the gene-ids and sample throughout. For a comprehensive guide to formatting your expression data for import into KBase, see the <a href="http://kbase.us/data-upload-download-guide/expression-matrix/">Data Upload/Download Guide</a>.</p>    
     
