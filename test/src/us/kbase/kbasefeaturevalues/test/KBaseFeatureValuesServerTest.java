@@ -35,6 +35,11 @@ import org.junit.Test;
 import datafileutil.DataFileUtilClient;
 import datafileutil.FileToShockParams;
 
+import genomeannotationapi.GenomeAnnotationAPIServiceClient;
+import genomeannotationapi.SaveOneGenomeParamsV1;
+
+import kbasegenomes.Genome;
+
 import us.kbase.kbasefeaturevalues.BuildFeatureSetParams;
 import us.kbase.kbasefeaturevalues.ClusterHierarchicalParams;
 import us.kbase.kbasefeaturevalues.ClusterKMeansParams;
@@ -88,6 +93,7 @@ public class KBaseFeatureValuesServerTest {
     private static AuthToken token = null;
     private static Map<String, String> config = null;
     private static WorkspaceClient wsClient = null;
+    private static GenomeAnnotationAPIServiceClient gaapi = null;
     private static String wsUrl = null;
     private static String wsName = null;
     private static KBaseFeatureValuesServer impl = null;
@@ -114,6 +120,10 @@ public class KBaseFeatureValuesServerTest {
         wsUrl = config.get("ws.url");
         wsClient = new WorkspaceClient(new URL(wsUrl), token);
         wsClient.setIsInsecureHttpConnectionAllowed(true);
+        URL swUrl = new URL(config.get("service.wizard.url"));
+        gaapi = new GenomeAnnotationAPIServiceClient(swUrl, token);
+        gaapi.setIsInsecureHttpConnectionAllowed(true);
+
         // These lines are necessary because we don't want to start linux syslog bridge service
         JsonServerSyslog.setStaticUseSyslog(false);
         JsonServerSyslog.setStaticMlogFile(new File(config.get("scratch"), "test.log").getAbsolutePath());
@@ -135,13 +145,16 @@ public class KBaseFeatureValuesServerTest {
         wsClient.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(contigsetObjName).withType("KBaseGenomes.ContigSet")
                 .withData(new UObject(contigsetData)))));
-        @SuppressWarnings("unchecked")
-        Map<String, Object> genomeData = UObject.getMapper().readValue(new File(inputDir,
-                "Desulfovibrio_vulgaris_Hildenborough_reduced_genome.json"), Map.class);
-        genomeData.put("contigset_ref", testWsName + "/" + contigsetObjName);
-        wsClient.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
-                new ObjectSaveData().withName(genomeObjName).withType("KBaseGenomes.Genome")
-                .withData(new UObject(genomeData)))));
+        //@SuppressWarnings("unchecked")
+        //Map<String, Object> genomeData = UObject.getMapper().readValue(new File(inputDir,
+        //        "Desulfovibrio_vulgaris_Hildenborough_reduced_genome.json"), Map.class);
+        //genomeData.put("contigset_ref", testWsName + "/" + contigsetObjName);
+        //Genome genome = UObject.getMapper().convertValue(genomeData, Genome.class);
+        Genome genome = UObject.getMapper().readValue(new File(inputDir,
+                        "Desulfovibrio_vulgaris_Hildenborough_reduced_genome.json"), Genome.class);
+        genome.setContigsetRef(testWsName + "/" + contigsetObjName);
+        gaapi.saveOneGenomeV1(new SaveOneGenomeParamsV1().withWorkspace(testWsName).withName(genomeObjName)
+                .withData(genome));
         ExpressionMatrix data = ExpressionUploader.parse(testWsName, inputFile, "MO", 
                 genomeObjName, true, null, null, token);
         wsClient.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
@@ -493,13 +506,19 @@ public class KBaseFeatureValuesServerTest {
                 new ObjectSaveData().withName(contigsetObjName).withType("KBaseGenomes.ContigSet")
                 .withData(new UObject(contigsetData)))));
         is = new GZIPInputStream(new FileInputStream(new File(dir, "Rhodobacter.genome.json.gz")));
-        Map<String, Object> genomeData = UObject.getMapper().readValue(is, Map.class);
+        /*Map<String, Object> genomeData = UObject.getMapper().readValue(is, Map.class);
         is.close();
         String genomeObjName = "submatrix_contigset.1";
         genomeData.put("contigset_ref", testWsName + "/" + contigsetObjName);
         getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(genomeObjName).withType("KBaseGenomes.Genome")
-                .withData(new UObject(genomeData)))));
+                .withData(new UObject(genomeData)))));*/
+        String genomeObjName = "submatrix_contigset.1";
+        Genome genome = UObject.getMapper().readValue(is, Genome.class);
+        is.close();
+        genome.setContigsetRef(testWsName + "/" + contigsetObjName);
+        gaapi.saveOneGenomeV1(new SaveOneGenomeParamsV1().withWorkspace(testWsName).withName(genomeObjName)
+                .withData(genome));
         ExpressionMatrix data = UObject.getMapper().readValue(new File(dir, "NewFakeData2.3.json"), ExpressionMatrix.class);
         data.setGenomeRef(testWsName + "/" + genomeObjName);
         String matrixId = "submatrix_matrix.1";

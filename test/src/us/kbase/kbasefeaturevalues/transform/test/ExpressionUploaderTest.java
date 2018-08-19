@@ -13,8 +13,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
+import genomeannotationapi.GenomeAnnotationAPIServiceClient;
+import genomeannotationapi.SaveOneGenomeParamsV1;
 import junit.framework.Assert;
 
+import kbasegenomes.Genome;
 import org.ini4j.Ini;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -38,6 +41,7 @@ public class ExpressionUploaderTest {
     private static File workDir = null;
     private static String wsUrl = null;
     private static String testWsName = null;
+    private static GenomeAnnotationAPIServiceClient gaapi = null;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -60,6 +64,9 @@ public class ExpressionUploaderTest {
         machineName = machineName == null ? "nowhere" : machineName.toLowerCase().replaceAll("[^\\dA-Za-z_]|\\s", "_");
         long suf = System.currentTimeMillis();
         WorkspaceClient wscl = getWsClient();
+        URL swUrl = new URL(config.get("service.wizard.url"));
+        gaapi = new GenomeAnnotationAPIServiceClient(swUrl, token);
+        gaapi.setIsInsecureHttpConnectionAllowed(true);
         Exception error = null;
         for (int i = 0; i < 5; i++) {
             testWsName = "test_feature_values_" + machineName + "_" + suf;
@@ -114,12 +121,11 @@ public class ExpressionUploaderTest {
         wscl.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(contigsetObjName).withType("KBaseGenomes.ContigSet")
                 .withData(new UObject(contigsetData)))));
-        Map<String, Object> genomeData = UObject.getMapper().readValue(new File(inputDir,
-                "Desulfovibrio_vulgaris_Hildenborough_reduced_genome.json"), Map.class);
-        genomeData.put("contigset_ref", testWsName + "/" + contigsetObjName);
-        wscl.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
-                new ObjectSaveData().withName(genomeObjName).withType("KBaseGenomes.Genome")
-                .withData(new UObject(genomeData)))));
+        Genome genome = UObject.getMapper().readValue(new File(inputDir,
+                "Desulfovibrio_vulgaris_Hildenborough_reduced_genome.json"), Genome.class);
+        genome.setContigsetRef(testWsName + "/" + contigsetObjName);
+        gaapi.saveOneGenomeV1(new SaveOneGenomeParamsV1().withWorkspace(testWsName).withName(genomeObjName)
+                .withData(genome));
         File exprTempFile = new File(workDir, "expression_output1.json");
         ExpressionUploader.main(new String[] { 
                 "--workspace_name", testWsName, 
@@ -191,12 +197,11 @@ public class ExpressionUploaderTest {
         wscl.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(contigsetObjName).withType("KBaseGenomes.ContigSet")
                 .withData(new UObject(contigsetData)))));
-        Map<String, Object> genomeData = UObject.getMapper().readValue(new GZIPInputStream(
-                new FileInputStream(new File(inputDir, "kb_g.1870.genome.json.gz"))), Map.class);
-        genomeData.put("contigset_ref", testWsName + "/" + contigsetObjName);
-        wscl.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
-                new ObjectSaveData().withName(genomeObjName).withType("KBaseGenomes.Genome")
-                .withData(new UObject(genomeData)))));
+        Genome genome = UObject.getMapper().readValue(new GZIPInputStream(
+                new FileInputStream(new File(inputDir, "kb_g.1870.genome.json.gz"))), Genome.class);
+        genome.setContigsetRef(testWsName + "/" + contigsetObjName);
+        gaapi.saveOneGenomeV1(new SaveOneGenomeParamsV1().withWorkspace(testWsName).withName(genomeObjName)
+                .withData(genome));
         ExpressionMatrix data = ExpressionUploader.parse(testWsName, inputFile, "Simple", 
                 genomeObjName, true, "Unknown", "1.0", token);
         wscl.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
