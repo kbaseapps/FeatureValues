@@ -329,7 +329,7 @@ public class KBaseFeatureValuesImpl {
                 elements.putAll(baseElements);
         }
         GenomeDataV1 genomeObj = MatrixUtil.loadGenome(token, null, params.getGenome(), 
-                Collections.<String>emptyList(), Arrays.asList("id"));
+                Collections.<String>emptyList(), Collections.<String>emptyList());
         Tuple11<Long, String, String, String, Long, String, Long, String, String, Long, Map<String,String>> info = 
                 genomeObj.getInfo();
         String genomeRef = info.getE7() + "/" + info.getE1() + "/" + info.getE5();
