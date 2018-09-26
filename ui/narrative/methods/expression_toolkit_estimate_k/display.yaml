@@ -46,7 +46,7 @@ parameters :
         ui-name : Min. Number of Clusters
         short-hint : Minimum number of clusters
         long-hint  : The smallest number of clusters for estimating potential values of k.
-        
+
     max_k :
         ui-name : Max. Number of Clusters
         short-hint : Maximum number of clusters
@@ -69,7 +69,7 @@ parameters :
 
     diss:
         ui-name : diss
-        short-hint : If checked, data will be considered as  dissimilarity matrix 
+        short-hint : If checked, data will be considered as  dissimilarity matrix
         long-hint  : Considering data as a dissimilarity matrix means that the potential number of clusters will be larger than one. Otherwise, the data will beconsidered as a matrix of observations by variables.
     random_seed :
         ui-name : Random Seed
@@ -79,13 +79,18 @@ parameters :
 
 description : |
     <p>This method generates reasonable numbers of clusters (k) for use in the Cluster Expression Data - K-Means method. Reasonable values of k are computed by minimizing both the number of clusters (k) and the average variance between the clusters. Begin by selecting or importing an expression dataset to analyze using the Add Data button. Provide a name for the output estimate, a valid number for the maximum number of clusters, and select a criterion for running estimate k. Run the method to generate a graph with peaks that represent reasonable values for k calculated by the algorithm.</p>
-    
-    <p>The input is a .tsv file with "gene-id" listed in the A1 cell, the gene ids listed in the A column, the sample/conditions identifiers in the 1 row, and expression values that correspond to the gene-ids and sample throughout. For a comprehensive guide to formatting your expression data for import into KBase, see the <a href="http://kbase.us/data-upload-download-guide/expression-matrix/">Data Upload/Download Guide</a>.</p>    
-    
+
+    <p>The input is a .tsv file with "gene-id" listed in the A1 cell, the gene ids listed in the A column, the sample/conditions identifiers in the 1 row, and expression values that correspond to the gene-ids and sample throughout. For a comprehensive guide to formatting your expression data for import into KBase, see the <a href="http://kbase.us/data-upload-download-guide/expression-matrix/">Data Upload/Download Guide</a>.</p>
+
     <p>This method is based on the <a href="http://www.inside-r.org/packages/cran/fpc/docs/pamk">fpc package for R</a>.</p>
-    
+
     <p><strong>Team members who developed & deployed algorithm in KBase:</strong>
     Paramvir Dehal, Roman Sutormin, Michael Sneddon, Srividya Ramakrishnan, Pavel Novichkov, Keith Keller.</p>
-    
+
     <p>For questions, <a href="mailto:help@kbase.us">e-mail help@kbase.us</a></p>
 
+publications :
+    -
+        display-text: |
+            Arkin AP, Cottingham RW, Henry CS, Harris NL, Stevens RL, Maslov S, et al. KBase: The United States Department of Energy Systems Biology Knowledgebase. Nature Biotechnology. 2018;36: 566. doi: 10.1038/nbt.4163
+        link: https://www.nature.com/articles/nbt.4163

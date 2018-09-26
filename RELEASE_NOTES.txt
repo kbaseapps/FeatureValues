@@ -1,9 +1,17 @@
 OVERVIEW
 -----------------------------------------
-This KBase service provides a set of methods for manipulation 
+This KBase service provides a set of methods for manipulation
 and visualization of expression values organized as two-
-dimensional matrix and assigned to genome features on one 
+dimensional matrix and assigned to genome features on one
 dimension and to different sorts conditions on second dimension.
+
+VERSION: 0.0.18
+------------------------------------------
+NEW FEATURES:
+- none
+
+UPDATED FEATURES / MAJOR BUG FIXES:
+- Added KBase paper citation to all display.yaml files
 
 VERSION: 0.0.17 (Released 4/11/2018)
 ------------------------------------------
@@ -19,7 +27,7 @@ NEW FEATURES:
 - none
 
 UPDATED FEATURES / MAJOR BUG FIXES:
-- Module is wrapped by KBase SDK 
+- Module is wrapped by KBase SDK
 
 
 
@@ -31,7 +39,7 @@ NEW FEATURES:
 UPDATED FEATURES / MAJOR BUG FIXES:
 - Fix for bug in computing averages across all data when getting
 stats for a submatrix.
-- Fix for null pointer exception during mapping row IDs to 
+- Fix for null pointer exception during mapping row IDs to
 aliases in expression matrix uploader.
 
 
@@ -42,15 +50,15 @@ NEW FEATURES:
 - none
 
 UPDATED FEATURES / MAJOR BUG FIXES:
-- Parameter max_items was added for hierarchical clustering 
+- Parameter max_items was added for hierarchical clustering
 allowing to slice top number of rows according to standard
 deviation for rows
-- Fix for misuse of correlation method in hierarchical 
+- Fix for misuse of correlation method in hierarchical
 clustering
 - Fix for bug in hierarchical clustering with limited max_items
 - Additional feature_ids parameter added for build_feature_set
 method
-- Fix for bug in estimate_k_new method in case min_k parameter 
+- Fix for bug in estimate_k_new method in case min_k parameter
 more than 2.
 
 
@@ -73,8 +81,8 @@ NEW FEATURES:
 - none
 
 UPDATED FEATURES / MAJOR BUG FIXES:
-- Fix for bug in FloatMatrix2DUtil.geRowstPairwiseComparison 
-method related to mistaken pairwise comparison for columns 
+- Fix for bug in FloatMatrix2DUtil.geRowstPairwiseComparison
+method related to mistaken pairwise comparison for columns
 instead of rows in sub-matrix
 
 
@@ -86,7 +94,7 @@ NEW FEATURES:
 
 UPDATED FEATURES / MAJOR BUG FIXES:
 - Fix for null pointer exception in buildRowDescriptors method
-- ClusterSet type was renamed into FeatureClusters by data team 
+- ClusterSet type was renamed into FeatureClusters by data team
 request
 
 
@@ -94,10 +102,10 @@ request
 VERSION: 0.0.3a (Released 8/11/2015)
 ------------------------------------------
 NEW FEATURES:
-- Downloaders for expression matrix and cluster set objects were 
+- Downloaders for expression matrix and cluster set objects were
 added
 - A new faster implementation of estimate_k method was added
-- Fast version of hierarchical clustering ("flashClust" R-lib) was 
+- Fast version of hierarchical clustering ("flashClust" R-lib) was
 added
 
 UPDATED FEATURES / MAJOR BUG FIXES:
@@ -112,13 +120,13 @@ NEW FEATURES:
 - Iteration over data in data API was redesigned
 - Method building feature set was added
 - Pairwise correlation is implmeneted in statistics repots
-- Max_items parameter was exposed for k-means. Type for 
+- Max_items parameter was exposed for k-means. Type for
 output of estimate_k method was changed
 
 UPDATED FEATURES / MAJOR BUG FIXES:
-- Fix for bug in hierarchical clustering related to clusters with 1 
+- Fix for bug in hierarchical clustering related to clusters with 1
 gene
-- Fix in R code for estimate_k for case of data with row number 
+- Fix in R code for estimate_k for case of data with row number
 more than max_items
 
 
@@ -126,22 +134,22 @@ more than max_items
 VERSION: 0.0.2 (Released 7/28/2015)
 ------------------------------------------
 NEW FEATURES:
-- More parameters were added for cluster_k_means and estimate_k 
+- More parameters were added for cluster_k_means and estimate_k
 methods in math-layer
-- Data API methods were added in spec-file in order to get access 
+- Data API methods were added in spec-file in order to get access
 to data from Narrative UI
 - Cluster quality calculation was added in math layer (R-code)
 - Cluster type was transformed into structure
-- Cluster quality properties and advanced parameters for k-means 
+- Cluster quality properties and advanced parameters for k-means
 related functions are now fully supported in API
 - One data API method (get_matrix_descriptor) is implemented
-- More parameters were added in estimate_k and cluster_k_means 
+- More parameters were added in estimate_k and cluster_k_means
 functions
-- Method 'reconnect_matrix_to_genome' was added. Method 
+- Method 'reconnect_matrix_to_genome' was added. Method
 'correct_matrix' was implemented for 'missing' type
 - Implemnetation of getMatrixUi added
 - Methods to calulcate statics on the FloatMatrix2D added
-- Methods getMatrixRowsStat and getMatrixColumnsStat 
+- Methods getMatrixRowsStat and getMatrixColumnsStat
 implemented
 
 UPDATED FEATURES / MAJOR BUG FIXES:
@@ -157,8 +165,8 @@ NEW FEATURES:
 - Spec-file with service module and types was designed
 - Java service code was initialized with service deployment process
 targeted for Jetty
-- So called Math-layer (or internal ClusterService) with k-mean 
-clustering and k-estimation methods was implemented in R as 
+- So called Math-layer (or internal ClusterService) with k-mean
+clustering and k-estimation methods was implemented in R as
 AWE-worker scripts
 - Status function was added to service API
 - Integration with AWE was covered in integration test
