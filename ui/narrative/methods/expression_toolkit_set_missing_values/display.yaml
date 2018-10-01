@@ -8,7 +8,7 @@ tooltip  : |
 
 screenshots :
     []
-    
+
 icon: kb_expr-yellow.png
 
 #
@@ -46,6 +46,12 @@ description : |
     <p>This method imputes the missing values of features for all of the samples or conditions contained within an Expression Matrix. The missing values are calculated by taking a mean of the gene expression values for all the samples in the specific rows that are missing gene expression values.</p>
 
     <p>The input is a .tsv file with "gene-id" listed in the A1 cell, the gene ids listed in the A column, the sample/conditions identifiers in the 1 row, and expression values that correspond to the gene-ids and sample throughout. For a comprehensive guide to formatting your expression data for import into KBase, see the <a href="http://kbase.us/data-upload-download-guide/expression-matrix/">Data Upload/Download Guide</a>.</p>
-   
+
     <p><strong>Team members who developed & deployed algorithm in KBase:</strong>
     Paramvir Dehal, Roman Sutormin, Michael Sneddon, Srividya Ramakrishnan, Pavel Novichkov, Keith Keller.</p>
+
+publications :
+    -
+        display-text: |
+            Arkin AP, Cottingham RW, Henry CS, Harris NL, Stevens RL, Maslov S, et al. KBase: The United States Department of Energy Systems Biology Knowledgebase. Nature Biotechnology. 2018;36: 566. doi: 10.1038/nbt.4163
+        link: https://www.nature.com/articles/nbt.4163
