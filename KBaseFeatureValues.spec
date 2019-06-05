@@ -68,6 +68,12 @@ module KBaseFeatureValues {
         list<string> errors;
     } AnalysisReport;
 
+/*
+   The workspace id for a single end or paired end reads object
+   @id ws KBaseFeatureValues.DifferentialExpressionMatrix
+   */
+   typedef string differential_expression_matrix_ref;
+
     /*
         A wrapper around a FloatMatrix2D designed for simple matricies of Expression
         data.  Rows map to features, and columns map to conditions.  The data type 
@@ -83,9 +89,11 @@ module KBaseFeatureValues {
         data - contains values for (feature,condition) pairs, where 
             features correspond to rows and conditions are columns
             (ie data.values[feature][condition])
+        diff_expr_matrix_ref - added to connect filtered expression matrix to differential expression matrix
+            used for filtering
 
         @optional description row_normalization col_normalization
-        @optional genome_ref feature_mapping conditionset_ref condition_mapping report
+        @optional genome_ref feature_mapping conditionset_ref condition_mapping report diff_expr_matrix_ref
 
         @metadata ws type
         @metadata ws scale
@@ -110,6 +118,8 @@ module KBaseFeatureValues {
 
         ws_conditionset_id conditionset_ref;
         mapping<string, string> condition_mapping;
+
+        differential_expression_matrix_ref  diff_expr_matrix_ref;
 
         FloatMatrix2D data;
         AnalysisReport report;
