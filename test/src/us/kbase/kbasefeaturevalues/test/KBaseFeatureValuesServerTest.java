@@ -490,7 +490,7 @@ public class KBaseFeatureValuesServerTest {
         is.close();
         String assemblyObjName = "submatrix_assembly.1";
         getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
-                new ObjectSaveData().withName(assemblyObjName).withType("KBaseGenomes.Assembly")
+                new ObjectSaveData().withName(assemblyObjName).withType("KBaseGenomeAnnotations.Assembly")
                 .withData(new UObject(assemblyData)))));
         is = new GZIPInputStream(new FileInputStream(new File(dir, "Rhodobacter.genome.json.gz")));
         Map<String, Object> genomeData = UObject.getMapper().readValue(is, Map.class);
@@ -568,7 +568,7 @@ public class KBaseFeatureValuesServerTest {
                     .withOutputObjName(exprObjName), token, getContext()).getOutputMatrixRef();
             MatrixStat stats = impl.getMatrixStat(new GetMatrixStatParams().withInputData(
                     matrixRef), token, getContext());
-            Assert.assertEquals("Desulfovibrio vulgaris Hildenborough", 
+            Assert.assertEquals("Desulfovibrio vulgaris str. Hildenborough", 
                     stats.getMtxDescriptor().getGenomeName());
         } finally {
             FileUtils.deleteQuietly(tmpDir);

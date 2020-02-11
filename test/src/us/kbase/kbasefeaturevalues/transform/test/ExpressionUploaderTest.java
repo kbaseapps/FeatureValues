@@ -186,10 +186,10 @@ public class ExpressionUploaderTest {
         File inputDir = new File("test/data/upload6");
         File inputFile = new File(inputDir, "E_coli_v4_Build_6_subdata.tsv");
         Map<String, Object> contigsetData = UObject.getMapper().readValue(new GZIPInputStream(
-                new FileInputStream(new File(inputDir, "kb_g.1870.contigset.json.gz"))), Map.class);
+                new FileInputStream(new File(inputDir, "kb_g.1870.assembly.json.gz"))), Map.class);
         WorkspaceClient wscl = getWsClient();
         wscl.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
-                new ObjectSaveData().withName(contigsetObjName).withType("KBaseGenomes.ContigSet")
+                new ObjectSaveData().withName(contigsetObjName).withType("KBaseGenomeAnnotations.Assembly")
                 .withData(new UObject(contigsetData)))));
         Map<String, Object> genomeData = UObject.getMapper().readValue(new GZIPInputStream(
                 new FileInputStream(new File(inputDir, "kb_g.1870.genome.json.gz"))), Map.class);
