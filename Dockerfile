@@ -26,8 +26,6 @@ rm Anaconda3-2019.10-Linux-x86_64.sh
 # Set path to conda
 ENV PATH=/root/anaconda/bin:$PATH
 
-RUN which conda
-
 # Updating Anaconda packages
 RUN conda update conda
 RUN conda update anaconda
@@ -58,6 +56,5 @@ RUN keytool -import -keystore /usr/lib/jvm/java-7-oracle/jre/lib/security/cacert
 RUN make all
 
 ENTRYPOINT [ "./scripts/entrypoint.sh" ]
-#ENTRYPOINT ["tail", "-f", "/dev/null"]
 
 CMD [ ]
