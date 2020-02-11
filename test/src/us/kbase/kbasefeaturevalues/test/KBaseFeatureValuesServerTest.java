@@ -485,18 +485,10 @@ public class KBaseFeatureValuesServerTest {
     public void testSubMatrixStat() throws Exception {
         String testWsName = getWsName();
         File dir = new File("test/data/upload8");
-        GZIPInputStream is = new GZIPInputStream(new FileInputStream(new File(dir, "Rhodobacter.assembly.json.gz")));
-        Map<String, Object> assemblyData = UObject.getMapper().readValue(is, Map.class);
-        is.close();
-        String assemblyObjName = "submatrix_assembly.1";
-        getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
-                new ObjectSaveData().withName(assemblyObjName).withType("KBaseGenomeAnnotations.Assembly")
-                .withData(new UObject(assemblyData)))));
         is = new GZIPInputStream(new FileInputStream(new File(dir, "Rhodobacter.genome.json.gz")));
         Map<String, Object> genomeData = UObject.getMapper().readValue(is, Map.class);
         is.close();
         String genomeObjName = "submatrix_genome.1";
-        genomeData.put("assembly_ref", testWsName + "/" + assemblyObjName);
         getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(genomeObjName).withType("KBaseGenomes.Genome")
                 .withData(new UObject(genomeData)))));
