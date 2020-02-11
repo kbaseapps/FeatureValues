@@ -485,7 +485,7 @@ public class KBaseFeatureValuesServerTest {
     public void testSubMatrixStat() throws Exception {
         String testWsName = getWsName();
         File dir = new File("test/data/upload8");
-        is = new GZIPInputStream(new FileInputStream(new File(dir, "Rhodobacter.genome.json.gz")));
+        GZIPInputStream is = new GZIPInputStream(new FileInputStream(new File(dir, "Rhodobacter.genome.json.gz")));
         Map<String, Object> genomeData = UObject.getMapper().readValue(is, Map.class);
         is.close();
         String genomeObjName = "submatrix_genome.1";
