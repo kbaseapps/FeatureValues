@@ -181,19 +181,12 @@ public class ExpressionUploaderTest {
     @Test
     public void testMappingToAliases() throws Exception {
         String expressionObjName = "Escherichia_coli_str_K-12_substr_MG1655.expression";
-        String contigsetObjName = "Escherichia_coli_str_K-12_substr_MG1655.contigset";
         String genomeObjName = "Escherichia_coli_str_K-12_substr_MG1655.genome";
         File inputDir = new File("test/data/upload6");
         File inputFile = new File(inputDir, "E_coli_v4_Build_6_subdata.tsv");
-        Map<String, Object> contigsetData = UObject.getMapper().readValue(new GZIPInputStream(
-                new FileInputStream(new File(inputDir, "kb_g.1870.assembly.json.gz"))), Map.class);
         WorkspaceClient wscl = getWsClient();
-        wscl.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
-                new ObjectSaveData().withName(contigsetObjName).withType("KBaseGenomeAnnotations.Assembly")
-                .withData(new UObject(contigsetData)))));
         Map<String, Object> genomeData = UObject.getMapper().readValue(new GZIPInputStream(
                 new FileInputStream(new File(inputDir, "kb_g.1870.genome.json.gz"))), Map.class);
-        genomeData.put("contigset_ref", testWsName + "/" + contigsetObjName);
         wscl.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(genomeObjName).withType("KBaseGenomes.Genome")
                 .withData(new UObject(genomeData)))));
