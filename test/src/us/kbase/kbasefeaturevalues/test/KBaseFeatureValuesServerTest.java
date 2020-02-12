@@ -120,25 +120,12 @@ public class KBaseFeatureValuesServerTest {
         impl = new KBaseFeatureValuesServer();
         ////////////////////////////Prepare common data //////////////////////////////
         String testWsName = getWsName();
-        String contigsetObjName = "Desulfovibrio_vulgaris_Hildenborough.contigset";
         String genomeObjName = commonGenomeObjectName;
         File inputDir = new File("test/data/upload1");
         File inputFile = new File(inputDir, "Desulfovibrio_vulgaris_Hildenborough_microarray_log_level_data.txt");
-        Map<String, Object> contigsetData = new LinkedHashMap<String, Object>();
-        contigsetData.put("contigs", new ArrayList<Object>());
-        contigsetData.put("id", "1945.assembly");
-        contigsetData.put("md5", "md5");
-        contigsetData.put("name", "1945");
-        contigsetData.put("source", "User uploaded data");
-        contigsetData.put("source_id", "noid");
-        contigsetData.put("type", "Organism");
-        wsClient.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
-                new ObjectSaveData().withName(contigsetObjName).withType("KBaseGenomes.ContigSet")
-                .withData(new UObject(contigsetData)))));
         @SuppressWarnings("unchecked")
         Map<String, Object> genomeData = UObject.getMapper().readValue(new File(inputDir,
                 "Desulfovibrio_vulgaris_Hildenborough_reduced_genome.json"), Map.class);
-        genomeData.put("contigset_ref", testWsName + "/" + contigsetObjName);
         wsClient.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(genomeObjName).withType("KBaseGenomes.Genome")
                 .withData(new UObject(genomeData)))));
