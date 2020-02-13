@@ -9,6 +9,10 @@ of expression values organized as two-dimensional matrix and assigned to
 genome features on one dimension and to different sorts conditions on second 
 dimension.
 
+Notes for preparing test data
+-----------------------------
+The prepared test data is checked into the repository as .json files in specific test/data/ directories. These .json file will work for tests on as long as the Genome object does not incur backwards incompatible changes. The version of the checked in .json files is KBaseGenomes.Genome-17.0 from ci.kbase.us circa 2/10/2020/.
+
 
 Authors
 ---------
