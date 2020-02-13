@@ -11,8 +11,13 @@ dimension.
 
 Notes for preparing test data
 -----------------------------
-The prepared test data is checked into the repository as .json files in specific test/data/ directories. These .json file will work for tests on as long as the Genome object does not incur backwards incompatible changes. The version of the checked in .json files is KBaseGenomes.Genome-17.0 from ci.kbase.us circa 2/10/2020/.
+The Genome object test data is only needed to provide a list of feature ids that match the ids in the paired expression data files. The prepared test data is checked into the repository as .json files in specific test/data/ directories. These .json file will work for tests on as long as the Genome object does not incur backwards incompatible changes. The version of the checked in .json files is KBaseGenomes.Genome-17.0 from ci.kbase.us circa 2/10/2020/.
 
+The tests require three different RefSeq Genomes with source .gbff files checked in to the appropriate test.data/upload directory. The genomes are: Desulfovibrio vulgaris Hildenborough, E. coli MG1655, and Rhodobacter sphaeroides. The steps to prepare new Genome .json test data are as follows:
+- Load .gbff files into a narrative in target environment.
+- Download the uploaded Genome object as a .json file.
+- Remove all optional _ref and handle fields in the genome object: Assembly_ref, genbank_handle_ref, gff_handle_ref, taxon_ref.
+- Place edited .json Genome files in the correct test/data/upload* directory.
 
 Authors
 ---------
