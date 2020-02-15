@@ -120,25 +120,12 @@ public class KBaseFeatureValuesServerTest {
         impl = new KBaseFeatureValuesServer();
         ////////////////////////////Prepare common data //////////////////////////////
         String testWsName = getWsName();
-        String contigsetObjName = "Desulfovibrio_vulgaris_Hildenborough.contigset";
         String genomeObjName = commonGenomeObjectName;
         File inputDir = new File("test/data/upload1");
         File inputFile = new File(inputDir, "Desulfovibrio_vulgaris_Hildenborough_microarray_log_level_data.txt");
-        Map<String, Object> contigsetData = new LinkedHashMap<String, Object>();
-        contigsetData.put("contigs", new ArrayList<Object>());
-        contigsetData.put("id", "1945.contigset");
-        contigsetData.put("md5", "md5");
-        contigsetData.put("name", "1945");
-        contigsetData.put("source", "User uploaded data");
-        contigsetData.put("source_id", "noid");
-        contigsetData.put("type", "Organism");
-        wsClient.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
-                new ObjectSaveData().withName(contigsetObjName).withType("KBaseGenomes.ContigSet")
-                .withData(new UObject(contigsetData)))));
         @SuppressWarnings("unchecked")
         Map<String, Object> genomeData = UObject.getMapper().readValue(new File(inputDir,
                 "Desulfovibrio_vulgaris_Hildenborough_reduced_genome.json"), Map.class);
-        genomeData.put("contigset_ref", testWsName + "/" + contigsetObjName);
         wsClient.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(genomeObjName).withType("KBaseGenomes.Genome")
                 .withData(new UObject(genomeData)))));
@@ -385,7 +372,7 @@ public class KBaseFeatureValuesServerTest {
         ExpressionMatrix matrix = getWsClient().getObjects(Arrays.asList(
                 new ObjectIdentity().withWorkspace(testWsName).withName(matrixId)))
                 .get(0).getData().asClassInstance(ExpressionMatrix.class);
-        Assert.assertEquals(2666, matrix.getFeatureMapping().size());
+        Assert.assertEquals(2669, matrix.getFeatureMapping().size());
     }
     
     @Test
@@ -485,18 +472,10 @@ public class KBaseFeatureValuesServerTest {
     public void testSubMatrixStat() throws Exception {
         String testWsName = getWsName();
         File dir = new File("test/data/upload8");
-        GZIPInputStream is = new GZIPInputStream(new FileInputStream(new File(dir, "Rhodobacter.contigset.json.gz")));
-        Map<String, Object> contigsetData = UObject.getMapper().readValue(is, Map.class);
-        is.close();
-        String contigsetObjName = "submatrix_contigset.1";
-        getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
-                new ObjectSaveData().withName(contigsetObjName).withType("KBaseGenomes.ContigSet")
-                .withData(new UObject(contigsetData)))));
-        is = new GZIPInputStream(new FileInputStream(new File(dir, "Rhodobacter.genome.json.gz")));
+        GZIPInputStream is = new GZIPInputStream(new FileInputStream(new File(dir, "Rhodobacter.genome.json.gz")));
         Map<String, Object> genomeData = UObject.getMapper().readValue(is, Map.class);
         is.close();
-        String genomeObjName = "submatrix_contigset.1";
-        genomeData.put("contigset_ref", testWsName + "/" + contigsetObjName);
+        String genomeObjName = "submatrix_genome.1";
         getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(genomeObjName).withType("KBaseGenomes.Genome")
                 .withData(new UObject(genomeData)))));
@@ -508,7 +487,7 @@ public class KBaseFeatureValuesServerTest {
                 .withData(new UObject(data)))));
         try {
             SubmatrixStat stat = impl.getSubmatrixStat(new GetSubmatrixStatParams().withInputData(testWsName + "/" + matrixId)
-                    .withRowIds(Arrays.asList("RSP_0049", "RSP_1584", "RSP_1588")).withFlRowPairwiseCorrelation(1L)
+                    .withRowIds(Arrays.asList("RSP_1428","RSP_1430","RSP_1432")).withFlRowPairwiseCorrelation(1L)
                     .withFlRowSetStats(1L), token, getContext());
             Assert.assertEquals(3, stat.getRowPairwiseCorrelation().getComparisonValues().size());
             Assert.assertEquals(3, stat.getRowPairwiseCorrelation().getComparisonValues().get(0).size());
@@ -568,7 +547,7 @@ public class KBaseFeatureValuesServerTest {
                     .withOutputObjName(exprObjName), token, getContext()).getOutputMatrixRef();
             MatrixStat stats = impl.getMatrixStat(new GetMatrixStatParams().withInputData(
                     matrixRef), token, getContext());
-            Assert.assertEquals("Desulfovibrio vulgaris Hildenborough", 
+            Assert.assertEquals("Desulfovibrio vulgaris str. Hildenborough", 
                     stats.getMtxDescriptor().getGenomeName());
         } finally {
             FileUtils.deleteQuietly(tmpDir);

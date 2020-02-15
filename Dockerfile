@@ -5,6 +5,8 @@ MAINTAINER KBase Developer
 # Insert apt-get instructions here to install
 # any required dependencies for your module.
 
+ENV DEBIAN_FRONTEND noninteractive
+
 RUN apt-get update && apt-get install -y \ 
   build-essential \
   python-dev \
@@ -16,23 +18,31 @@ RUN apt-get update && apt-get install -y \
 RUN pip install scikit-learn
 RUN pip install scipy
 
+# download anaconda
+RUN wget https://repo.anaconda.com/archive/Anaconda3-2019.10-Linux-x86_64.sh
+RUN bash Anaconda3-2019.10-Linux-x86_64.sh -b -p /root/anaconda/ && \
+rm Anaconda3-2019.10-Linux-x86_64.sh
+
+# Set path to conda
+ENV PATH=/root/anaconda/bin:$PATH
+
+# Updating Anaconda packages
+RUN conda update conda
+RUN conda update anaconda
+RUN conda update --all
+RUN conda config --append channels conda-forge
+
 # install R dependencies
-RUN CODENAME=`grep CODENAME /etc/lsb-release | cut -c 18-` && \
-    echo "deb http://cran.cnr.berkeley.edu/bin/linux/ubuntu $CODENAME/" >> /etc/apt/sources.list && \
-    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9 && \
-    sudo apt-get update && \
-    yes '' | sudo apt-get -y install r-base && \
-    yes '' | sudo apt-get -y install r-base-dev && \
-    echo 'install.packages(c("lme4"), repos="http://cran.us.r-project.org", dependencies=TRUE)\n' > /tmp/packages.R && \
-    echo 'install.packages("cluster", dependencies=TRUE, repos="http://cran.us.r-project.org")\n' > /tmp/packages.R && \
-    Rscript /tmp/packages.R
-RUN R -q -e 'if(!require(jsonlite)) install.packages("jsonlite", repos="http://cran.us.r-project.org")' && \
-    R -q -e 'if(!require(clValid)) install.packages("clValid", repos="http://cran.us.r-project.org")' && \
-    R -q -e 'if(!require(amap)) install.packages("amap", repos="http://cran.us.r-project.org")' && \
-    R -q -e 'if(!require(sp)) install.packages("sp", repos="http://cran.us.r-project.org")' && \
-    R -q -e 'if(!require(ape)) install.packages("ape", dependencies=TRUE, repos="http://cran.us.r-project.org")' && \
-    R -q -e 'if(!require(flashClust)) install.packages("flashClust", dependencies=TRUE, repos="http://cran.us.r-project.org")' && \
-    R -q -e 'if(!require(fpc)) install.packages("fpc", dependencies=TRUE, repos="http://cran.us.r-project.org")'
+RUN conda install r
+RUN conda install r-amap 
+RUN conda install r-jsonlite 
+RUN conda install r-clValid 
+RUN conda install r-sp 
+RUN conda install r-ape 
+RUN conda install r-flashClust 
+#RUN conda install r-fpc
+
+RUN R -q -e 'install.packages("fpc", repos="http://cran.r-project.org")'
 
 # -----------------------------------------
 
