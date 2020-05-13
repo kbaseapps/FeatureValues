@@ -1,9 +1,12 @@
 FROM kbase/kbase:sdkbase.latest
+
 MAINTAINER KBase Developer
 # -----------------------------------------
 
 # Insert apt-get instructions here to install
 # any required dependencies for your module.
+
+RUN echo fo
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -46,12 +49,38 @@ RUN R -q -e 'install.packages("fpc", repos="http://cran.r-project.org")'
 
 # -----------------------------------------
 
+
+RUN add-apt-repository ppa:openjdk-r/ppa \
+	&& sudo apt-get update \
+	&& sudo apt-get -y install openjdk-8-jdk \
+	&& echo java versions: \
+	&& java -version \
+	&& javac -version \
+	&& echo $JAVA_HOME \
+	&& ls -l /usr/lib/jvm \
+	&& cd /kb/runtime \
+	&& rm java \
+	&& ln -s /usr/lib/jvm/java-8-openjdk-amd64 java \
+	&& ls -l
+
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
+
+RUN cd /kb/dev_container/modules/jars \
+	&& git pull
+
+RUN pwd
+RUN ls ./
+
 COPY ./ /kb/module
 RUN mkdir -p /kb/module/work
-RUN chmod -R a+rw /kb/module
+#RUN chmod -R a+rw /kb/module
+RUN chmod 777 /kb/module
 
 WORKDIR /kb/module
-RUN keytool -import -keystore /usr/lib/jvm/java-7-oracle/jre/lib/security/cacerts -storepass changeit -noprompt -trustcacerts -alias letsencryptauthorityx3 -file ./ssl/lets-encrypt-x3-cross-signed.der
+
+RUN pwd
+RUN ls
+RUN cat Makefile
 
 RUN make all
 
