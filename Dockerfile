@@ -65,8 +65,14 @@ RUN add-apt-repository ppa:openjdk-r/ppa \
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
+#RUN cd /kb/dev_container/modules/jars \
+#	&& git pull
+
+# update jars
 RUN cd /kb/dev_container/modules/jars \
-	&& git pull
+	&& git pull \
+	&& . /kb/dev_container/user-env.sh \
+	&& make deploy
 
 RUN pwd
 RUN ls ./

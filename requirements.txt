@@ -1,0 +1,7 @@
+r
+r-amap
+r-jsonlite
+r-clValid
+r-sp
+r-ape
+r-flashClust
