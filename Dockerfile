@@ -1,4 +1,4 @@
-FROM kbase/kbase:sdkbase.latest
+FROM kbase/sdkbase:latest
 
 MAINTAINER KBase Developer
 # -----------------------------------------
@@ -74,19 +74,11 @@ RUN cd /kb/dev_container/modules/jars \
 	&& . /kb/dev_container/user-env.sh \
 	&& make deploy
 
-RUN pwd
-RUN ls ./
-
 COPY ./ /kb/module
 RUN mkdir -p /kb/module/work
-#RUN chmod -R a+rw /kb/module
 RUN chmod 777 /kb/module
 
 WORKDIR /kb/module
-
-RUN pwd
-RUN ls
-RUN cat Makefile
 
 RUN make all
 
