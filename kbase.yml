@@ -14,7 +14,7 @@ module-version:
     0.0.21
 
 owners:
-    [marcin, rsutormin, msneddon, psnovichkov, srividya22]
+    [marcin]
 
 service-config:
     dynamic-service: true
