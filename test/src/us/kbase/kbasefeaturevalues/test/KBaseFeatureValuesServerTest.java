@@ -487,7 +487,7 @@ public class KBaseFeatureValuesServerTest {
                 .withData(new UObject(data)))));
         try {
             SubmatrixStat stat = impl.getSubmatrixStat(new GetSubmatrixStatParams().withInputData(testWsName + "/" + matrixId)
-                    .withRowIds(Arrays.asList("RSP_1428","RSP_1430","RSP_1432")).withFlRowPairwiseCorrelation(1L)
+                    .withRowIds(Arrays.asList("RSP_0046","RSP_1584","RSP_1588")).withFlRowPairwiseCorrelation(1L)
                     .withFlRowSetStats(1L), token, getContext());
             Assert.assertEquals(3, stat.getRowPairwiseCorrelation().getComparisonValues().size());
             Assert.assertEquals(3, stat.getRowPairwiseCorrelation().getComparisonValues().get(0).size());
