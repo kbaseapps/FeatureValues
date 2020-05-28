@@ -184,17 +184,6 @@ public class KBaseFeatureValuesServerTest {
     }
 
     @Test
-    public void testClustersFromLabels() throws Exception {
-        FloatMatrix2D matrixData = getSampleMatrix();
-        ClusterResults res = new ClusterResults().withClusterLabels(
-                Arrays.asList(1L, -1L, -1L, -1L, 2L, 2L, 2L))
-                .withMeancor(Arrays.asList(Double.NaN, 0.9999))
-                .withMsecs(Arrays.asList(Double.NaN, 0.0062));
-        List<LabeledCluster> clusters = KBaseFeatureValuesImpl.clustersFromLabels(matrixData, res);
-        Assert.assertEquals(2, clusters.size());
-    }
-
-    @Test
     public void testMainPipeline() throws Exception {
         WorkspaceClient wscl = getWsClient();
         String testWsName = getWsName();
@@ -206,16 +195,32 @@ public class KBaseFeatureValuesServerTest {
         String clustObj3Name = "clusters3";
         ExpressionMatrix data = new ExpressionMatrix().withType("log-ratio").withScale("1.0")
                 .withData(getSampleMatrix());
+        System.err.println("data "+data.toString());
+
         wscl.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(exprObjName).withType("KBaseFeatureValues.ExpressionMatrix")
                 .withData(new UObject(data)))));
+        System.err.println("test!!!");
+        System.err.println("testMainPipeline "+testWsName + "/" + exprObjName);
+        System.err.println("testMainPipeline "+estimObjName);
+        //Assert.assertNotNull("exprObjName ",testWsName + "/" + exprObjName);
+        //Assert.assertEquals("exprObjName ",testWsName + "/" + exprObjName);
+        //Assert.assertNotNull("estimObjName ", estimObjName);
+        //
         /////////////// estimate K /////////////////
-        impl.estimateK(new EstimateKParams().withInputMatrix(testWsName + "/" + 
-                exprObjName).withOutWorkspace(testWsName).withOutEstimateResult(estimObjName), token, getContext());
+        EstimateKParams ekp = new EstimateKParams().withInputMatrix(testWsName + "/" +
+                exprObjName).withOutWorkspace(testWsName).withOutEstimateResult(estimObjName);
+        System.err.println("ekp "+ekp.toString());
+
+        impl.estimateK(ekp, token, getContext());
         ObjectData res1 = wscl.getObjects(Arrays.asList(new ObjectIdentity().withWorkspace(testWsName)
                 .withName(estimObjName))).get(0);
         EstimateKResult estKRes = res1.getData().asClassInstance(EstimateKResult.class);
         long k = estKRes.getBestK();
+        Assert.assertNotNull("k exists ", k);
+        Assert.assertNotNull("c size exists ", estKRes.getEstimateClusterSizes().size());
+        System.err.println("k "+k);
+        System.err.println("cluster size "+estKRes.getEstimateClusterSizes().size());
         Assert.assertEquals(3, k);
         Assert.assertEquals(5, estKRes.getEstimateClusterSizes().size());
         for (int i = 0; i < estKRes.getEstimateClusterSizes().size(); i++) {
@@ -223,7 +228,7 @@ public class KBaseFeatureValuesServerTest {
             Assert.assertEquals(2L + i, (long)item.getE1());
             Assert.assertTrue((double)item.getE2() > 0);
         }
-        impl.estimateKNew(new EstimateKParamsNew().withInputMatrix(testWsName + "/" + 
+        impl.estimateKNew(new EstimateKParamsNew().withInputMatrix(testWsName + "/" +
                 exprObjName).withRandomSeed(123L).withOutWorkspace(testWsName)
                 .withOutEstimateResult(estimNewObjName), token, getContext());
         ObjectData res1new = wscl.getObjects(Arrays.asList(new ObjectIdentity().withWorkspace(testWsName)
@@ -240,7 +245,7 @@ public class KBaseFeatureValuesServerTest {
             Assert.assertEquals((double)entry.getE2(), (double)entryNew.getE2(), 1e-10);
         }
         /////////////// K-means /////////////////
-        impl.clusterKMeans(new ClusterKMeansParams().withInputData(testWsName + "/" + 
+        impl.clusterKMeans(new ClusterKMeansParams().withInputData(testWsName + "/" +
                 exprObjName).withK(k).withOutWorkspace(testWsName).withOutClustersetId(clustObj1Name),
                 token, getContext());
         ObjectData res2 = wscl.getObjects(Arrays.asList(new ObjectIdentity().withWorkspace(testWsName)
@@ -248,7 +253,7 @@ public class KBaseFeatureValuesServerTest {
         FeatureClusters clSet2 = res2.getData().asClassInstance(FeatureClusters.class);
         checkKMeansForSample(clSet2);
         /////////////// Hierarchical /////////////////
-        impl.clusterHierarchical(new ClusterHierarchicalParams().withInputData(testWsName + "/" + 
+        impl.clusterHierarchical(new ClusterHierarchicalParams().withInputData(testWsName + "/" +
                 exprObjName).withFeatureHeightCutoff(0.5).withOutWorkspace(testWsName)
                 .withOutClustersetId(clustObj2Name), token, getContext());
         ObjectData res3 = wscl.getObjects(Arrays.asList(new ObjectIdentity().withWorkspace(testWsName)
@@ -261,7 +266,7 @@ public class KBaseFeatureValuesServerTest {
         Assert.assertTrue(clSet3.getFeatureDendrogram().startsWith("("));
         Assert.assertTrue(clSet3.getFeatureDendrogram().endsWith(");"));
         /////////////// From dendrogram /////////////////
-        impl.clustersFromDendrogram(new ClustersFromDendrogramParams().withInputData(testWsName + "/" + 
+        impl.clustersFromDendrogram(new ClustersFromDendrogramParams().withInputData(testWsName + "/" +
                 clustObj2Name).withFeatureHeightCutoff(0.2).withOutWorkspace(testWsName)
                 .withOutClustersetId(clustObj3Name), token, getContext());
         ObjectData res4 = wscl.getObjects(Arrays.asList(new ObjectIdentity().withWorkspace(testWsName)
@@ -295,6 +300,18 @@ public class KBaseFeatureValuesServerTest {
                 } catch (Exception ignore) {}
         }
     }
+
+    @Test
+    public void testClustersFromLabels() throws Exception {
+        FloatMatrix2D matrixData = getSampleMatrix();
+        ClusterResults res = new ClusterResults().withClusterLabels(
+                Arrays.asList(1L, -1L, -1L, -1L, 2L, 2L, 2L))
+                .withMeancor(Arrays.asList(Double.NaN, 0.9999))
+                .withMsecs(Arrays.asList(Double.NaN, 0.0062));
+        List<LabeledCluster> clusters = KBaseFeatureValuesImpl.clustersFromLabels(matrixData, res);
+        Assert.assertEquals(2, clusters.size());
+    }
+
 
     private static void checkKMeansForSample(FeatureClusters clSet) {
         Assert.assertEquals(3, clSet.getFeatureClusters().size());
@@ -662,7 +679,7 @@ public class KBaseFeatureValuesServerTest {
                     .withType("KBaseFeatureValues.ExpressionMatrix")
                     .withData(new UObject(mdata)))));
             String clustersObjName = "export_clusters";
-            impl.clusterKMeans(new ClusterKMeansParams().withInputData(testWsName + "/" + 
+	    impl.clusterKMeans(new ClusterKMeansParams().withInputData(testWsName + "/" + 
                     matrixObjName).withK(3L).withOutWorkspace(testWsName)
                     .withOutClustersetId(clustersObjName),
                     token, getContext());

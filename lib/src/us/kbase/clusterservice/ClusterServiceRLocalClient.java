@@ -70,7 +70,7 @@ public class ClusterServiceRLocalClient extends JsonLocalClientCaller implements
      */
     public EstimateKResult estimateK(FloatMatrix2D matrix, Long minK, Long maxK, Long maxIter, Long randomSeed, Long neighbSize, Long maxItems) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
-        args.add(matrix);
+	args.add(matrix);
         args.add(minK);
         args.add(maxK);
         args.add(maxIter);
@@ -101,8 +101,8 @@ public class ClusterServiceRLocalClient extends JsonLocalClientCaller implements
      * @throws JsonClientException if a JSON RPC exception occurs
      */
     public EstimateKResult estimateKNew(FloatMatrix2D matrix, Long minK, Long maxK, String criterion, Long usepam, Double alpha, Long diss, Long randomSeed) throws IOException, JsonClientException {
-        List<Object> args = new ArrayList<Object>();
-        args.add(matrix);
+	List<Object> args = new ArrayList<Object>();
+	args.add(matrix);
         args.add(minK);
         args.add(maxK);
         args.add(criterion);
@@ -132,7 +132,7 @@ public class ClusterServiceRLocalClient extends JsonLocalClientCaller implements
      */
     public ClusterResults clusterHierarchical(FloatMatrix2D matrix, String distanceMetric, String linkageCriteria, Double heightCutoff, Long processRows, String algorithm) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
-        args.add(matrix);
+	args.add(matrix);
         args.add(distanceMetric);
         args.add(linkageCriteria);
         args.add(heightCutoff);
@@ -159,7 +159,7 @@ public class ClusterServiceRLocalClient extends JsonLocalClientCaller implements
      */
     public ClusterResults clustersFromDendrogram(FloatMatrix2D matrix, String dendrogram, Double heightCutoff) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
-        args.add(matrix);
+	args.add(matrix);
         args.add(dendrogram);
         args.add(heightCutoff);
         TypeReference<List<ClusterResults>> retType = new TypeReference<List<ClusterResults>>() {};
@@ -179,7 +179,7 @@ public class ClusterServiceRLocalClient extends JsonLocalClientCaller implements
      */
     public ClusterResults calcClusterQualities(FloatMatrix2D matrix, List<Long> clusterLabels) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
-        args.add(matrix);
+	args.add(matrix);
         args.add(clusterLabels);
         TypeReference<List<ClusterResults>> retType = new TypeReference<List<ClusterResults>>() {};
         List<ClusterResults> res = jsonrpcCall("ClusterServiceR.calc_cluster_qualities", args, retType, true, false);

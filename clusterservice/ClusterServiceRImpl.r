@@ -92,6 +92,13 @@ methods <- list()
 
 methods[["ClusterServiceR.estimate_k"]] <- function(matrix, min_k, max_k, 
         max_iter, random_seed, neighb_size, max_items) {
+
+    #write("matrix", stderr())
+    #write(str(matrix), stderr())
+
+    #write("matrix", stdout())
+    #write(str(matrix), stdout())
+
     if (!is.null(random_seed))
         set.seed(random_seed)
     if (is.null(min_k))
@@ -127,6 +134,52 @@ methods[["ClusterServiceR.estimate_k"]] <- function(matrix, min_k, max_k,
     return(list(best_k=unbox(as.numeric(ret_names[best_pos])), estimate_cluster_sizes=cluster_count_qualities))
 }
 
+methods[["ClusterServiceR.estimate_k_noobj"]] <- function(matrix, row_ids, col_ids, min_k, max_k, 
+        max_iter, random_seed, neighb_size, max_items) {
+
+    print("ClusterServiceR.estimate_k")
+    print(str(min_k))
+    print(str(max_k))
+
+
+    if (!is.null(random_seed))
+        set.seed(random_seed)
+    if (is.null(min_k))
+        min_k <- 2
+    if (is.null(max_k))
+        max_k <- 200
+    if (is.null(max_iter))
+        max_iter <- 100
+    if (is.null(neighb_size))
+        neighb_size <- 10
+    values <- as.matrix(matrix)
+    #row_names <- matrix[["row_ids"]]
+    row_names <- c(1:nrow(values))-1
+    row.names(values) <- row_names
+    values <- data.matrix(values)
+    if ((!is.null(max_items)) && (max_items < nrow(values))) {
+        row_nums <- sample(1:nrow(values), max_items, replace=FALSE)
+        values <- values[row_nums,]
+    }
+    max_clust_num = min(c(max_k,nrow(values)-1))
+
+    print(values)
+
+    valid <- clValid(values, nClust=c(min_k:max_clust_num), maxitems=nrow(values), 
+        clMethods=c("kmeans"),validation=c("internal"), iter.max=max_iter,
+        neighbSize=neighb_size)
+    ret <- measures(valid, "Silhouette")[1,,1]
+    ret_names <- names(ret)
+    best_pos <- which.max(ret)
+    cluster_count_qualities <- list()
+    for (pos in 1:length(ret)) {
+        cluster_count <- unbox(ret_names[pos])
+        quality <- unbox(ret[pos])
+        cluster_count_qualities <- rbind(cluster_count_qualities, list(cluster_count, quality))
+    }
+    return(list(best_k=unbox(as.numeric(ret_names[best_pos])), estimate_cluster_sizes=cluster_count_qualities))
+}
+
 methods[["ClusterServiceR.estimate_k_new"]] <- function(matrix, min_k, max_k,
        crit,usepam,alpha,diss,random_seed) {
     if (!is.null(random_seed))
@@ -142,6 +195,45 @@ methods[["ClusterServiceR.estimate_k_new"]] <- function(matrix, min_k, max_k,
     values <- matrix[["values"]]
     #row_names <- matrix[["row_ids"]]
     row_names <- c(1:length(matrix[["row_ids"]]))-1
+    row.names(values) <- row_names
+    values <- data.matrix(values)
+    max_clust_num = min(c(max_k,nrow(values)-1))
+    pk<- pamk(values,krange=c(min_k:max_clust_num),criterion=crit,
+        usepam=usepam,ns=10)
+    ret_names <- c(min_k:max_clust_num)
+    best_pos <- pk$nc
+    cluster_count_qualities <- list()
+    for (pos in 1:length(ret_names)) {
+        cluster_count = unbox(ret_names[pos])
+        quality <- unbox(pk$crit[cluster_count])
+        cluster_count_qualities <- rbind(cluster_count_qualities, list(cluster_count, quality))
+    }
+    return(list(best_k=unbox(as.numeric(best_pos)), estimate_cluster_sizes=cluster_count_qualities))
+}
+
+methods[["ClusterServiceR.estimate_k_new_noobj"]] <- function(matrix, row_ids, col_ids, min_k, max_k,
+       crit,usepam,alpha,diss,random_seed) {
+
+
+    #write("matrix", stderr())
+    #write(str(matrix), stderr())
+
+    #write("matrix", stdout())
+    #write(str(matrix), stdout())
+
+    if (!is.null(random_seed))
+        set.seed(random_seed)
+    if (is.null(min_k))
+        min_k <- 2
+    if (is.null(max_k))
+        max_k <- 200
+    if (is.null(crit))
+        crit <- "asw"
+    if (is.null(usepam))
+        usepam <- FALSE
+    values <- as.matrix(matrix)
+    #row_names <- matrix[["row_ids"]]
+    row_names <- c(1:nrow(matrix))-1
     row.names(values) <- row_names
     values <- data.matrix(values)
     max_clust_num = min(c(max_k,nrow(values)-1))

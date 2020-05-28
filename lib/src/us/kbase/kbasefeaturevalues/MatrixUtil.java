@@ -29,6 +29,7 @@ public class MatrixUtil {
     
     public static GenomeDataV1 loadGenome(AuthToken token, String matrixRef, String genomeRef,
             List<String> includedFields, List<String> includedFeatureFields) throws Exception {
+
         URL callbackUrl = new URL(System.getenv("SDK_CALLBACK_URL"));
         GenomeAnnotationAPIClient gaapi = new GenomeAnnotationAPIClient(callbackUrl, token);
         gaapi.setIsInsecureHttpConnectionAllowed(true);
