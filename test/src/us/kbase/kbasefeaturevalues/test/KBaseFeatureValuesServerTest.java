@@ -195,14 +195,9 @@ public class KBaseFeatureValuesServerTest {
         String clustObj3Name = "clusters3";
         ExpressionMatrix data = new ExpressionMatrix().withType("log-ratio").withScale("1.0")
                 .withData(getSampleMatrix());
-        System.err.println("data "+data.toString());
-
         wscl.saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(exprObjName).withType("KBaseFeatureValues.ExpressionMatrix")
                 .withData(new UObject(data)))));
-        System.err.println("test!!!");
-        System.err.println("testMainPipeline "+testWsName + "/" + exprObjName);
-        System.err.println("testMainPipeline "+estimObjName);
         //Assert.assertNotNull("exprObjName ",testWsName + "/" + exprObjName);
         //Assert.assertEquals("exprObjName ",testWsName + "/" + exprObjName);
         //Assert.assertNotNull("estimObjName ", estimObjName);
@@ -210,8 +205,6 @@ public class KBaseFeatureValuesServerTest {
         /////////////// estimate K /////////////////
         EstimateKParams ekp = new EstimateKParams().withInputMatrix(testWsName + "/" +
                 exprObjName).withOutWorkspace(testWsName).withOutEstimateResult(estimObjName);
-        System.err.println("ekp "+ekp.toString());
-
         impl.estimateK(ekp, token, getContext());
         ObjectData res1 = wscl.getObjects(Arrays.asList(new ObjectIdentity().withWorkspace(testWsName)
                 .withName(estimObjName))).get(0);
@@ -219,8 +212,8 @@ public class KBaseFeatureValuesServerTest {
         long k = estKRes.getBestK();
         Assert.assertNotNull("k exists ", k);
         Assert.assertNotNull("c size exists ", estKRes.getEstimateClusterSizes().size());
-        System.err.println("k "+k);
-        System.err.println("cluster size "+estKRes.getEstimateClusterSizes().size());
+	//System.err.println("k "+k);
+        //System.err.println("cluster size "+estKRes.getEstimateClusterSizes().size());
         Assert.assertEquals(3, k);
         Assert.assertEquals(5, estKRes.getEstimateClusterSizes().size());
         for (int i = 0; i < estKRes.getEstimateClusterSizes().size(); i++) {

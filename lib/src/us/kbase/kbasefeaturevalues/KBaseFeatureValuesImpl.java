@@ -500,10 +500,6 @@ public class KBaseFeatureValuesImpl {
 
 		// Build matrix descriptor		
 		submatrixStat.setMtxDescriptor(buildMatrixDescriptor(mgl));
-        	System.out.println("getSubmatrixStat");
-		System.out.println(params.getRowIndeces());
-		System.out.println(params.getRowIds());
-		System.out.println(mgl.matrix.getData().getRowIds());
 
 		int[] rowIndeces = buildIndeces(params.getRowIndeces(), params.getRowIds(), mgl.matrix.getData().getRowIds());
 		int[] colIndeces = buildIndeces(params.getColumnIndeces(), params.getColumnIds(), mgl.matrix.getData().getColIds());
