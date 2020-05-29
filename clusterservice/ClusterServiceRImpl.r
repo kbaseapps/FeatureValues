@@ -92,7 +92,6 @@ methods <- list()
 
 methods[["ClusterServiceR.estimate_k"]] <- function(matrix, min_k, max_k, 
         max_iter, random_seed, neighb_size, max_items) {
-
     if (!is.null(random_seed))
         set.seed(random_seed)
     if (is.null(min_k))
