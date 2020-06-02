@@ -296,7 +296,7 @@ module KBaseFeatureValues {
         provides an estimate of K by [...]
     */
     funcdef estimate_k(EstimateKParams params)
-        returns () authentication required;
+        returns (string job_id) authentication required;
 
      typedef structure {
         ws_matrix_id input_matrix;
@@ -316,7 +316,7 @@ module KBaseFeatureValues {
         provides an estimate of K by [...]
     */
     funcdef estimate_k_new(EstimateKParamsNew params)
-        returns () authentication required;
+        returns (string job_id) authentication required;
 
 
 
@@ -335,7 +335,7 @@ module KBaseFeatureValues {
         Clusters features by K-means clustering.
     */
     funcdef cluster_k_means(ClusterKMeansParams params)
-        returns () authentication required;
+        returns (string job_id) authentication required;
 
 
     typedef structure {
@@ -354,7 +354,7 @@ module KBaseFeatureValues {
         Clusters features by hierarchical clustering.
     */
     funcdef cluster_hierarchical(ClusterHierarchicalParams params)
-        returns () authentication required;
+        returns (string job_id) authentication required;
 
 
     typedef structure {
@@ -371,7 +371,7 @@ module KBaseFeatureValues {
         a specific hieght or by some other approach.
     */
     funcdef clusters_from_dendrogram(ClustersFromDendrogramParams params)
-        returns () authentication required;
+        returns (string job_id) authentication required;
 
 
     typedef structure {
@@ -386,7 +386,7 @@ module KBaseFeatureValues {
         a specific hieght or by some other approach.
     */
     funcdef evaluate_clusterset_quality(EvaluateClustersetQualityParams params)
-        returns () authentication required;
+        returns (string job_id) authentication required;
 
 
     /*
@@ -399,7 +399,7 @@ module KBaseFeatureValues {
     } ValidateMatrixParams;
 
     funcdef validate_matrix(ValidateMatrixParams params)
-        returns () authentication optional;
+        returns (string job_id) authentication optional;
 
     /*
         transform_type - type of matrix change (one of: add, multiply,
@@ -416,7 +416,7 @@ module KBaseFeatureValues {
     } CorrectMatrixParams;
 
     funcdef correct_matrix(CorrectMatrixParams params)
-        returns () authentication required;
+        returns (string job_id) authentication required;
 
     /*
         out_matrix_id - optional target matrix object name (if not specified 
@@ -430,7 +430,7 @@ module KBaseFeatureValues {
     } ReconnectMatrixToGenomeParams;
     
     funcdef reconnect_matrix_to_genome(ReconnectMatrixToGenomeParams params)
-        returns () authentication required;
+        returns (string job_id) authentication required;
 
     /* 
         The workspace ID of a FeatureSet data object.
@@ -453,7 +453,7 @@ module KBaseFeatureValues {
     } BuildFeatureSetParams;
 
     funcdef build_feature_set(BuildFeatureSetParams params) 
-        returns () authentication required;
+        returns (string job_id) authentication required;
 
 
 	/*******************************************
