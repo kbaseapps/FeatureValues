@@ -122,11 +122,11 @@ public class KBaseFeatureValuesImpl {
                 .withType("KBaseFeatureValues.EstimateKResult").withName(params.getOutEstimateResult())
                 .withData(new UObject(toSave)).withProvenance(provenance))));
 
-	System.err.println(getInfo[0].workspaceID;
-	System.err.println(getInfo[0].id);
-	System.err.println(getInfo[0].version);
+	System.err.println(getInfo.get(0).workspaceID);
+	System.err.println(getInfo.get(0).id);
+	System.err.println(getInfo.get(0).version);
 
-	return getInfo[0].workspaceID+"/"+getInfo[0].id+"/"+getInfo[0].version;
+	return getInfo.get(0).workspaceID+"/"+getInfo.get(0).id+"/"+getInfo.get(0).version;
     }
 
     public void estimateKNew(EstimateKParamsNew params,
