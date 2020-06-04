@@ -105,7 +105,7 @@ public class KBaseFeatureValuesImpl {
         return jobId;
     }
     
-    public void estimateK(EstimateKParams params, 
+    public String estimateK(EstimateKParams params, 
             List<ProvenanceAction> provenance) throws Exception {
         ObjectData objData = getWsClient().getObjects2(new GetObjects2Params().withObjects(
                 Arrays.asList(new ObjectSpecification().withRef(params.getInputMatrix()))))
@@ -117,10 +117,16 @@ public class KBaseFeatureValuesImpl {
                 params.getNeighbSize(), params.getMaxItems());
         provenance.get(0).withDescription("K estimation for K-Means clustering method")
                 .withInputWsObjects(Arrays.asList(params.getInputMatrix()));
-        getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(params.getOutWorkspace())
+        List<ObjectInformation> getInfo = getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(params.getOutWorkspace())
                 .withObjects(Arrays.asList(new ObjectSaveData()
                 .withType("KBaseFeatureValues.EstimateKResult").withName(params.getOutEstimateResult())
                 .withData(new UObject(toSave)).withProvenance(provenance))));
+
+	System.err.println(getInfo[0].workspaceID;
+	System.err.println(getInfo[0].id);
+	System.err.println(getInfo[0].version);
+
+	return getInfo[0].workspaceID+"/"+getInfo[0].id+"/"+getInfo[0].version;
     }
 
     public void estimateKNew(EstimateKParamsNew params,
