@@ -125,10 +125,7 @@ public class KBaseFeatureValuesImpl {
                 .withType("KBaseFeatureValues.EstimateKResult").withName(params.getOutEstimateResult())
                 .withData(new UObject(toSave)).withProvenance(provenance))));
 
-	WorkspaceIdentity wi = new WorkspaceIdentity();
-	wi.setWorkspace(params.getOutWorkspace());
-	Tuple9 t9 = wsc.getWorkspaceInfo(wi);
-	String outref = t9.getE1() + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
+	String outref = getInfo.get(0).getE7() + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
 	return outref;
     }
 
@@ -151,10 +148,7 @@ public class KBaseFeatureValuesImpl {
                 .withType("KBaseFeatureValues.EstimateKResult").withName(params.getOutEstimateResult())
                 .withData(new UObject(toSave)).withProvenance(provenance))));
 
-	WorkspaceIdentity wi = new WorkspaceIdentity();
-        wi.setWorkspace(params.getOutWorkspace());
-        Tuple9 t9 = wsc.getWorkspaceInfo(wi);
-        String outref = t9.getE1() + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
+        String outref = getInfo.get(0).getE7() + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
         return outref;
     }
     
@@ -192,10 +186,7 @@ public class KBaseFeatureValuesImpl {
                 .withType("KBaseFeatureValues.FeatureClusters").withName(params.getOutClustersetId())
                 .withData(new UObject(toSave)).withProvenance(provenance))));
 
-	WorkspaceIdentity wi = new WorkspaceIdentity();
-        wi.setWorkspace(params.getOutWorkspace());
-        Tuple9 t9 = wsc.getWorkspaceInfo(wi);
-        String outref = t9.getE1() + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
+        String outref = getInfo.get(0).getE7()  + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
         return outref;
     }
 
@@ -256,10 +247,7 @@ public class KBaseFeatureValuesImpl {
                 .withType("KBaseFeatureValues.FeatureClusters").withName(params.getOutClustersetId())
                 .withData(new UObject(toSave)).withProvenance(provenance))));
 
-	WorkspaceIdentity wi = new WorkspaceIdentity();
-        wi.setWorkspace(params.getOutWorkspace());
-        Tuple9 t9 = wsc.getWorkspaceInfo(wi);
-        String outref = t9.getE1() + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
+        String outref = getInfo.get(0).getE7()  + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
         return outref;
     }
 
@@ -290,10 +278,7 @@ public class KBaseFeatureValuesImpl {
                 .withType("KBaseFeatureValues.FeatureClusters").withName(params.getOutClustersetId())
                 .withData(new UObject(toSave)).withProvenance(provenance))));
 
-	WorkspaceIdentity wi = new WorkspaceIdentity();
-        wi.setWorkspace(params.getOutWorkspace());
-        Tuple9 t9 = wsc.getWorkspaceInfo(wi);
-        String outref = t9.getE1() + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
+        String outref = getInfo.get(0).getE7()  + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
         return outref;
     }
 
@@ -330,10 +315,7 @@ public class KBaseFeatureValuesImpl {
                 .withType(inputType).withName(outMatrixId)
                 .withData(new UObject(matrix)).withProvenance(provenance))));
 
-	WorkspaceIdentity wi = new WorkspaceIdentity();
-        wi.setWorkspace(params.getOutWorkspace());
-        Tuple9 t9 = wsc.getWorkspaceInfo(wi);
-        String outref = t9.getE1() + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
+        String outref = getInfo.get(0).getE7() + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
         return outref;
     }
 
@@ -359,10 +341,7 @@ public class KBaseFeatureValuesImpl {
                 .withType(inputType).withName(outMatrixId)
                 .withData(new UObject(matrix)).withProvenance(provenance))));
 
-	WorkspaceIdentity wi = new WorkspaceIdentity();
-        wi.setWorkspace(params.getOutWorkspace());
-        Tuple9 t9 = wsc.getWorkspaceInfo(wi);
-        String outref = t9.getE1() + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
+        String outref = getInfo.get(0).getE7()  + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
         return outref;
     }
 
@@ -455,10 +434,7 @@ public class KBaseFeatureValuesImpl {
                 .withType("KBaseCollections.FeatureSet").withName(params.getOutputFeatureSet())
                 .withData(new UObject(featureSet)).withProvenance(provenance))));
 
-        WorkspaceIdentity wi = new WorkspaceIdentity();
-        wi.setWorkspace(params.getOutWorkspace());
-        Tuple9 t9 = wsc.getWorkspaceInfo(wi);
-        String outref = t9.getE1() + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
+        String outref = getInfo.get(0).getE7()  + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
         return outref;
     }
     

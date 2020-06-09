@@ -29,6 +29,14 @@ module KBaseFeatureValues {
     */
     typedef string ws_conditionset_id;
 
+
+    /* 
+        The Workspace object reference for a method return.
+        @id ws
+    */
+    typedef string workspace_ref;
+
+
     /*
         A simple 2D matrix of floating point numbers with labels/ids for rows and
         columns.  The matrix is stored as a list of lists, with the outer list
