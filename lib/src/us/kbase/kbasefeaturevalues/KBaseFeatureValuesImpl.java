@@ -316,6 +316,7 @@ public class KBaseFeatureValuesImpl {
                 .withData(new UObject(matrix)).withProvenance(provenance))));
 
         String outref = getInfo.get(0).getE7() + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
+	System.err.println("outref "+outref);
         return outref;
     }
 
