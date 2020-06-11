@@ -107,7 +107,7 @@ public class KBaseFeatureValuesImpl {
         return jobId;
     }
     
-    public String estimateK(EstimateKParams params, 
+    public EstimateKResult estimateK(EstimateKParams params, 
             List<ProvenanceAction> provenance) throws Exception {
         ObjectData objData = getWsClient().getObjects2(new GetObjects2Params().withObjects(
                 Arrays.asList(new ObjectSpecification().withRef(params.getInputMatrix()))))
@@ -125,11 +125,10 @@ public class KBaseFeatureValuesImpl {
                 .withType("KBaseFeatureValues.EstimateKResult").withName(params.getOutEstimateResult())
                 .withData(new UObject(toSave)).withProvenance(provenance))));
 
-	String outref = getInfo.get(0).getE7() + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
-	return outref;
+	return toSave;
     }
 
-    public String estimateKNew(EstimateKParamsNew params,
+    public EstimateKResult estimateKNew(EstimateKParamsNew params,
             List<ProvenanceAction> provenance) throws Exception {
         ObjectData objData = getWsClient().getObjects2(new GetObjects2Params().withObjects(
                 Arrays.asList(new ObjectSpecification().withRef(params.getInputMatrix()))))
@@ -148,8 +147,7 @@ public class KBaseFeatureValuesImpl {
                 .withType("KBaseFeatureValues.EstimateKResult").withName(params.getOutEstimateResult())
                 .withData(new UObject(toSave)).withProvenance(provenance))));
 
-        String outref = getInfo.get(0).getE7() + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
-        return outref;
+        return toSave;
     }
     
     public String clusterKMeans(ClusterKMeansParams params, 

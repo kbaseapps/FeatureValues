@@ -394,7 +394,7 @@ module KBaseFeatureValues {
         a specific hieght or by some other approach.
     */
     funcdef evaluate_clusterset_quality(EvaluateClustersetQualityParams params)
-        returns (string workspace_ref) authentication required;
+        returns () authentication required;
 
 
     /*
@@ -407,7 +407,7 @@ module KBaseFeatureValues {
     } ValidateMatrixParams;
 
     funcdef validate_matrix(ValidateMatrixParams params)
-        returns (string workspace_ref) authentication optional;
+        returns () authentication optional;
 
     /*
         transform_type - type of matrix change (one of: add, multiply,

@@ -27,8 +27,10 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * data - contains values for (feature,condition) pairs, where 
  *     features correspond to rows and conditions are columns
  *     (ie data.values[feature][condition])
+ * diff_expr_matrix_ref - added to connect filtered expression matrix to differential expression matrix
+ *     used for filtering
  * @optional description row_normalization col_normalization
- * @optional genome_ref feature_mapping conditionset_ref condition_mapping report
+ * @optional genome_ref feature_mapping conditionset_ref condition_mapping report diff_expr_matrix_ref
  * @metadata ws type
  * @metadata ws scale
  * @metadata ws row_normalization
@@ -52,6 +54,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "feature_mapping",
     "conditionset_ref",
     "condition_mapping",
+    "diff_expr_matrix_ref",
     "data",
     "report"
 })
@@ -75,6 +78,8 @@ public class ExpressionMatrix {
     private java.lang.String conditionsetRef;
     @JsonProperty("condition_mapping")
     private Map<String, String> conditionMapping;
+    @JsonProperty("diff_expr_matrix_ref")
+    private java.lang.String diffExprMatrixRef;
     /**
      * <p>Original spec-file type: FloatMatrix2D</p>
      * <pre>
@@ -240,6 +245,21 @@ public class ExpressionMatrix {
         return this;
     }
 
+    @JsonProperty("diff_expr_matrix_ref")
+    public java.lang.String getDiffExprMatrixRef() {
+        return diffExprMatrixRef;
+    }
+
+    @JsonProperty("diff_expr_matrix_ref")
+    public void setDiffExprMatrixRef(java.lang.String diffExprMatrixRef) {
+        this.diffExprMatrixRef = diffExprMatrixRef;
+    }
+
+    public ExpressionMatrix withDiffExprMatrixRef(java.lang.String diffExprMatrixRef) {
+        this.diffExprMatrixRef = diffExprMatrixRef;
+        return this;
+    }
+
     /**
      * <p>Original spec-file type: FloatMatrix2D</p>
      * <pre>
@@ -330,7 +350,7 @@ public class ExpressionMatrix {
 
     @Override
     public java.lang.String toString() {
-        return ((((((((((((((((((((((((("ExpressionMatrix"+" [description=")+ description)+", type=")+ type)+", scale=")+ scale)+", rowNormalization=")+ rowNormalization)+", colNormalization=")+ colNormalization)+", genomeRef=")+ genomeRef)+", featureMapping=")+ featureMapping)+", conditionsetRef=")+ conditionsetRef)+", conditionMapping=")+ conditionMapping)+", data=")+ data)+", report=")+ report)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((((((((((((((((((("ExpressionMatrix"+" [description=")+ description)+", type=")+ type)+", scale=")+ scale)+", rowNormalization=")+ rowNormalization)+", colNormalization=")+ colNormalization)+", genomeRef=")+ genomeRef)+", featureMapping=")+ featureMapping)+", conditionsetRef=")+ conditionsetRef)+", conditionMapping=")+ conditionMapping)+", diffExprMatrixRef=")+ diffExprMatrixRef)+", data=")+ data)+", report=")+ report)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

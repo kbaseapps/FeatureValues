@@ -90,12 +90,19 @@ sub new
     # We create an auth token, passing through the arguments that we were (hopefully) given.
 
     {
-	my $token = Bio::KBase::AuthToken->new(@args);
+	my %arg_hash2 = @args;
+	if (exists $arg_hash2{"token"}) {
+	    $self->{token} = $arg_hash2{"token"};
+	} elsif (exists $arg_hash2{"user_id"}) {
+	    my $token = Bio::KBase::AuthToken->new(@args);
+	    if (!$token->error_message) {
+	        $self->{token} = $token->token;
+	    }
+	}
 	
-	if (!$token->error_message)
+	if (exists $self->{token})
 	{
-	    $self->{token} = $token->token;
-	    $self->{client}->{token} = $token->token;
+	    $self->{client}->{token} = $self->{token};
 	}
     }
 
@@ -112,7 +119,7 @@ sub new
 
 =head2 estimate_k
 
-  $obj->estimate_k($params)
+  $output = $obj->estimate_k($params)
 
 =over 4
 
@@ -122,6 +129,7 @@ sub new
 
 <pre>
 $params is a KBaseFeatureValues.EstimateKParams
+$output is a KBaseFeatureValues.EstimateKResult
 EstimateKParams is a reference to a hash where the following keys are defined:
 	input_matrix has a value which is a KBaseFeatureValues.ws_matrix_id
 	min_k has a value which is an int
@@ -133,6 +141,12 @@ EstimateKParams is a reference to a hash where the following keys are defined:
 	out_workspace has a value which is a string
 	out_estimate_result has a value which is a string
 ws_matrix_id is a string
+EstimateKResult is a reference to a hash where the following keys are defined:
+	best_k has a value which is an int
+	estimate_cluster_sizes has a value which is a reference to a list where each element is a reference to a list containing 2 items:
+		0: an int
+		1: a float
+
 
 </pre>
 
@@ -141,6 +155,7 @@ ws_matrix_id is a string
 =begin text
 
 $params is a KBaseFeatureValues.EstimateKParams
+$output is a KBaseFeatureValues.EstimateKResult
 EstimateKParams is a reference to a hash where the following keys are defined:
 	input_matrix has a value which is a KBaseFeatureValues.ws_matrix_id
 	min_k has a value which is an int
@@ -152,6 +167,12 @@ EstimateKParams is a reference to a hash where the following keys are defined:
 	out_workspace has a value which is a string
 	out_estimate_result has a value which is a string
 ws_matrix_id is a string
+EstimateKResult is a reference to a hash where the following keys are defined:
+	best_k has a value which is an int
+	estimate_cluster_sizes has a value which is a reference to a list where each element is a reference to a list containing 2 items:
+		0: an int
+		1: a float
+
 
 
 =end text
@@ -201,7 +222,7 @@ provides an estimate of K by [...]
 					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
 					      );
 	} else {
-	    return;
+	    return wantarray ? @{$result->result} : $result->result->[0];
 	}
     } else {
         Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method estimate_k",
@@ -215,7 +236,7 @@ provides an estimate of K by [...]
 
 =head2 estimate_k_new
 
-  $obj->estimate_k_new($params)
+  $output = $obj->estimate_k_new($params)
 
 =over 4
 
@@ -225,6 +246,7 @@ provides an estimate of K by [...]
 
 <pre>
 $params is a KBaseFeatureValues.EstimateKParamsNew
+$output is a KBaseFeatureValues.EstimateKResult
 EstimateKParamsNew is a reference to a hash where the following keys are defined:
 	input_matrix has a value which is a KBaseFeatureValues.ws_matrix_id
 	min_k has a value which is an int
@@ -238,6 +260,12 @@ EstimateKParamsNew is a reference to a hash where the following keys are defined
 	out_estimate_result has a value which is a string
 ws_matrix_id is a string
 boolean is an int
+EstimateKResult is a reference to a hash where the following keys are defined:
+	best_k has a value which is an int
+	estimate_cluster_sizes has a value which is a reference to a list where each element is a reference to a list containing 2 items:
+		0: an int
+		1: a float
+
 
 </pre>
 
@@ -246,6 +274,7 @@ boolean is an int
 =begin text
 
 $params is a KBaseFeatureValues.EstimateKParamsNew
+$output is a KBaseFeatureValues.EstimateKResult
 EstimateKParamsNew is a reference to a hash where the following keys are defined:
 	input_matrix has a value which is a KBaseFeatureValues.ws_matrix_id
 	min_k has a value which is an int
@@ -259,6 +288,12 @@ EstimateKParamsNew is a reference to a hash where the following keys are defined
 	out_estimate_result has a value which is a string
 ws_matrix_id is a string
 boolean is an int
+EstimateKResult is a reference to a hash where the following keys are defined:
+	best_k has a value which is an int
+	estimate_cluster_sizes has a value which is a reference to a list where each element is a reference to a list containing 2 items:
+		0: an int
+		1: a float
+
 
 
 =end text
@@ -308,7 +343,7 @@ provides an estimate of K by [...]
 					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
 					      );
 	} else {
-	    return;
+	    return wantarray ? @{$result->result} : $result->result->[0];
 	}
     } else {
         Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method estimate_k_new",
@@ -322,7 +357,7 @@ provides an estimate of K by [...]
 
 =head2 cluster_k_means
 
-  $obj->cluster_k_means($params)
+  $workspace_ref = $obj->cluster_k_means($params)
 
 =over 4
 
@@ -332,6 +367,7 @@ provides an estimate of K by [...]
 
 <pre>
 $params is a KBaseFeatureValues.ClusterKMeansParams
+$workspace_ref is a string
 ClusterKMeansParams is a reference to a hash where the following keys are defined:
 	k has a value which is an int
 	input_data has a value which is a KBaseFeatureValues.ws_matrix_id
@@ -350,6 +386,7 @@ ws_matrix_id is a string
 =begin text
 
 $params is a KBaseFeatureValues.ClusterKMeansParams
+$workspace_ref is a string
 ClusterKMeansParams is a reference to a hash where the following keys are defined:
 	k has a value which is an int
 	input_data has a value which is a KBaseFeatureValues.ws_matrix_id
@@ -408,7 +445,7 @@ Clusters features by K-means clustering.
 					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
 					      );
 	} else {
-	    return;
+	    return wantarray ? @{$result->result} : $result->result->[0];
 	}
     } else {
         Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method cluster_k_means",
@@ -422,7 +459,7 @@ Clusters features by K-means clustering.
 
 =head2 cluster_hierarchical
 
-  $obj->cluster_hierarchical($params)
+  $workspace_ref = $obj->cluster_hierarchical($params)
 
 =over 4
 
@@ -432,6 +469,7 @@ Clusters features by K-means clustering.
 
 <pre>
 $params is a KBaseFeatureValues.ClusterHierarchicalParams
+$workspace_ref is a string
 ClusterHierarchicalParams is a reference to a hash where the following keys are defined:
 	distance_metric has a value which is a string
 	linkage_criteria has a value which is a string
@@ -451,6 +489,7 @@ ws_matrix_id is a string
 =begin text
 
 $params is a KBaseFeatureValues.ClusterHierarchicalParams
+$workspace_ref is a string
 ClusterHierarchicalParams is a reference to a hash where the following keys are defined:
 	distance_metric has a value which is a string
 	linkage_criteria has a value which is a string
@@ -510,7 +549,7 @@ Clusters features by hierarchical clustering.
 					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
 					      );
 	} else {
-	    return;
+	    return wantarray ? @{$result->result} : $result->result->[0];
 	}
     } else {
         Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method cluster_hierarchical",
@@ -524,7 +563,7 @@ Clusters features by hierarchical clustering.
 
 =head2 clusters_from_dendrogram
 
-  $obj->clusters_from_dendrogram($params)
+  $workspace_ref = $obj->clusters_from_dendrogram($params)
 
 =over 4
 
@@ -534,6 +573,7 @@ Clusters features by hierarchical clustering.
 
 <pre>
 $params is a KBaseFeatureValues.ClustersFromDendrogramParams
+$workspace_ref is a string
 ClustersFromDendrogramParams is a reference to a hash where the following keys are defined:
 	feature_height_cutoff has a value which is a float
 	condition_height_cutoff has a value which is a float
@@ -549,6 +589,7 @@ ws_featureclusters_id is a string
 =begin text
 
 $params is a KBaseFeatureValues.ClustersFromDendrogramParams
+$workspace_ref is a string
 ClustersFromDendrogramParams is a reference to a hash where the following keys are defined:
 	feature_height_cutoff has a value which is a float
 	condition_height_cutoff has a value which is a float
@@ -606,7 +647,7 @@ a specific hieght or by some other approach.
 					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
 					      );
 	} else {
-	    return;
+	    return wantarray ? @{$result->result} : $result->result->[0];
 	}
     } else {
         Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method clusters_from_dendrogram",
@@ -800,7 +841,7 @@ ws_matrix_id is a string
 
 =head2 correct_matrix
 
-  $obj->correct_matrix($params)
+  $workspace_ref = $obj->correct_matrix($params)
 
 =over 4
 
@@ -810,6 +851,7 @@ ws_matrix_id is a string
 
 <pre>
 $params is a KBaseFeatureValues.CorrectMatrixParams
+$workspace_ref is a string
 CorrectMatrixParams is a reference to a hash where the following keys are defined:
 	transform_type has a value which is a string
 	transform_value has a value which is a float
@@ -825,6 +867,7 @@ ws_matrix_id is a string
 =begin text
 
 $params is a KBaseFeatureValues.CorrectMatrixParams
+$workspace_ref is a string
 CorrectMatrixParams is a reference to a hash where the following keys are defined:
 	transform_type has a value which is a string
 	transform_value has a value which is a float
@@ -880,7 +923,7 @@ ws_matrix_id is a string
 					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
 					      );
 	} else {
-	    return;
+	    return wantarray ? @{$result->result} : $result->result->[0];
 	}
     } else {
         Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method correct_matrix",
@@ -894,7 +937,7 @@ ws_matrix_id is a string
 
 =head2 reconnect_matrix_to_genome
 
-  $obj->reconnect_matrix_to_genome($params)
+  $workspace_ref = $obj->reconnect_matrix_to_genome($params)
 
 =over 4
 
@@ -904,6 +947,7 @@ ws_matrix_id is a string
 
 <pre>
 $params is a KBaseFeatureValues.ReconnectMatrixToGenomeParams
+$workspace_ref is a string
 ReconnectMatrixToGenomeParams is a reference to a hash where the following keys are defined:
 	input_data has a value which is a KBaseFeatureValues.ws_matrix_id
 	genome_ref has a value which is a KBaseFeatureValues.ws_genome_id
@@ -919,6 +963,7 @@ ws_genome_id is a string
 =begin text
 
 $params is a KBaseFeatureValues.ReconnectMatrixToGenomeParams
+$workspace_ref is a string
 ReconnectMatrixToGenomeParams is a reference to a hash where the following keys are defined:
 	input_data has a value which is a KBaseFeatureValues.ws_matrix_id
 	genome_ref has a value which is a KBaseFeatureValues.ws_genome_id
@@ -974,7 +1019,7 @@ ws_genome_id is a string
 					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
 					      );
 	} else {
-	    return;
+	    return wantarray ? @{$result->result} : $result->result->[0];
 	}
     } else {
         Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method reconnect_matrix_to_genome",
@@ -988,7 +1033,7 @@ ws_genome_id is a string
 
 =head2 build_feature_set
 
-  $obj->build_feature_set($params)
+  $workspace_ref = $obj->build_feature_set($params)
 
 =over 4
 
@@ -998,6 +1043,7 @@ ws_genome_id is a string
 
 <pre>
 $params is a KBaseFeatureValues.BuildFeatureSetParams
+$workspace_ref is a string
 BuildFeatureSetParams is a reference to a hash where the following keys are defined:
 	genome has a value which is a KBaseFeatureValues.ws_genome_id
 	feature_ids has a value which is a string
@@ -1016,6 +1062,7 @@ ws_featureset_id is a string
 =begin text
 
 $params is a KBaseFeatureValues.BuildFeatureSetParams
+$workspace_ref is a string
 BuildFeatureSetParams is a reference to a hash where the following keys are defined:
 	genome has a value which is a KBaseFeatureValues.ws_genome_id
 	feature_ids has a value which is a string
@@ -1074,7 +1121,7 @@ ws_featureset_id is a string
 					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
 					      );
 	} else {
-	    return;
+	    return wantarray ? @{$result->result} : $result->result->[0];
 	}
     } else {
         Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method build_feature_set",
@@ -2994,6 +3041,38 @@ a string
 
 
 
+=head2 workspace_ref
+
+=over 4
+
+
+
+=item Description
+
+The Workspace object reference for a method return.
+@id ws
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a string
+</pre>
+
+=end html
+
+=begin text
+
+a string
+
+=end text
+
+=back
+
+
+
 =head2 FloatMatrix2D
 
 =over 4
@@ -3123,6 +3202,38 @@ errors has a value which is a reference to a list where each element is a string
 
 
 
+=head2 differential_expression_matrix_ref
+
+=over 4
+
+
+
+=item Description
+
+The workspace id for a single end or paired end reads object
+@id ws KBaseFeatureValues.DifferentialExpressionMatrix
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a string
+</pre>
+
+=end html
+
+=begin text
+
+a string
+
+=end text
+
+=back
+
+
+
 =head2 ExpressionMatrix
 
 =over 4
@@ -3134,6 +3245,90 @@ errors has a value which is a reference to a list where each element is a string
 A wrapper around a FloatMatrix2D designed for simple matricies of Expression
 data.  Rows map to features, and columns map to conditions.  The data type 
 includes some information about normalization factors and contains
+mappings from row ids to features and col ids to conditions.
+
+description - short optional description of the dataset
+type - ? level, ratio, log-ratio
+scale - ? probably: raw, ln, log2, log10
+col_normalization - mean_center, median_center, mode_center, zscore
+row_normalization - mean_center, median_center, mode_center, zscore
+feature_mapping - map from row_id to feature id in the genome
+data - contains values for (feature,condition) pairs, where 
+    features correspond to rows and conditions are columns
+    (ie data.values[feature][condition])
+diff_expr_matrix_ref - added to connect filtered expression matrix to differential expression matrix
+    used for filtering
+
+@optional description row_normalization col_normalization
+@optional genome_ref feature_mapping conditionset_ref condition_mapping report diff_expr_matrix_ref
+
+@metadata ws type
+@metadata ws scale
+@metadata ws row_normalization
+@metadata ws col_normalization
+@metadata ws genome_ref as Genome
+@metadata ws conditionset_ref as ConditionSet
+@metadata ws length(data.row_ids) as feature_count
+@metadata ws length(data.col_ids) as condition_count
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+description has a value which is a string
+type has a value which is a string
+scale has a value which is a string
+row_normalization has a value which is a string
+col_normalization has a value which is a string
+genome_ref has a value which is a KBaseFeatureValues.ws_genome_id
+feature_mapping has a value which is a reference to a hash where the key is a string and the value is a string
+conditionset_ref has a value which is a KBaseFeatureValues.ws_conditionset_id
+condition_mapping has a value which is a reference to a hash where the key is a string and the value is a string
+diff_expr_matrix_ref has a value which is a KBaseFeatureValues.differential_expression_matrix_ref
+data has a value which is a KBaseFeatureValues.FloatMatrix2D
+report has a value which is a KBaseFeatureValues.AnalysisReport
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+description has a value which is a string
+type has a value which is a string
+scale has a value which is a string
+row_normalization has a value which is a string
+col_normalization has a value which is a string
+genome_ref has a value which is a KBaseFeatureValues.ws_genome_id
+feature_mapping has a value which is a reference to a hash where the key is a string and the value is a string
+conditionset_ref has a value which is a KBaseFeatureValues.ws_conditionset_id
+condition_mapping has a value which is a reference to a hash where the key is a string and the value is a string
+diff_expr_matrix_ref has a value which is a KBaseFeatureValues.differential_expression_matrix_ref
+data has a value which is a KBaseFeatureValues.FloatMatrix2D
+report has a value which is a KBaseFeatureValues.AnalysisReport
+
+
+=end text
+
+=back
+
+
+
+=head2 DifferentialExpressionMatrix
+
+=over 4
+
+
+
+=item Description
+
+A wrapper around a FloatMatrix2D designed for simple matricies of Differential
+Expression data.  Rows map to features, and columns map to conditions.  The 
+data type includes some information about normalization factors and contains
 mappings from row ids to features and col ids to conditions.
 
 description - short optional description of the dataset
