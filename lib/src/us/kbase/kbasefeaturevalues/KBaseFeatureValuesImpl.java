@@ -120,7 +120,7 @@ public class KBaseFeatureValuesImpl {
         provenance.get(0).withDescription("K estimation for K-Means clustering method")
                 .withInputWsObjects(Arrays.asList(params.getInputMatrix()));
 	WorkspaceClient wsc = getWsClient();
-        List<Tuple11<Long,String,String,String,Long,String,Long,String,String,Long,Map<String,String>>> getInfo = wsc.saveObjects(new SaveObjectsParams().withWorkspace(params.getOutWorkspace())
+        wsc.saveObjects(new SaveObjectsParams().withWorkspace(params.getOutWorkspace())
                 .withObjects(Arrays.asList(new ObjectSaveData()
                 .withType("KBaseFeatureValues.EstimateKResult").withName(params.getOutEstimateResult())
                 .withData(new UObject(toSave)).withProvenance(provenance))));
@@ -142,7 +142,7 @@ public class KBaseFeatureValuesImpl {
                 .withInputWsObjects(Arrays.asList(params.getInputMatrix()));
         
 	WorkspaceClient wsc = getWsClient();
-	List<Tuple11<Long,String,String,String,Long,String,Long,String,String,Long,Map<String,String>>> getInfo = wsc.saveObjects(new SaveObjectsParams().withWorkspace(params.getOutWorkspace())
+	wsc.saveObjects(new SaveObjectsParams().withWorkspace(params.getOutWorkspace())
                 .withObjects(Arrays.asList(new ObjectSaveData()
                 .withType("KBaseFeatureValues.EstimateKResult").withName(params.getOutEstimateResult())
                 .withData(new UObject(toSave)).withProvenance(provenance))));
@@ -184,8 +184,7 @@ public class KBaseFeatureValuesImpl {
                 .withType("KBaseFeatureValues.FeatureClusters").withName(params.getOutClustersetId())
                 .withData(new UObject(toSave)).withProvenance(provenance))));
 
-        String outref = getInfo.get(0).getE7()  + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
-        return outref;
+        return toWsId(getInfo);
     }
 
     public static List<LabeledCluster> clustersFromLabels(FloatMatrix2D matrixData, ClusterResults res) {
@@ -245,8 +244,7 @@ public class KBaseFeatureValuesImpl {
                 .withType("KBaseFeatureValues.FeatureClusters").withName(params.getOutClustersetId())
                 .withData(new UObject(toSave)).withProvenance(provenance))));
 
-        String outref = getInfo.get(0).getE7()  + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
-        return outref;
+	return toWsId(getInfo);
     }
 
     public String clustersFromDendrogram(ClustersFromDendrogramParams params,
@@ -276,8 +274,7 @@ public class KBaseFeatureValuesImpl {
                 .withType("KBaseFeatureValues.FeatureClusters").withName(params.getOutClustersetId())
                 .withData(new UObject(toSave)).withProvenance(provenance))));
 
-        String outref = getInfo.get(0).getE7()  + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
-        return outref;
+	return toWsId(getInfo);
     }
 
     public void evaluateClustersetQuality(EvaluateClustersetQualityParams params, 
@@ -313,9 +310,7 @@ public class KBaseFeatureValuesImpl {
                 .withType(inputType).withName(outMatrixId)
                 .withData(new UObject(matrix)).withProvenance(provenance))));
 
-        String outref = getInfo.get(0).getE7() + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
-	System.err.println("outref "+outref);
-        return outref;
+	return toWsId(getInfo);
     }
 
     public String reconnectMatrixToGenome(ReconnectMatrixToGenomeParams params,
@@ -340,8 +335,7 @@ public class KBaseFeatureValuesImpl {
                 .withType(inputType).withName(outMatrixId)
                 .withData(new UObject(matrix)).withProvenance(provenance))));
 
-        String outref = getInfo.get(0).getE7()  + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
-        return outref;
+	return toWsId(getInfo);
     }
 
     @SuppressWarnings("unchecked")
@@ -433,8 +427,7 @@ public class KBaseFeatureValuesImpl {
                 .withType("KBaseCollections.FeatureSet").withName(params.getOutputFeatureSet())
                 .withData(new UObject(featureSet)).withProvenance(provenance))));
 
-        String outref = getInfo.get(0).getE7()  + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
-        return outref;
+	return toWsId(getInfo);
     }
     
     private static void addToListOnce(List<String> list, String item) {
@@ -924,6 +917,12 @@ public class KBaseFeatureValuesImpl {
         return new ExportClustersSifOutput().withShockId(clustersToFile(
                 new ClustersToFileParams().withInputRef(params.getInputRef())
                 .withToShock(1L).withFormat("SIF")).getShockId());
+    }
+
+
+    public String toWsId(String[] getInfo() {
+	String outref = getInfo.get(0).getE7()  + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
+	return outref;
     }
 
     class MatrixGenomeLoader{
