@@ -100,6 +100,30 @@ public class FloatMatrix2D {
     }
 
     @Override
+    public boolean equals(Object o) {
+
+    	if (this == o)
+        	return true;
+   	 if (o == null)
+        	return false;
+	if (getClass() != o.getClass())
+        	return false;
+
+	FloatMatrix2D newe = (FloatMatrix2D) o;
+
+	if(!Objects.equals((this.getRowIds(), o.getRowIds())
+                return false;
+	if(!Objects.equals((this.getColIds(), o.getColIds())
+                return false;
+	if(!Objects.equals((this.getValues(), o.getValues())
+                return false;
+	if(!Objects.equals((this.getAdditionalProperties(), o.getAdditionalProperties())
+                return false;
+
+	return true;
+    }
+
+    @Override
     public java.lang.String toString() {
         return ((((((((("FloatMatrix2D"+" [rowIds=")+ rowIds)+", colIds=")+ colIds)+", values=")+ values)+", additionalProperties=")+ additionalProperties)+"]");
     }

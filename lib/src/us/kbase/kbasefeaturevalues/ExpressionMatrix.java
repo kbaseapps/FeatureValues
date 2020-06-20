@@ -349,6 +349,76 @@ public class ExpressionMatrix {
     }
 
     @Override
+    public boolean equals(Object o) {
+
+	if (this == o)
+		return true;
+	if (o == null) {
+		System.err.println("o == null");
+		return false;
+		{
+	if (getClass() != o.getClass()) {
+		System.err.println("getClass() != o.getClass()");
+		return false;
+	}
+
+	if(!Objects.equals((this.getDescription(), o.getDescription()) {
+		System.err.println("1");
+                return false;
+	}
+	if(!Objects.equals((this.getType(), o.getType()){
+		System.err.println("2");
+                return false;
+	}
+	if(!Objects.equals((this.getScale(), o.(getScale)) {
+		System.err.println("3");
+                return false;
+	}
+	if(!Objects.equals((this.getRowNormalization(), o.getRowNormalization()) {
+		System.err.println("4");
+                return false;
+	}
+	if(!Objects.equals((this.getColNormalization(), o.getColNormalization()) {
+		System.err.println("5");
+                return false;
+	}
+	if(!Objects.equals((this.o.getGenomeRef(), o.o.getGenomeRef()) {
+		System.err.println("6");
+                return false;
+	}
+	if(!Objects.equals((this.(o.getFeatureMapping), o.o.getFeatureMapping()) {
+		System.err.println("7");
+                return false;
+	}
+	if(!Objects.equals((this.o.getConditionsetRef(), o.o.getConditionsetRef()) {
+		System.err.println("8");
+                return false;
+	}
+	if(!Objects.equals((this.o.getConditionMapping(), o.o.getConditionMapping()) {
+		System.err.println("9");
+                return false;
+	}
+	if(!Objects.equals((this.o.getDiffExprMatrixRef(), o.o.getDiffExprMatrixRef()) {
+		System.err.println("10");
+                return false;
+	}
+	if(!Objects.equals((this.o.getData(), o.o.getData()) {
+		System.err.println("11");
+                return false;
+	}
+	if(!Objects.equals((this.this.getReport(), o.this.getReport()) {
+		System.err.println("12");
+                return false;
+	}
+	if(!Objects.equals((this.o.getAdditionalProperties(), o.o.getAdditionalProperties()) {
+		System.err.println("13");
+                return false;
+	}
+	
+	return true;
+    }
+
+    @Override
     public java.lang.String toString() {
         return ((((((((((((((((((((((((((("ExpressionMatrix"+" [description=")+ description)+", type=")+ type)+", scale=")+ scale)+", rowNormalization=")+ rowNormalization)+", colNormalization=")+ colNormalization)+", genomeRef=")+ genomeRef)+", featureMapping=")+ featureMapping)+", conditionsetRef=")+ conditionsetRef)+", conditionMapping=")+ conditionMapping)+", diffExprMatrixRef=")+ diffExprMatrixRef)+", data=")+ data)+", report=")+ report)+", additionalProperties=")+ additionalProperties)+"]");
     }

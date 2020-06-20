@@ -920,7 +920,7 @@ public class KBaseFeatureValuesImpl {
     }
 
 
-    public String toWsId(String[] getInfo() {
+    public String toWsId(List<Tuple11<Long,String,String,String,Long,String,Long,String,String,Long,Map<String,String>>> getInfo) {
 	String outref = getInfo.get(0).getE7()  + "/" + getInfo.get(0).getE1() + "/" +  getInfo.get(0).getE5();
 	return outref;
     }
