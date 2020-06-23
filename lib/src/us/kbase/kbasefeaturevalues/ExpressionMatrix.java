@@ -3,6 +3,7 @@ package us.kbase.kbasefeaturevalues;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -356,61 +357,61 @@ public class ExpressionMatrix {
 	if (o == null) {
 		System.err.println("o == null");
 		return false;
-		{
+    }
 	if (getClass() != o.getClass()) {
 		System.err.println("getClass() != o.getClass()");
 		return false;
 	}
 
-	if(!Objects.equals((this.getDescription(), o.getDescription()) {
+	if(!Objects.equals(this.getDescription(), ((ExpressionMatrix)o).getDescription())) {
 		System.err.println("1");
                 return false;
 	}
-	if(!Objects.equals((this.getType(), o.getType()){
+	if(!Objects.equals(this.getType(), ((ExpressionMatrix)o).getType())) {
 		System.err.println("2");
                 return false;
 	}
-	if(!Objects.equals((this.getScale(), o.(getScale)) {
+	if(!Objects.equals(this.getScale(), ((ExpressionMatrix)o).getScale())) {
 		System.err.println("3");
                 return false;
 	}
-	if(!Objects.equals((this.getRowNormalization(), o.getRowNormalization()) {
+	if(!Objects.equals(this.getRowNormalization(), ((ExpressionMatrix)o).getRowNormalization())) {
 		System.err.println("4");
                 return false;
 	}
-	if(!Objects.equals((this.getColNormalization(), o.getColNormalization()) {
+	if(!Objects.equals(this.getColNormalization(), ((ExpressionMatrix)o).getColNormalization())) {
 		System.err.println("5");
                 return false;
 	}
-	if(!Objects.equals((this.o.getGenomeRef(), o.o.getGenomeRef()) {
+	if(!Objects.equals(this.getGenomeRef(), ((ExpressionMatrix)o).getGenomeRef())) {
 		System.err.println("6");
                 return false;
 	}
-	if(!Objects.equals((this.(o.getFeatureMapping), o.o.getFeatureMapping()) {
+	if(!Objects.equals(this.getFeatureMapping(), ((ExpressionMatrix)o).getFeatureMapping())) {
 		System.err.println("7");
                 return false;
 	}
-	if(!Objects.equals((this.o.getConditionsetRef(), o.o.getConditionsetRef()) {
+	if(!Objects.equals(this.getConditionsetRef(), ((ExpressionMatrix)o).getConditionsetRef())) {
 		System.err.println("8");
                 return false;
 	}
-	if(!Objects.equals((this.o.getConditionMapping(), o.o.getConditionMapping()) {
+	if(!Objects.equals(this.getConditionMapping(), ((ExpressionMatrix)o).getConditionMapping())) {
 		System.err.println("9");
                 return false;
 	}
-	if(!Objects.equals((this.o.getDiffExprMatrixRef(), o.o.getDiffExprMatrixRef()) {
+	if(!Objects.equals(this.getDiffExprMatrixRef(), ((ExpressionMatrix)o).getDiffExprMatrixRef())) {
 		System.err.println("10");
                 return false;
 	}
-	if(!Objects.equals((this.o.getData(), o.o.getData()) {
+	if(!Objects.equals(this.getData(), ((ExpressionMatrix)o).getData())) {
 		System.err.println("11");
                 return false;
 	}
-	if(!Objects.equals((this.this.getReport(), o.this.getReport()) {
+	if(!Objects.equals(this.getReport(), ((ExpressionMatrix)o).getReport())) {
 		System.err.println("12");
                 return false;
 	}
-	if(!Objects.equals((this.o.getAdditionalProperties(), o.o.getAdditionalProperties()) {
+	if(!Objects.equals(this.getAdditionalProperties(), ((ExpressionMatrix)o).getAdditionalProperties())) {
 		System.err.println("13");
                 return false;
 	}
