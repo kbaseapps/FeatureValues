@@ -359,7 +359,6 @@ public class KBaseFeatureValuesServerTest {
         checkKMeansForSample(clSet);
     }
 
-    @Test
     public void testCorrectMatrix() throws Exception {
         String testWsName = getWsName();
         String sourceMatrixId = "notcorrected_matrix.1";
@@ -492,6 +491,7 @@ public class KBaseFeatureValuesServerTest {
                 .withBaseFeatureSet(testWsName + "/" + outFeatureSetObj1)
                 .withFeatureIds("DVU1000").withGenome(testWsName + "/" + genomeObjName)
                 .withOutWorkspace(testWsName).withOutputFeatureSet(outFeatureSetObj2);
+
         String getId = impl.buildFeatureSet(bfsp, token, getContext());
 
         //retrieve saved object
@@ -499,6 +499,7 @@ public class KBaseFeatureValuesServerTest {
                 new ObjectIdentity().withWorkspace(testWsName).withName(outFeatureSetObj2)))
                 .get(0);
         Map<String, Object> fs2 = res1.getData().asClassInstance(Map.class);
+
         Map<String, List<String>> elements2 = (Map<String, List<String>>) fs2.get("elements");
         Assert.assertEquals(4, elements2.size());
 
@@ -685,7 +686,6 @@ public class KBaseFeatureValuesServerTest {
             //test if returned id matches id returned by ws saveobjects
             Assert.assertEquals(getInfoEM.get(0).getE7()  + "/" + getInfoEM.get(0).getE1() + "/" +  getInfoEM.get(0).getE5(), getId);
 
-
             String shockId = impl.exportClustersTsv(new ExportClustersTsvParams().withInputRef(
                     testWsName + "/" + clustersObjName), token, getContext()).getShockId();
             tempShockIdsToDelete.add(shockId);
@@ -817,3 +817,4 @@ public class KBaseFeatureValuesServerTest {
         return res;
     }
 }
+
