@@ -219,20 +219,6 @@ public class KBaseFeatureValuesServerTest {
             Assert.assertTrue((double) item.getE2() > 0);
         }
 
-        List<Tuple11<Long, String, String, String, Long, String, Long, String, String, Long, Map<String, String>>> info2 = getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(testWsName)
-                .withObjects(Arrays.asList(new ObjectSaveData()
-                        .withType("KBaseFeatureValues.EstimateKResult")
-                        .withName(estimObjName + "_test")
-                        .withData(new UObject(estKRes)))));
-
-        String getId2 = info2.get(0).getE7() + "/" + info2.get(0).getE1() + "/" + info2.get(0).getE5();
-        EstimateKResult ekr2 = loadfromWs(getId2).asClassInstance(EstimateKResult.class);
-
-        //test that returned object matches what is saved and returned by ws
-        Assert.assertEquals(estKRes.getBestK(), ekr2.getBestK());
-        Assert.assertEquals(estKRes.getEstimateClusterSizes().size(), ekr2.getEstimateClusterSizes().size());
-
-
         EstimateKResult estKResNew = impl.estimateKNew(new EstimateKParamsNew().withInputMatrix(testWsName + "/" +
                 exprObjName).withRandomSeed(123L).withOutWorkspace(testWsName)
                 .withOutEstimateResult(estimNewObjName), token, getContext());
@@ -357,7 +343,7 @@ public class KBaseFeatureValuesServerTest {
         String clustObj1Name = "py_clusters1";
         ExpressionMatrix data = new ExpressionMatrix().withType("log-ratio").withScale("1.0")
                 .withData(getSampleMatrix());
-        getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
+        List<Tuple11<Long, String, String, String, Long, String, Long, String, String, Long, Map<String, String>>> getInfoEKN = getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(exprObjName).withType("KBaseFeatureValues.ExpressionMatrix")
                         .withData(new UObject(data)))));
         String getId = impl.clusterKMeans(new ClusterKMeansParams().withInputData(testWsName + "/" +
@@ -366,44 +352,11 @@ public class KBaseFeatureValuesServerTest {
         ObjectData res = getWsClient().getObjects(Arrays.asList(new ObjectIdentity().withWorkspace(testWsName)
                 .withName(clustObj1Name))).get(0);
 
+        //test if returned id matches id returned by ws saveobjects
+        Assert.assertEquals(getInfoEKN.get(0).getE7()  + "/" + getInfoEKN.get(0).getE1() + "/" +  getInfoEKN.get(0).getE5(), getId);
+
         FeatureClusters clSet = res.getData().asClassInstance(FeatureClusters.class);
         checkKMeansForSample(clSet);
-    }
-
-    @Test
-    public void testSaveMatrix() throws Exception {
-        String testWsName = getWsName();
-        String sourceMatrixId = "notcorrected_matrix.1";
-
-        FloatMatrix2D testmat = getSampleMatrix();
-        ExpressionMatrix matrix = new ExpressionMatrix().withType("log-ratio").withScale("1.0")
-                .withData(testmat);
-        List<Tuple11<Long, String, String, String, Long, String, Long, String, String, Long, Map<String, String>>> info = getWsClient().
-                saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(new ObjectSaveData().
-                        withName(sourceMatrixId).withType("KBaseFeatureValues.ExpressionMatrix").withData(new UObject(matrix)))));
-
-        String getId = info.get(0).getE7() + "/" + info.get(0).getE1() + "/" + info.get(0).getE5();
-        ExpressionMatrix res = loadfromWs(getId).asClassInstance(ExpressionMatrix.class);
-
-        //test that fields in pre-crafted ExpressionMatrix match what gets returned from workspace saved object
-        Assert.assertEquals(matrix.getDescription(), res.getDescription());
-        Assert.assertEquals(matrix.getRowNormalization(), res.getDescription());
-        Assert.assertEquals(matrix.getColNormalization(), res.getDescription());
-        Assert.assertEquals(matrix.getGenomeRef(), res.getDescription());
-        Assert.assertEquals(matrix.getFeatureMapping(), res.getDescription());
-        Assert.assertEquals(matrix.getConditionsetRef(), res.getDescription());
-        Assert.assertEquals(matrix.getConditionMapping(), res.getDescription());
-        Assert.assertEquals(matrix.getDiffExprMatrixRef(), res.getDescription());
-        Assert.assertEquals(matrix.getReport(), res.getDescription());
-        //Map<java.lang.String, Object> testProp = new HashMap<java.lang.String, Object>();
-        Assert.assertEquals(matrix.getAdditionalProperties(), res.getDescription());
-        Assert.assertEquals(matrix.getType(), res.getDescription());
-        Assert.assertEquals(matrix.getScale(), res.getDescription());
-
-        Assert.assertEquals(matrix.getData().getRowIds(), res.getData().getRowIds());
-        Assert.assertEquals(matrix.getData().getColIds(), res.getData().getColIds());
-        Assert.assertEquals(matrix.getData().getAdditionalProperties(), res.getData().getAdditionalProperties());
-
     }
 
     @Test
@@ -417,7 +370,7 @@ public class KBaseFeatureValuesServerTest {
         //introduce null value for imputation test
         data.getData().getValues().get(0).set(0, null);
         Assert.assertEquals(1, getNullCount(data.getData()));
-        getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
+        List<Tuple11<Long, String, String, String, Long, String, Long, String, String, Long, Map<String, String>>> infoCM = getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(sourceMatrixId).withType("KBaseFeatureValues.ExpressionMatrix")
                         .withData(new UObject(data)))));
         String targetMatrixId = "corrected_matrix.1";
@@ -435,9 +388,13 @@ public class KBaseFeatureValuesServerTest {
 
         //reload with returned object id
         ExpressionMatrix res = loadfromWs(getId).asClassInstance(ExpressionMatrix.class);
-        //reset from null in data used for imputation test
+        //reset from null in data before imputation
         data.getData().getValues().get(0).set(0, res.getData().getValues().get(0).get(0));
         Assert.assertEquals(data.getData().toString(), matrix.getData().toString());
+
+        //test if returned id matches id returned by ws saveobjects
+        Assert.assertEquals(infoCM.get(0).getE7()  + "/" + infoCM.get(0).getE1() + "/" +  infoCM.get(0).getE5(), getId);
+
     }
 
     @Test
@@ -449,7 +406,7 @@ public class KBaseFeatureValuesServerTest {
         ExpressionMatrix data = ExpressionUploader.parse(null, inputFile, "MO",
                 null, true, null, null, null);
         String matrixId = "connected_matrix.1";
-        getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
+        List<Tuple11<Long, String, String, String, Long, String, Long, String, String, Long, Map<String, String>>> infoEM = getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                 new ObjectSaveData().withName(matrixId).withType("KBaseFeatureValues.ExpressionMatrix")
                         .withData(new UObject(data)))));
         String getId = impl.reconnectMatrixToGenome(new ReconnectMatrixToGenomeParams().withInputData(
@@ -462,26 +419,9 @@ public class KBaseFeatureValuesServerTest {
         //test feature mapping result
         Assert.assertEquals(2669, matrix.getFeatureMapping().size());
 
-        //reload with returned object id
-        ExpressionMatrix res = loadfromWs(getId).asClassInstance(ExpressionMatrix.class);
-        //test that fields in pre-crafted ExpressionMatrix match what gets returned from workspace saved object
-        Assert.assertEquals(matrix.getDescription(), res.getDescription());
-        Assert.assertEquals(matrix.getRowNormalization(), res.getDescription());
-        Assert.assertEquals(matrix.getColNormalization(), res.getDescription());
-        Assert.assertEquals(matrix.getGenomeRef(), res.getDescription());
-        Assert.assertEquals(matrix.getFeatureMapping(), res.getDescription());
-        Assert.assertEquals(matrix.getConditionsetRef(), res.getDescription());
-        Assert.assertEquals(matrix.getConditionMapping(), res.getDescription());
-        Assert.assertEquals(matrix.getDiffExprMatrixRef(), res.getDescription());
-        Assert.assertEquals(matrix.getReport(), res.getDescription());
-        //Map<java.lang.String, Object> testProp = new HashMap<java.lang.String, Object>();
-        Assert.assertEquals(matrix.getAdditionalProperties(), res.getDescription());
-        Assert.assertEquals(matrix.getType(), res.getDescription());
-        Assert.assertEquals(matrix.getScale(), res.getDescription());
+        //test if returned id matches id returned by ws saveobjects
+        Assert.assertEquals(infoEM.get(0).getE7()  + "/" + infoEM.get(0).getE1() + "/" +  infoEM.get(0).getE5(), getId);
 
-        Assert.assertEquals(matrix.getData().getRowIds(), res.getData().getRowIds());
-        Assert.assertEquals(matrix.getData().getColIds(), res.getData().getColIds());
-        Assert.assertEquals(matrix.getData().getAdditionalProperties(), res.getData().getAdditionalProperties());
     }
 
     @Test
@@ -552,15 +492,19 @@ public class KBaseFeatureValuesServerTest {
                 .withBaseFeatureSet(testWsName + "/" + outFeatureSetObj1)
                 .withFeatureIds("DVU1000").withGenome(testWsName + "/" + genomeObjName)
                 .withOutWorkspace(testWsName).withOutputFeatureSet(outFeatureSetObj2);
-        String getId = impl.buildFeatureSet(bfsp,
-                token, getContext());
+        String getId = impl.buildFeatureSet(bfsp, token, getContext());
 
         //retrieve saved object
-        Map<String, Object> fs2 = getWsClient().getObjects(Arrays.asList(
+        ObjectData res1 = getWsClient().getObjects(Arrays.asList(
                 new ObjectIdentity().withWorkspace(testWsName).withName(outFeatureSetObj2)))
-                .get(0).getData().asClassInstance(Map.class);
+                .get(0);
+        Map<String, Object> fs2 = res1.getData().asClassInstance(Map.class);
         Map<String, List<String>> elements2 = (Map<String, List<String>>) fs2.get("elements");
         Assert.assertEquals(4, elements2.size());
+
+        //test that returned ref matched object id
+        Tuple11<Long,String,String,String,Long,String,Long,String,String,Long,Map<String,String>> getInfoFS = res1.getInfo();
+        Assert.assertEquals(getInfoFS.getE7()  + "/" + getInfoFS.getE1() + "/" +  getInfoFS.getE5(), getId);
     }
 
     @SuppressWarnings("unchecked")
@@ -728,7 +672,7 @@ public class KBaseFeatureValuesServerTest {
             String matrixObjName = "matrix_for_export_clusters";
             ExpressionMatrix mdata = new ExpressionMatrix().withType("log-ratio").withScale("1.0")
                     .withData(getSampleMatrix());
-            getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
+            List<Tuple11<Long,String,String,String,Long,String,Long,String,String,Long,Map<String,String>>> getInfoEM = getWsClient().saveObjects(new SaveObjectsParams().withWorkspace(testWsName).withObjects(Arrays.asList(
                     new ObjectSaveData().withName(matrixObjName)
                             .withType("KBaseFeatureValues.ExpressionMatrix")
                             .withData(new UObject(mdata)))));
@@ -738,8 +682,9 @@ public class KBaseFeatureValuesServerTest {
                     .withOutClustersetId(clustersObjName),
                     token, getContext());
 
-            //reload with different source for object id
-            FeatureClusters res = loadfromWs(getId).asClassInstance(FeatureClusters.class);
+            //test if returned id matches id returned by ws saveobjects
+            Assert.assertEquals(getInfoEM.get(0).getE7()  + "/" + getInfoEM.get(0).getE1() + "/" +  getInfoEM.get(0).getE5(), getId);
+
 
             String shockId = impl.exportClustersTsv(new ExportClustersTsvParams().withInputRef(
                     testWsName + "/" + clustersObjName), token, getContext()).getShockId();
