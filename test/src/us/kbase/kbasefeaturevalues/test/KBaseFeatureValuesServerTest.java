@@ -353,7 +353,7 @@ public class KBaseFeatureValuesServerTest {
                 .withName(clustObj1Name))).get(0);
 
         //test if returned id matches id returned by ws saveobjects
-        Assert.assertEquals(getInfoEKN.get(0).getE7()  + "/" + getInfoEKN.get(0).getE1() + "/" +  getInfoEKN.get(0).getE5(), getId);
+        Assert.assertEquals(getInfoEKN.get(0).getE7()  + "/" + (getInfoEKN.get(0).getE1()+1) + "/" +  getInfoEKN.get(0).getE5(), getId);
 
         FeatureClusters clSet = res.getData().asClassInstance(FeatureClusters.class);
         checkKMeansForSample(clSet);
@@ -419,7 +419,7 @@ public class KBaseFeatureValuesServerTest {
         Assert.assertEquals(2669, matrix.getFeatureMapping().size());
 
         //test if returned id matches id returned by ws saveobjects
-        Assert.assertEquals(infoEM.get(0).getE7()  + "/" + infoEM.get(0).getE1() + "/" +  infoEM.get(0).getE5(), getId);
+        Assert.assertEquals(infoEM.get(0).getE7()  + "/" + infoEM.get(0).getE1() + "/" +  (infoEM.get(0).getE5()+1), getId);
 
     }
 
@@ -684,7 +684,7 @@ public class KBaseFeatureValuesServerTest {
                     token, getContext());
 
             //test if returned id matches id returned by ws saveobjects
-            Assert.assertEquals(getInfoEM.get(0).getE7()  + "/" + getInfoEM.get(0).getE1() + "/" +  getInfoEM.get(0).getE5(), getId);
+            Assert.assertEquals(getInfoEM.get(0).getE7()  + "/" + (getInfoEM.get(0).getE1()+1) + "/" +  getInfoEM.get(0).getE5(), getId);
 
             String shockId = impl.exportClustersTsv(new ExportClustersTsvParams().withInputRef(
                     testWsName + "/" + clustersObjName), token, getContext()).getShockId();
@@ -805,7 +805,8 @@ public class KBaseFeatureValuesServerTest {
         String[] getIdParts = strId.split("/");
         UObject res = null;
         try {
-            res = getWsClient().getObjects(Arrays.asList(new ObjectIdentity().withWsid(Long.parseLong(getIdParts[0])).withObjid(Long.parseLong(getIdParts[1])).withVer(Long.parseLong(getIdParts[2])))).get(0).getData();
+            res = getWsClient().getObjects(Arrays.asList(new ObjectIdentity().withWsid(Long.parseLong(getIdParts[0])).
+                    withObjid(Long.parseLong(getIdParts[1])).withVer(Long.parseLong(getIdParts[2])))).get(0).getData();
         } catch (IOException e) {
             System.out.println("error saving object as " + strId);
             System.out.println(e.toString());
