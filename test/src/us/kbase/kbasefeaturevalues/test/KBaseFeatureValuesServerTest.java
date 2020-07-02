@@ -218,13 +218,11 @@ public class KBaseFeatureValuesServerTest {
             Assert.assertEquals(2L + i, (long) item.getE1());
             Assert.assertTrue((double) item.getE2() > 0);
         }
-        System.err.println("estKRes\n"+estKRes.toString());
 
         EstimateKResult estKResNew = impl.estimateKNew(new EstimateKParamsNew().withInputMatrix(testWsName + "/" +
                 exprObjName).withRandomSeed(123L).withOutWorkspace(testWsName)
                 .withOutEstimateResult(estimNewObjName), token, getContext());
 
-        System.err.println("estKResNew\n"+estKResNew.toString());
         long kNew = estKResNew.getBestK();
         Assert.assertEquals(k, kNew);
         //System.out.println("Cluster count qualities: " + estKResNew.getEstimateClusterSizes());
@@ -391,7 +389,11 @@ public class KBaseFeatureValuesServerTest {
 
         //reload with returned object id
         ExpressionMatrix res = loadfromWs(getId).asClassInstance(ExpressionMatrix.class);
-        //reset from null in data before imputation
+        //Change null in data before imputation to new value and compare globally:
+        //briefly, the tested method imputes missing values and the test expression matrix has no nulls
+        //this test introduces a null and passes the new matrix to the method
+        //it then compares all values in the returned expression matrix
+        //but since the saved matrix has an imputed value where the test matrix has a null value, that matrix cell is made identical
         data.getData().getValues().get(0).set(0, res.getData().getValues().get(0).get(0));
         Assert.assertEquals(data.getData().toString(), matrix.getData().toString());
 
