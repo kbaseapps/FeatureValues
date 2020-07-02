@@ -218,10 +218,13 @@ public class KBaseFeatureValuesServerTest {
             Assert.assertEquals(2L + i, (long) item.getE1());
             Assert.assertTrue((double) item.getE2() > 0);
         }
+        System.err.println("estKRes\n"+estKRes.toString());
 
         EstimateKResult estKResNew = impl.estimateKNew(new EstimateKParamsNew().withInputMatrix(testWsName + "/" +
                 exprObjName).withRandomSeed(123L).withOutWorkspace(testWsName)
                 .withOutEstimateResult(estimNewObjName), token, getContext());
+
+        System.err.println("estKResNew\n"+estKResNew.toString());
         long kNew = estKResNew.getBestK();
         Assert.assertEquals(k, kNew);
         //System.out.println("Cluster count qualities: " + estKResNew.getEstimateClusterSizes());
