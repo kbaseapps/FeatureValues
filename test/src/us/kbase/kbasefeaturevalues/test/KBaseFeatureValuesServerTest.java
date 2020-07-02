@@ -359,6 +359,7 @@ public class KBaseFeatureValuesServerTest {
         checkKMeansForSample(clSet);
     }
 
+    @Test
     public void testCorrectMatrix() throws Exception {
         String testWsName = getWsName();
         String sourceMatrixId = "notcorrected_matrix.1";
