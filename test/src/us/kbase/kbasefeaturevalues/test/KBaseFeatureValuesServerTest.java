@@ -393,7 +393,7 @@ public class KBaseFeatureValuesServerTest {
         Assert.assertEquals(data.getData().toString(), matrix.getData().toString());
 
         //test if returned id matches id returned by ws saveobjects
-        Assert.assertEquals(infoCM.get(0).getE7()  + "/" + infoCM.get(0).getE1() + "/" +  infoCM.get(0).getE5(), getId);
+        Assert.assertEquals(infoCM.get(0).getE7()  + "/" + (infoCM.get(0).getE1()+1) + "/" +  infoCM.get(0).getE5(), getId);
 
     }
 
