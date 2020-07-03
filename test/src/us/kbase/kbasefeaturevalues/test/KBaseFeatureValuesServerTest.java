@@ -205,14 +205,15 @@ public class KBaseFeatureValuesServerTest {
                 exprObjName).withOutWorkspace(testWsName).withOutEstimateResult(estimObjName);
         EstimateKResult estKRes = impl.estimateK(ekp, token, getContext());
 
-        //ObjectData res1 = getWsClient().getObjects(Arrays.asList(new ObjectIdentity().withWorkspace(testWsName)
-        //        .withName(estimObjName))).get(0);
-        //EstimateKResult estKRes = res1.getData().asClassInstance(EstimateKResult.class);
         long k = estKRes.getBestK();
+
+        /*comparing the two fields that are populated: best K and K clusters*/
         Assert.assertNotNull("k exists ", k);
         Assert.assertNotNull("c size exists ", estKRes.getEstimateClusterSizes().size());
         Assert.assertEquals(3, k);
         Assert.assertEquals(5, estKRes.getEstimateClusterSizes().size());
+        Map<String, Object> additionalProperties = new HashMap<String, Object>();
+        Assert.assertEquals(additionalProperties, estKRes.getAdditionalProperties());
         for (int i = 0; i < estKRes.getEstimateClusterSizes().size(); i++) {
             Tuple2<Long, Double> item = estKRes.getEstimateClusterSizes().get(i);
             Assert.assertEquals(2L + i, (long) item.getE1());
