@@ -395,6 +395,8 @@ public class KBaseFeatureValuesServerTest {
         //this test introduces a null and passes the new matrix to the method
         //it then compares all values in the returned expression matrix
         //but since the saved matrix has an imputed value where the test matrix has a null value, that matrix cell is made identical
+        Assert.assertEquals(0.325, (double) res.getData().getValues().get(0).get(0), 1e-10);
+
         data.getData().getValues().get(0).set(0, res.getData().getValues().get(0).get(0));
         Assert.assertEquals(data.getData().toString(), matrix.getData().toString());
 
