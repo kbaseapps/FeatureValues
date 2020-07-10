@@ -12,7 +12,7 @@ from __future__ import print_function
 try:
     # baseclient and this client are in a package
     from .baseclient import BaseClient as _BaseClient  # @UnusedImport
-except:
+except ImportError:
     # no they aren't
     from baseclient import BaseClient as _BaseClient  # @Reimport
 
@@ -23,7 +23,7 @@ class KBaseFeatureValues(object):
             self, url=None, timeout=30 * 60, user_id=None,
             password=None, token=None, ignore_authrc=False,
             trust_all_ssl_certificates=False,
-            auth_svc='https://kbase.us/services/authorization/Sessions/Login'):
+            auth_svc='https://ci.kbase.us/services/auth/api/legacy/KBase/Sessions/Login'):
         if url is None:
             raise ValueError('A url is required')
         self._service_ver = None
@@ -46,10 +46,12 @@ class KBaseFeatureValues(object):
            parameter "random_seed" of Long, parameter "neighb_size" of Long,
            parameter "max_items" of Long, parameter "out_workspace" of
            String, parameter "out_estimate_result" of String
+        :returns: instance of type "EstimateKResult" (note: this needs review
+           from Marcin) -> structure: parameter "best_k" of Long, parameter
+           "estimate_cluster_sizes" of list of tuple of size 2: Long, Double
         """
-        return self._client.call_method(
-            'KBaseFeatureValues.estimate_k',
-            [params], self._service_ver, context)
+        return self._client.call_method('KBaseFeatureValues.estimate_k',
+                                        [params], self._service_ver, context)
 
     def estimate_k_new(self, params, context=None):
         """
@@ -67,10 +69,12 @@ class KBaseFeatureValues(object):
            false values, false = 0, true = 1 @range [0,1]), parameter
            "random_seed" of Long, parameter "out_workspace" of String,
            parameter "out_estimate_result" of String
+        :returns: instance of type "EstimateKResult" (note: this needs review
+           from Marcin) -> structure: parameter "best_k" of Long, parameter
+           "estimate_cluster_sizes" of list of tuple of size 2: Long, Double
         """
-        return self._client.call_method(
-            'KBaseFeatureValues.estimate_k_new',
-            [params], self._service_ver, context)
+        return self._client.call_method('KBaseFeatureValues.estimate_k_new',
+                                        [params], self._service_ver, context)
 
     def cluster_k_means(self, params, context=None):
         """
@@ -83,10 +87,10 @@ class KBaseFeatureValues(object):
            "n_start" of Long, parameter "max_iter" of Long, parameter
            "random_seed" of Long, parameter "algorithm" of String, parameter
            "out_workspace" of String, parameter "out_clusterset_id" of String
+        :returns: instance of String
         """
-        return self._client.call_method(
-            'KBaseFeatureValues.cluster_k_means',
-            [params], self._service_ver, context)
+        return self._client.call_method('KBaseFeatureValues.cluster_k_means',
+                                        [params], self._service_ver, context)
 
     def cluster_hierarchical(self, params, context=None):
         """
@@ -101,10 +105,10 @@ class KBaseFeatureValues(object):
            KBaseFeatureValues.SingleKnockoutFitnessMatrix), parameter
            "algorithm" of String, parameter "out_workspace" of String,
            parameter "out_clusterset_id" of String
+        :returns: instance of String
         """
-        return self._client.call_method(
-            'KBaseFeatureValues.cluster_hierarchical',
-            [params], self._service_ver, context)
+        return self._client.call_method('KBaseFeatureValues.cluster_hierarchical',
+                                        [params], self._service_ver, context)
 
     def clusters_from_dendrogram(self, params, context=None):
         """
@@ -118,10 +122,10 @@ class KBaseFeatureValues(object):
            FeatureClusters data object. @id ws
            KBaseFeatureValues.FeatureClusters), parameter "out_workspace" of
            String, parameter "out_clusterset_id" of String
+        :returns: instance of String
         """
-        return self._client.call_method(
-            'KBaseFeatureValues.clusters_from_dendrogram',
-            [params], self._service_ver, context)
+        return self._client.call_method('KBaseFeatureValues.clusters_from_dendrogram',
+                                        [params], self._service_ver, context)
 
     def evaluate_clusterset_quality(self, params, context=None):
         """
@@ -134,9 +138,8 @@ class KBaseFeatureValues(object):
            data object. @id ws KBaseFeatureValues.FeatureClusters), parameter
            "out_workspace" of String, parameter "out_report_id" of String
         """
-        return self._client.call_method(
-            'KBaseFeatureValues.evaluate_clusterset_quality',
-            [params], self._service_ver, context)
+        return self._client.call_method('KBaseFeatureValues.evaluate_clusterset_quality',
+                                        [params], self._service_ver, context)
 
     def validate_matrix(self, params, context=None):
         """
@@ -148,9 +151,8 @@ class KBaseFeatureValues(object):
            KBaseFeatureValues.ExpressionMatrix
            KBaseFeatureValues.SingleKnockoutFitnessMatrix)
         """
-        return self._client.call_method(
-            'KBaseFeatureValues.validate_matrix',
-            [params], self._service_ver, context)
+        return self._client.call_method('KBaseFeatureValues.validate_matrix',
+                                        [params], self._service_ver, context)
 
     def correct_matrix(self, params, context=None):
         """
@@ -164,10 +166,10 @@ class KBaseFeatureValues(object):
            @id ws KBaseFeatureValues.ExpressionMatrix
            KBaseFeatureValues.SingleKnockoutFitnessMatrix), parameter
            "out_workspace" of String, parameter "out_matrix_id" of String
+        :returns: instance of String
         """
-        return self._client.call_method(
-            'KBaseFeatureValues.correct_matrix',
-            [params], self._service_ver, context)
+        return self._client.call_method('KBaseFeatureValues.correct_matrix',
+                                        [params], self._service_ver, context)
 
     def reconnect_matrix_to_genome(self, params, context=None):
         """
@@ -181,10 +183,10 @@ class KBaseFeatureValues(object):
            "genome_ref" of type "ws_genome_id" (The workspace ID for a Genome
            data object. @id ws KBaseGenomes.Genome), parameter
            "out_workspace" of String, parameter "out_matrix_id" of String
+        :returns: instance of String
         """
-        return self._client.call_method(
-            'KBaseFeatureValues.reconnect_matrix_to_genome',
-            [params], self._service_ver, context)
+        return self._client.call_method('KBaseFeatureValues.reconnect_matrix_to_genome',
+                                        [params], self._service_ver, context)
 
     def build_feature_set(self, params, context=None):
         """
@@ -198,10 +200,10 @@ class KBaseFeatureValues(object):
            object. @id ws KBaseCollections.FeatureSet), parameter
            "description" of String, parameter "out_workspace" of String,
            parameter "output_feature_set" of String
+        :returns: instance of String
         """
-        return self._client.call_method(
-            'KBaseFeatureValues.build_feature_set',
-            [params], self._service_ver, context)
+        return self._client.call_method('KBaseFeatureValues.build_feature_set',
+                                        [params], self._service_ver, context)
 
     def get_matrix_descriptor(self, GetMatrixDescriptorParams, context=None):
         """
@@ -221,9 +223,8 @@ class KBaseFeatureValues(object):
            "type" of String, parameter "row_normalization" of String,
            parameter "col_normalization" of String
         """
-        return self._client.call_method(
-            'KBaseFeatureValues.get_matrix_descriptor',
-            [GetMatrixDescriptorParams], self._service_ver, context)
+        return self._client.call_method('KBaseFeatureValues.get_matrix_descriptor',
+                                        [GetMatrixDescriptorParams], self._service_ver, context)
 
     def get_matrix_row_descriptors(self, GetMatrixItemDescriptorsParams, context=None):
         """
@@ -257,9 +258,8 @@ class KBaseFeatureValues(object):
            parameter "name" of String, parameter "description" of String,
            parameter "properties" of mapping from String to String
         """
-        return self._client.call_method(
-            'KBaseFeatureValues.get_matrix_row_descriptors',
-            [GetMatrixItemDescriptorsParams], self._service_ver, context)
+        return self._client.call_method('KBaseFeatureValues.get_matrix_row_descriptors',
+                                        [GetMatrixItemDescriptorsParams], self._service_ver, context)
 
     def get_matrix_column_descriptors(self, GetMatrixItemDescriptorsParams, context=None):
         """
@@ -293,9 +293,8 @@ class KBaseFeatureValues(object):
            parameter "name" of String, parameter "description" of String,
            parameter "properties" of mapping from String to String
         """
-        return self._client.call_method(
-            'KBaseFeatureValues.get_matrix_column_descriptors',
-            [GetMatrixItemDescriptorsParams], self._service_ver, context)
+        return self._client.call_method('KBaseFeatureValues.get_matrix_column_descriptors',
+                                        [GetMatrixItemDescriptorsParams], self._service_ver, context)
 
     def get_matrix_rows_stat(self, GetMatrixItemsStatParams, context=None):
         """
@@ -340,9 +339,8 @@ class KBaseFeatureValues(object):
            parameter "min" of Double, parameter "max" of Double, parameter
            "std" of Double, parameter "missing_values" of Long
         """
-        return self._client.call_method(
-            'KBaseFeatureValues.get_matrix_rows_stat',
-            [GetMatrixItemsStatParams], self._service_ver, context)
+        return self._client.call_method('KBaseFeatureValues.get_matrix_rows_stat',
+                                        [GetMatrixItemsStatParams], self._service_ver, context)
 
     def get_matrix_columns_stat(self, GetMatrixItemsStatParams, context=None):
         """
@@ -387,9 +385,8 @@ class KBaseFeatureValues(object):
            parameter "min" of Double, parameter "max" of Double, parameter
            "std" of Double, parameter "missing_values" of Long
         """
-        return self._client.call_method(
-            'KBaseFeatureValues.get_matrix_columns_stat',
-            [GetMatrixItemsStatParams], self._service_ver, context)
+        return self._client.call_method('KBaseFeatureValues.get_matrix_columns_stat',
+                                        [GetMatrixItemsStatParams], self._service_ver, context)
 
     def get_matrix_row_sets_stat(self, GetMatrixSetsStatParams, context=None):
         """
@@ -462,9 +459,8 @@ class KBaseFeatureValues(object):
            of Double, parameter "maxs" of list of Double, parameter "stds" of
            list of Double, parameter "missing_values" of list of Long
         """
-        return self._client.call_method(
-            'KBaseFeatureValues.get_matrix_row_sets_stat',
-            [GetMatrixSetsStatParams], self._service_ver, context)
+        return self._client.call_method('KBaseFeatureValues.get_matrix_row_sets_stat',
+                                        [GetMatrixSetsStatParams], self._service_ver, context)
 
     def get_matrix_column_sets_stat(self, GetMatrixSetsStatParams, context=None):
         """
@@ -537,9 +533,8 @@ class KBaseFeatureValues(object):
            of Double, parameter "maxs" of list of Double, parameter "stds" of
            list of Double, parameter "missing_values" of list of Long
         """
-        return self._client.call_method(
-            'KBaseFeatureValues.get_matrix_column_sets_stat',
-            [GetMatrixSetsStatParams], self._service_ver, context)
+        return self._client.call_method('KBaseFeatureValues.get_matrix_column_sets_stat',
+                                        [GetMatrixSetsStatParams], self._service_ver, context)
 
     def get_matrix_stat(self, GetMatrixStatParams, context=None):
         """
@@ -638,9 +633,8 @@ class KBaseFeatureValues(object):
            parameter "min" of Double, parameter "max" of Double, parameter
            "std" of Double, parameter "missing_values" of Long
         """
-        return self._client.call_method(
-            'KBaseFeatureValues.get_matrix_stat',
-            [GetMatrixStatParams], self._service_ver, context)
+        return self._client.call_method('KBaseFeatureValues.get_matrix_stat',
+                                        [GetMatrixStatParams], self._service_ver, context)
 
     def get_submatrix_stat(self, GetSubmatrixStatParams, context=None):
         """
@@ -864,9 +858,8 @@ class KBaseFeatureValues(object):
            Double, parameter "stds" of list of Double, parameter "values" of
            list of list of Double
         """
-        return self._client.call_method(
-            'KBaseFeatureValues.get_submatrix_stat',
-            [GetSubmatrixStatParams], self._service_ver, context)
+        return self._client.call_method('KBaseFeatureValues.get_submatrix_stat',
+                                        [GetSubmatrixStatParams], self._service_ver, context)
 
     def tsv_file_to_matrix(self, params, context=None):
         """
@@ -893,9 +886,8 @@ class KBaseFeatureValues(object):
            KBaseFeatureValues.ExpressionMatrix
            KBaseFeatureValues.SingleKnockoutFitnessMatrix)
         """
-        return self._client.call_method(
-            'KBaseFeatureValues.tsv_file_to_matrix',
-            [params], self._service_ver, context)
+        return self._client.call_method('KBaseFeatureValues.tsv_file_to_matrix',
+                                        [params], self._service_ver, context)
 
     def matrix_to_tsv_file(self, params, context=None):
         """
@@ -909,9 +901,8 @@ class KBaseFeatureValues(object):
         :returns: instance of type "MatrixToTsvFileOutput" -> structure:
            parameter "file_path" of String, parameter "shock_id" of String
         """
-        return self._client.call_method(
-            'KBaseFeatureValues.matrix_to_tsv_file',
-            [params], self._service_ver, context)
+        return self._client.call_method('KBaseFeatureValues.matrix_to_tsv_file',
+                                        [params], self._service_ver, context)
 
     def export_matrix(self, params, context=None):
         """
@@ -923,9 +914,8 @@ class KBaseFeatureValues(object):
         :returns: instance of type "ExportMatrixOutput" -> structure:
            parameter "shock_id" of String
         """
-        return self._client.call_method(
-            'KBaseFeatureValues.export_matrix',
-            [params], self._service_ver, context)
+        return self._client.call_method('KBaseFeatureValues.export_matrix',
+                                        [params], self._service_ver, context)
 
     def clusters_to_file(self, params, context=None):
         """
@@ -940,9 +930,8 @@ class KBaseFeatureValues(object):
         :returns: instance of type "ClustersToFileOutput" -> structure:
            parameter "file_path" of String, parameter "shock_id" of String
         """
-        return self._client.call_method(
-            'KBaseFeatureValues.clusters_to_file',
-            [params], self._service_ver, context)
+        return self._client.call_method('KBaseFeatureValues.clusters_to_file',
+                                        [params], self._service_ver, context)
 
     def export_clusters_tsv(self, params, context=None):
         """
@@ -953,9 +942,8 @@ class KBaseFeatureValues(object):
         :returns: instance of type "ExportClustersTsvOutput" -> structure:
            parameter "shock_id" of String
         """
-        return self._client.call_method(
-            'KBaseFeatureValues.export_clusters_tsv',
-            [params], self._service_ver, context)
+        return self._client.call_method('KBaseFeatureValues.export_clusters_tsv',
+                                        [params], self._service_ver, context)
 
     def export_clusters_sif(self, params, context=None):
         """
@@ -966,9 +954,8 @@ class KBaseFeatureValues(object):
         :returns: instance of type "ExportClustersSifOutput" -> structure:
            parameter "shock_id" of String
         """
-        return self._client.call_method(
-            'KBaseFeatureValues.export_clusters_sif',
-            [params], self._service_ver, context)
+        return self._client.call_method('KBaseFeatureValues.export_clusters_sif',
+                                        [params], self._service_ver, context)
 
     def status(self, context=None):
         return self._client.call_method('KBaseFeatureValues.status',

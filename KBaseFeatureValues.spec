@@ -29,6 +29,14 @@ module KBaseFeatureValues {
     */
     typedef string ws_conditionset_id;
 
+
+    /* 
+        The Workspace object reference for a method return.
+        @id ws
+    */
+    typedef string workspace_ref;
+
+
     /*
         A simple 2D matrix of floating point numbers with labels/ids for rows and
         columns.  The matrix is stored as a list of lists, with the outer list
@@ -296,7 +304,7 @@ module KBaseFeatureValues {
         provides an estimate of K by [...]
     */
     funcdef estimate_k(EstimateKParams params)
-        returns () authentication required;
+        returns (EstimateKResult output) authentication required;
 
      typedef structure {
         ws_matrix_id input_matrix;
@@ -316,7 +324,7 @@ module KBaseFeatureValues {
         provides an estimate of K by [...]
     */
     funcdef estimate_k_new(EstimateKParamsNew params)
-        returns () authentication required;
+        returns (EstimateKResult output) authentication required;
 
 
 
@@ -335,7 +343,7 @@ module KBaseFeatureValues {
         Clusters features by K-means clustering.
     */
     funcdef cluster_k_means(ClusterKMeansParams params)
-        returns () authentication required;
+        returns (string workspace_ref) authentication required;
 
 
     typedef structure {
@@ -354,7 +362,7 @@ module KBaseFeatureValues {
         Clusters features by hierarchical clustering.
     */
     funcdef cluster_hierarchical(ClusterHierarchicalParams params)
-        returns () authentication required;
+        returns (string workspace_ref) authentication required;
 
 
     typedef structure {
@@ -371,7 +379,7 @@ module KBaseFeatureValues {
         a specific hieght or by some other approach.
     */
     funcdef clusters_from_dendrogram(ClustersFromDendrogramParams params)
-        returns () authentication required;
+        returns (string workspace_ref) authentication required;
 
 
     typedef structure {
@@ -416,7 +424,7 @@ module KBaseFeatureValues {
     } CorrectMatrixParams;
 
     funcdef correct_matrix(CorrectMatrixParams params)
-        returns () authentication required;
+        returns (string workspace_ref) authentication required;
 
     /*
         out_matrix_id - optional target matrix object name (if not specified 
@@ -430,7 +438,7 @@ module KBaseFeatureValues {
     } ReconnectMatrixToGenomeParams;
     
     funcdef reconnect_matrix_to_genome(ReconnectMatrixToGenomeParams params)
-        returns () authentication required;
+        returns (string workspace_ref) authentication required;
 
     /* 
         The workspace ID of a FeatureSet data object.
@@ -453,7 +461,7 @@ module KBaseFeatureValues {
     } BuildFeatureSetParams;
 
     funcdef build_feature_set(BuildFeatureSetParams params) 
-        returns () authentication required;
+        returns (string workspace_ref) authentication required;
 
 
 	/*******************************************

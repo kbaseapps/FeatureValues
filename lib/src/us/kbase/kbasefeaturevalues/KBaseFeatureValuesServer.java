@@ -30,9 +30,9 @@ import us.kbase.workspace.ProvenanceAction;
  */
 public class KBaseFeatureValuesServer extends JsonServerServlet {
     private static final long serialVersionUID = 1L;
-    private static final String version = "0.0.16";
-    private static final String gitUrl = "https://github.com/rsutormin/FeatureValues";
-    private static final String gitCommitHash = "5047f289b791f6dc1361639e188ccb805afb7ffe";
+    private static final String version = "0.0.21";
+    private static final String gitUrl = "https://github.com/realmarcin/FeatureValues";
+    private static final String gitCommitHash = "694227fae8a25e2a7204e297c3b3d6c11dad5ab8";
 
     //BEGIN_CLASS_HEADER
     public static final String CONFIG_PARAM_WS_URL = "ws.url";
@@ -63,12 +63,15 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * provides an estimate of K by [...]
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.EstimateKParams EstimateKParams}
+     * @return   parameter "output" of type {@link us.kbase.kbasefeaturevalues.EstimateKResult EstimateKResult}
      */
     @JsonServerMethod(rpc = "KBaseFeatureValues.estimate_k", async=true)
-    public void estimateK(EstimateKParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
+    public EstimateKResult estimateK(EstimateKParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
+        EstimateKResult returnVal = null;
         //BEGIN estimate_k
-        impl(authPart).estimateK(params, prov(jsonRpcContext));
+        returnVal = impl(authPart).estimateK(params, prov(jsonRpcContext));
         //END estimate_k
+        return returnVal;
     }
 
     /**
@@ -78,12 +81,15 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * provides an estimate of K by [...]
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.EstimateKParamsNew EstimateKParamsNew}
+     * @return   parameter "output" of type {@link us.kbase.kbasefeaturevalues.EstimateKResult EstimateKResult}
      */
     @JsonServerMethod(rpc = "KBaseFeatureValues.estimate_k_new", async=true)
-    public void estimateKNew(EstimateKParamsNew params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
+    public EstimateKResult estimateKNew(EstimateKParamsNew params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
+        EstimateKResult returnVal = null;
         //BEGIN estimate_k_new
-        impl(authPart).estimateKNew(params, prov(jsonRpcContext));
+        returnVal = impl(authPart).estimateKNew(params, prov(jsonRpcContext));
         //END estimate_k_new
+        return returnVal;
     }
 
     /**
@@ -92,12 +98,15 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * Clusters features by K-means clustering.
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ClusterKMeansParams ClusterKMeansParams}
+     * @return   parameter "workspace_ref" of String
      */
     @JsonServerMethod(rpc = "KBaseFeatureValues.cluster_k_means", async=true)
-    public void clusterKMeans(ClusterKMeansParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
+    public String clusterKMeans(ClusterKMeansParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
+        String returnVal = null;
         //BEGIN cluster_k_means
-        impl(authPart).clusterKMeans(params, prov(jsonRpcContext));
+        returnVal = impl(authPart).clusterKMeans(params, prov(jsonRpcContext));
         //END cluster_k_means
+        return returnVal;
     }
 
     /**
@@ -106,12 +115,15 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * Clusters features by hierarchical clustering.
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ClusterHierarchicalParams ClusterHierarchicalParams}
+     * @return   parameter "workspace_ref" of String
      */
     @JsonServerMethod(rpc = "KBaseFeatureValues.cluster_hierarchical", async=true)
-    public void clusterHierarchical(ClusterHierarchicalParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
+    public String clusterHierarchical(ClusterHierarchicalParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
+        String returnVal = null;
         //BEGIN cluster_hierarchical
-        impl(authPart).clusterHierarchical(params, prov(jsonRpcContext));
+        returnVal = impl(authPart).clusterHierarchical(params, prov(jsonRpcContext));
         //END cluster_hierarchical
+        return returnVal;
     }
 
     /**
@@ -122,12 +134,15 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * a specific hieght or by some other approach.
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ClustersFromDendrogramParams ClustersFromDendrogramParams}
+     * @return   parameter "workspace_ref" of String
      */
     @JsonServerMethod(rpc = "KBaseFeatureValues.clusters_from_dendrogram", async=true)
-    public void clustersFromDendrogram(ClustersFromDendrogramParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
+    public String clustersFromDendrogram(ClustersFromDendrogramParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
+        String returnVal = null;
         //BEGIN clusters_from_dendrogram
-        impl(authPart).clustersFromDendrogram(params, prov(jsonRpcContext));
+        returnVal = impl(authPart).clustersFromDendrogram(params, prov(jsonRpcContext));
         //END clusters_from_dendrogram
+        return returnVal;
     }
 
     /**
@@ -164,12 +179,15 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * <pre>
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.CorrectMatrixParams CorrectMatrixParams}
+     * @return   parameter "workspace_ref" of String
      */
     @JsonServerMethod(rpc = "KBaseFeatureValues.correct_matrix", async=true)
-    public void correctMatrix(CorrectMatrixParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
+    public String correctMatrix(CorrectMatrixParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
+        String returnVal = null;
         //BEGIN correct_matrix
-        impl(authPart).correctMatrix(params, prov(jsonRpcContext));
+        returnVal = impl(authPart).correctMatrix(params, prov(jsonRpcContext));
         //END correct_matrix
+        return returnVal;
     }
 
     /**
@@ -177,12 +195,15 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * <pre>
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.ReconnectMatrixToGenomeParams ReconnectMatrixToGenomeParams}
+     * @return   parameter "workspace_ref" of String
      */
     @JsonServerMethod(rpc = "KBaseFeatureValues.reconnect_matrix_to_genome", async=true)
-    public void reconnectMatrixToGenome(ReconnectMatrixToGenomeParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
+    public String reconnectMatrixToGenome(ReconnectMatrixToGenomeParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
+        String returnVal = null;
         //BEGIN reconnect_matrix_to_genome
-        impl(authPart).reconnectMatrixToGenome(params, prov(jsonRpcContext));
+        returnVal = impl(authPart).reconnectMatrixToGenome(params, prov(jsonRpcContext));
         //END reconnect_matrix_to_genome
+        return returnVal;
     }
 
     /**
@@ -190,12 +211,15 @@ public class KBaseFeatureValuesServer extends JsonServerServlet {
      * <pre>
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbasefeaturevalues.BuildFeatureSetParams BuildFeatureSetParams}
+     * @return   parameter "workspace_ref" of String
      */
     @JsonServerMethod(rpc = "KBaseFeatureValues.build_feature_set", async=true)
-    public void buildFeatureSet(BuildFeatureSetParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
+    public String buildFeatureSet(BuildFeatureSetParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
+        String returnVal = null;
         //BEGIN build_feature_set
-        impl(authPart).buildFeatureSet(params, prov(jsonRpcContext));
+        returnVal = impl(authPart).buildFeatureSet(params, prov(jsonRpcContext));
         //END build_feature_set
+        return returnVal;
     }
 
     /**

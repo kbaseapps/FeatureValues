@@ -3,6 +3,7 @@ package us.kbase.kbasefeaturevalues;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -27,8 +28,10 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * data - contains values for (feature,condition) pairs, where 
  *     features correspond to rows and conditions are columns
  *     (ie data.values[feature][condition])
+ * diff_expr_matrix_ref - added to connect filtered expression matrix to differential expression matrix
+ *     used for filtering
  * @optional description row_normalization col_normalization
- * @optional genome_ref feature_mapping conditionset_ref condition_mapping report
+ * @optional genome_ref feature_mapping conditionset_ref condition_mapping report diff_expr_matrix_ref
  * @metadata ws type
  * @metadata ws scale
  * @metadata ws row_normalization
@@ -52,6 +55,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "feature_mapping",
     "conditionset_ref",
     "condition_mapping",
+    "diff_expr_matrix_ref",
     "data",
     "report"
 })
@@ -75,6 +79,8 @@ public class ExpressionMatrix {
     private java.lang.String conditionsetRef;
     @JsonProperty("condition_mapping")
     private Map<String, String> conditionMapping;
+    @JsonProperty("diff_expr_matrix_ref")
+    private java.lang.String diffExprMatrixRef;
     /**
      * <p>Original spec-file type: FloatMatrix2D</p>
      * <pre>
@@ -240,6 +246,21 @@ public class ExpressionMatrix {
         return this;
     }
 
+    @JsonProperty("diff_expr_matrix_ref")
+    public java.lang.String getDiffExprMatrixRef() {
+        return diffExprMatrixRef;
+    }
+
+    @JsonProperty("diff_expr_matrix_ref")
+    public void setDiffExprMatrixRef(java.lang.String diffExprMatrixRef) {
+        this.diffExprMatrixRef = diffExprMatrixRef;
+    }
+
+    public ExpressionMatrix withDiffExprMatrixRef(java.lang.String diffExprMatrixRef) {
+        this.diffExprMatrixRef = diffExprMatrixRef;
+        return this;
+    }
+
     /**
      * <p>Original spec-file type: FloatMatrix2D</p>
      * <pre>
@@ -329,8 +350,78 @@ public class ExpressionMatrix {
     }
 
     @Override
+    public boolean equals(Object o) {
+
+	if (this == o)
+		return true;
+	if (o == null) {
+		System.err.println("o == null");
+		return false;
+    }
+	if (getClass() != o.getClass()) {
+		System.err.println("getClass() != o.getClass()");
+		return false;
+	}
+
+	if(!Objects.equals(this.getDescription(), ((ExpressionMatrix)o).getDescription())) {
+		System.err.println("1");
+                return false;
+	}
+	if(!Objects.equals(this.getType(), ((ExpressionMatrix)o).getType())) {
+		System.err.println("2");
+                return false;
+	}
+	if(!Objects.equals(this.getScale(), ((ExpressionMatrix)o).getScale())) {
+		System.err.println("3");
+                return false;
+	}
+	if(!Objects.equals(this.getRowNormalization(), ((ExpressionMatrix)o).getRowNormalization())) {
+		System.err.println("4");
+                return false;
+	}
+	if(!Objects.equals(this.getColNormalization(), ((ExpressionMatrix)o).getColNormalization())) {
+		System.err.println("5");
+                return false;
+	}
+	if(!Objects.equals(this.getGenomeRef(), ((ExpressionMatrix)o).getGenomeRef())) {
+		System.err.println("6");
+                return false;
+	}
+	if(!Objects.equals(this.getFeatureMapping(), ((ExpressionMatrix)o).getFeatureMapping())) {
+		System.err.println("7");
+                return false;
+	}
+	if(!Objects.equals(this.getConditionsetRef(), ((ExpressionMatrix)o).getConditionsetRef())) {
+		System.err.println("8");
+                return false;
+	}
+	if(!Objects.equals(this.getConditionMapping(), ((ExpressionMatrix)o).getConditionMapping())) {
+		System.err.println("9");
+                return false;
+	}
+	if(!Objects.equals(this.getDiffExprMatrixRef(), ((ExpressionMatrix)o).getDiffExprMatrixRef())) {
+		System.err.println("10");
+                return false;
+	}
+	if(!Objects.equals(this.getData(), ((ExpressionMatrix)o).getData())) {
+		System.err.println("11");
+                return false;
+	}
+	if(!Objects.equals(this.getReport(), ((ExpressionMatrix)o).getReport())) {
+		System.err.println("12");
+                return false;
+	}
+	if(!Objects.equals(this.getAdditionalProperties(), ((ExpressionMatrix)o).getAdditionalProperties())) {
+		System.err.println("13");
+                return false;
+	}
+	
+	return true;
+    }
+
+    @Override
     public java.lang.String toString() {
-        return ((((((((((((((((((((((((("ExpressionMatrix"+" [description=")+ description)+", type=")+ type)+", scale=")+ scale)+", rowNormalization=")+ rowNormalization)+", colNormalization=")+ colNormalization)+", genomeRef=")+ genomeRef)+", featureMapping=")+ featureMapping)+", conditionsetRef=")+ conditionsetRef)+", conditionMapping=")+ conditionMapping)+", data=")+ data)+", report=")+ report)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((((((((((((((((((("ExpressionMatrix"+" [description=")+ description)+", type=")+ type)+", scale=")+ scale)+", rowNormalization=")+ rowNormalization)+", colNormalization=")+ colNormalization)+", genomeRef=")+ genomeRef)+", featureMapping=")+ featureMapping)+", conditionsetRef=")+ conditionsetRef)+", conditionMapping=")+ conditionMapping)+", diffExprMatrixRef=")+ diffExprMatrixRef)+", data=")+ data)+", report=")+ report)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

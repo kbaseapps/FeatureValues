@@ -4,6 +4,7 @@ package us.kbase.kbasefeaturevalues;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -97,6 +98,30 @@ public class FloatMatrix2D {
     @JsonAnySetter
     public void setAdditionalProperties(java.lang.String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+    	if (this == o)
+        	return true;
+   	 if (o == null)
+        	return false;
+	if (getClass() != o.getClass())
+        	return false;
+
+	FloatMatrix2D newe = (FloatMatrix2D) o;
+
+	if(!Objects.equals(this.getRowIds(), ((FloatMatrix2D) o).getRowIds()))
+                return false;
+	if(!Objects.equals(this.getColIds(), ((FloatMatrix2D) o).getColIds()))
+                return false;
+	if(!Objects.equals(this.getValues(), ((FloatMatrix2D) o).getValues()))
+                return false;
+	if(!Objects.equals(this.getAdditionalProperties(), ((FloatMatrix2D) o).getAdditionalProperties()))
+                return false;
+
+	return true;
     }
 
     @Override
