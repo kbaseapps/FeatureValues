@@ -205,29 +205,58 @@ public class KBaseFeatureValuesServerTest {
                 exprObjName).withOutWorkspace(testWsName).withOutEstimateResult(estimObjName);
         EstimateKResult estKRes = impl.estimateK(ekp, token, getContext());
 
-        //ObjectData res1 = getWsClient().getObjects(Arrays.asList(new ObjectIdentity().withWorkspace(testWsName)
-        //        .withName(estimObjName))).get(0);
-        //EstimateKResult estKRes = res1.getData().asClassInstance(EstimateKResult.class);
         long k = estKRes.getBestK();
+
+        /*
+        this is testing the object returned by the method
+        comparing the two fields that are populated: best K and K clusters
+        and empty additionalProperties */
         Assert.assertNotNull("k exists ", k);
         Assert.assertNotNull("c size exists ", estKRes.getEstimateClusterSizes().size());
         Assert.assertEquals(3, k);
         Assert.assertEquals(5, estKRes.getEstimateClusterSizes().size());
+        Map<String, Object> additionalProperties = new HashMap<String, Object>();
+        Assert.assertEquals(additionalProperties, estKRes.getAdditionalProperties());
         for (int i = 0; i < estKRes.getEstimateClusterSizes().size(); i++) {
             Tuple2<Long, Double> item = estKRes.getEstimateClusterSizes().get(i);
             Assert.assertEquals(2L + i, (long) item.getE1());
             Assert.assertTrue((double) item.getE2() > 0);
         }
-        System.err.println("estKRes\n"+estKRes.toString());
 
+        //loading saved result object
+        ObjectData res1 = getWsClient().getObjects(Arrays.asList(new ObjectIdentity().withWorkspace(testWsName)
+                .withName(estimObjName))).get(0);
+        EstimateKResult estKResLoad = res1.getData().asClassInstance(EstimateKResult.class);
+        long kLoad = estKResLoad.getBestK();
+        /*
+        this is testing the result object loaded from ws
+        comparing the two fields that are populated: best K and K clusters
+        and empty additionalProperties */
+        Assert.assertNotNull("k exists ", kLoad);
+        Assert.assertNotNull("c size exists ", estKResLoad.getEstimateClusterSizes().size());
+        Assert.assertEquals(3, kLoad);
+        Assert.assertEquals(5, estKResLoad.getEstimateClusterSizes().size());
+        Map<String, Object> additionalPropertiesLoad = new HashMap<String, Object>();
+        Assert.assertEquals(additionalPropertiesLoad, estKRes.getAdditionalProperties());
+        for (int i = 0; i < estKResLoad.getEstimateClusterSizes().size(); i++) {
+            Tuple2<Long, Double> item = estKResLoad.getEstimateClusterSizes().get(i);
+            Assert.assertEquals(2L + i, (long) item.getE1());
+            Assert.assertTrue((double) item.getE2() > 0);
+        }
+
+
+        /////////////// estimate K new /////////////////
         EstimateKResult estKResNew = impl.estimateKNew(new EstimateKParamsNew().withInputMatrix(testWsName + "/" +
                 exprObjName).withRandomSeed(123L).withOutWorkspace(testWsName)
                 .withOutEstimateResult(estimNewObjName), token, getContext());
 
-        System.err.println("estKResNew\n"+estKResNew.toString());
         long kNew = estKResNew.getBestK();
-        Assert.assertEquals(k, kNew);
-        //System.out.println("Cluster count qualities: " + estKResNew.getEstimateClusterSizes());
+
+        /*
+        this is testing the object returned by the method
+        comparing the two fields that are populated: best K and K clusters
+        and empty additionalProperties */
+        Assert.assertEquals(3, kNew);
         Assert.assertEquals(estKRes.getEstimateClusterSizes().size(), estKResNew.getEstimateClusterSizes().size());
         for (int i = 0; i < estKResNew.getEstimateClusterSizes().size(); i++) {
             Tuple2<Long, Double> entry = estKRes.getEstimateClusterSizes().get(i);
@@ -235,6 +264,26 @@ public class KBaseFeatureValuesServerTest {
             Assert.assertEquals((long) entry.getE1(), (long) entryNew.getE1());
             Assert.assertEquals((double) entry.getE2(), (double) entryNew.getE2(), 1e-10);
         }
+
+        //loading saved result object
+        ObjectData res1New = getWsClient().getObjects(Arrays.asList(new ObjectIdentity().withWorkspace(testWsName)
+                .withName(estimObjName))).get(0);
+        EstimateKResult estKNewResLoad = res1New.getData().asClassInstance(EstimateKResult.class);
+        long kNewLoad = estKNewResLoad.getBestK();
+        /*
+        this is testing the result object loaded from ws
+        comparing the two fields that are populated: best K and K clusters
+        and empty additionalProperties */
+        Assert.assertEquals(3, kNewLoad);
+        Assert.assertEquals(estKRes.getEstimateClusterSizes().size(), estKNewResLoad.getEstimateClusterSizes().size());
+        for (int i = 0; i < estKNewResLoad.getEstimateClusterSizes().size(); i++) {
+            Tuple2<Long, Double> entry = estKNewResLoad.getEstimateClusterSizes().get(i);
+            Tuple2<Long, Double> entryNew = estKNewResLoad.getEstimateClusterSizes().get(i);
+            Assert.assertEquals((long) entry.getE1(), (long) entryNew.getE1());
+            Assert.assertEquals((double) entry.getE2(), (double) entryNew.getE2(), 1e-10);
+        }
+
+
         /////////////// K-means /////////////////
         String wsRefKM = impl.clusterKMeans(new ClusterKMeansParams().withInputData(testWsName + "/" +
                 exprObjName).withK(k).withOutWorkspace(testWsName).withOutClustersetId(clustObj1Name),
@@ -381,23 +430,18 @@ public class KBaseFeatureValuesServerTest {
                 testWsName + "/" + sourceMatrixId).withOutWorkspace(testWsName)
                 .withOutMatrixId(targetMatrixId).withTransformType("missing"), token, getContext());
 
-        ExpressionMatrix matrix = getWsClient().getObjects(Arrays.asList(
-                new ObjectIdentity().withWorkspace(testWsName).withName(targetMatrixId)))
-                .get(0).getData().asClassInstance(ExpressionMatrix.class);
-
-        //test matrix imputation
-        Assert.assertEquals(0, getNullCount(matrix.getData()));
-        Assert.assertEquals(0.325, (double) matrix.getData().getValues().get(0).get(0), 1e-10);
-
-        //reload with returned object id
-        ExpressionMatrix res = loadfromWs(getId).asClassInstance(ExpressionMatrix.class);
-        //reset from null in data before imputation
-        data.getData().getValues().get(0).set(0, res.getData().getValues().get(0).get(0));
-        Assert.assertEquals(data.getData().toString(), matrix.getData().toString());
-
         //test if returned id matches id returned by ws saveobjects
         Assert.assertEquals(infoCM.get(0).getE7()  + "/" + (infoCM.get(0).getE1()+1) + "/" +  infoCM.get(0).getE5(), getId);
 
+        ExpressionMatrix res = loadfromWs(getId).asClassInstance(ExpressionMatrix.class);
+
+        //test matrix imputation
+        Assert.assertEquals(0, getNullCount(res.getData()));
+        Assert.assertEquals(0.325, (double) res.getData().getValues().get(0).get(0), 1e-10);
+
+        //test remaining values
+        data.getData().getValues().get(0).set(0, res.getData().getValues().get(0).get(0));
+        Assert.assertEquals(data.getData().toString(), res.getData().toString());
     }
 
     @Test
