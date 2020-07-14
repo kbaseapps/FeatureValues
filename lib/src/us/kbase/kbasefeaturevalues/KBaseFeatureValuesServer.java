@@ -30,9 +30,9 @@ import us.kbase.workspace.ProvenanceAction;
  */
 public class KBaseFeatureValuesServer extends JsonServerServlet {
     private static final long serialVersionUID = 1L;
-    private static final String version = "0.0.21";
-    private static final String gitUrl = "https://github.com/realmarcin/FeatureValues";
-    private static final String gitCommitHash = "694227fae8a25e2a7204e297c3b3d6c11dad5ab8";
+    private static final String version = "0.0.22";
+    private static final String gitUrl = "https://github.com/mrcreosote/FeatureValues.git";
+    private static final String gitCommitHash = "6fd397b4efefa132665237cee1a5f1363642362a";
 
     //BEGIN_CLASS_HEADER
     public static final String CONFIG_PARAM_WS_URL = "ws.url";
