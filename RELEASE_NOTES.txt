@@ -5,6 +5,19 @@ and visualization of expression values organized as two-
 dimensional matrix and assigned to genome features on one
 dimension and to different sorts conditions on second dimension.
 
+VERSION: 0.0.22
+------------------------------------------
+NEW FEATURES:
+- none
+
+UPDATED FEATURES / MAJOR BUG FIXES:
+- Updated Java to enable TLS 1.2 connections.
+- Several methods now return values. This is primarily
+  for compatibility with the KBase EE2 service.
+
+
+** Release notes for versions 0.0.19 to 0.0.21 are not currently available.
+
 VERSION: 0.0.18
 ------------------------------------------
 NEW FEATURES:
