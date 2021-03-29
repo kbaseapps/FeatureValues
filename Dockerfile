@@ -87,8 +87,7 @@ RUN mkdir -p /kb/module/work
 RUN chmod -R a+rw /kb/module
 
 WORKDIR /kb/module
-RUN pip install JSONRPCBase
-RUN rm -f /kb/deployment/lib/biokbase/log.py
+
 RUN make all
 
 ENTRYPOINT [ "./scripts/entrypoint.sh" ]
