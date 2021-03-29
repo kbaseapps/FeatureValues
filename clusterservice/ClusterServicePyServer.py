@@ -165,7 +165,7 @@ class JSONRPCServiceCustom(JSONRPCService):
 
     def _handle_request(self, ctx, request):
         """Handles given request and returns its response."""
-        if self.method_data[request['method']].has_key('types'): # @IgnorePep8
+        if 'types' in self.method_data[request['method']]: # @IgnorePep8
             self._validate_params_types(request['method'], request['params'])
 
         result = self._call_method(ctx, request)
@@ -270,16 +270,16 @@ class Application(object):
                              types=[dict, int, int, int, int, int])
         self.rpc_service.add(impl_ClusterServicePy.estimate_k_new,
                              name='ClusterServicePy.estimate_k_new',
-                             types=[dict, int, int, basestring, int, float, int, int])
+                             types=[dict, int, int, str, int, float, int, int])
         self.rpc_service.add(impl_ClusterServicePy.cluster_k_means,
                              name='ClusterServicePy.cluster_k_means',
-                             types=[dict, int, int, int, int, basestring])
+                             types=[dict, int, int, int, int, str])
         self.rpc_service.add(impl_ClusterServicePy.cluster_hierarchical,
                              name='ClusterServicePy.cluster_hierarchical',
-                             types=[dict, basestring, basestring, float, int])
+                             types=[dict, str, str, float, int])
         self.rpc_service.add(impl_ClusterServicePy.clusters_from_dendrogram,
                              name='ClusterServicePy.clusters_from_dendrogram',
-                             types=[dict, basestring, float])
+                             types=[dict, str, float])
         self.rpc_service.add(impl_ClusterServicePy.calc_cluster_qualities,
                              name='ClusterServicePy.calc_cluster_qualities',
                              types=[list])

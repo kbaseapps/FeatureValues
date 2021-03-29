@@ -36,15 +36,15 @@
     <include name="syslog4j/syslog4j-0.9.46.jar"/>
     <include name="kbase/workspace/WorkspaceClient-0.6.0.jar"/>
     <include name="kbase/genomes/kbase-genomes-20140411.jar"/>
-    <include name="kbase/shock/shock-client-0.0.15.jar"/>
+    <include name="kbase/shock/shock-client-0.1.0.jar"/>
     <include name="apache_commons/commons-lang-2.4.jar"/>
     <include name="apache_commons/commons-math-2.2.jar"/>
     <include name="apache_commons/commons-io-2.4.jar"/>
     <include name="kohsuke/args4j-2.0.21.jar"/>
     <include name="apache_commons/commons-logging-1.1.1.jar"/>
-    <include name="apache_commons/http/httpclient-4.3.1.jar"/>
-    <include name="apache_commons/http/httpcore-4.3.jar"/>
-    <include name="apache_commons/http/httpmime-4.3.1.jar"/>
+    <include name="apache_commons/http/httpclient-4.5.9.jar"/>
+    <include name="apache_commons/http/httpcore-4.4.11.jar"/>
+    <include name="apache_commons/http/httpmime-4.5.8.jar"/>
   </fileset>
 
   <path id="compile.classpath">

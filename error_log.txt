@@ -1,0 +1,135 @@
+1. error with RUN add-apt-repository ppa:openjdk-r/ppa:
+Step 23/32 : RUN add-apt-repository ppa:openjdk-r/ppa 	&& sudo apt-get update 	&& sudo apt-get -y install openjdk-8-jdk 	&& echo java versions: 	&& java -version 	&& javac -version 	&& echo $JAVA_HOME 	&& ls -l /usr/lib/jvm 	&& cd /kb/runtime 	&& rm java 	&& ln -s /usr/lib/jvm/java-8-openjdk-amd64 java 	&& ls -l
+ ---> Running in b4d574f6cfe9
+
+ More info: https://launchpad.net/~openjdk-r/+archive/ubuntu/ppa
+gpg: keybox '/tmp/tmplcd8odl_/pubring.gpg' created
+gpg: /tmp/tmplcd8odl_/trustdb.gpg: trustdb created
+gpg: key EB9B1D8886F44E2A: public key "Launchpad OpenJDK builds (all archs)" imported
+gpg: Total number processed: 1
+gpg:               imported: 1
+Warning: apt-key output should not be parsed (stdout is not a terminal)
+gpg: no valid OpenPGP data found.
+Exception in thread Thread-1:
+Traceback (most recent call last):
+  File "/usr/lib/python3.5/threading.py", line 914, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.5/threading.py", line 862, in run
+    self._target(*self._args, **self._kwargs)
+  File "/usr/lib/python3/dist-packages/softwareproperties/SoftwareProperties.py", line 688, in addkey_func
+    func(**kwargs)
+  File "/usr/lib/python3/dist-packages/softwareproperties/ppa.py", line 386, in add_key
+    return apsk.add_ppa_signing_key()
+  File "/usr/lib/python3/dist-packages/softwareproperties/ppa.py", line 273, in add_ppa_signing_key
+    cleanup(tmp_keyring_dir)
+  File "/usr/lib/python3/dist-packages/softwareproperties/ppa.py", line 234, in cleanup
+    shutil.rmtree(tmp_keyring_dir)
+  File "/usr/lib/python3.5/shutil.py", line 480, in rmtree
+    _rmtree_safe_fd(fd, path, onerror)
+  File "/usr/lib/python3.5/shutil.py", line 438, in _rmtree_safe_fd
+    onerror(os.unlink, fullname, sys.exc_info())
+  File "/usr/lib/python3.5/shutil.py", line 436, in _rmtree_safe_fd
+    os.unlink(name, dir_fd=topfd)
+FileNotFoundError: [Errno 2] No such file or directory: 'S.gpg-agent.browser'
+
+Ign:1 http://httpredir.debian.org/debian stretch InRelease
+Hit:2 http://security.debian.org stretch/updates InRelease
+Hit:3 http://httpredir.debian.org/debian stretch Release
+Err:2 http://security.debian.org stretch/updates InRelease
+  At least one invalid signature was encountered.
+Ign:4 http://ppa.launchpad.net/openjdk-r/ppa/ubuntu hirsute InRelease
+Err:5 http://httpredir.debian.org/debian stretch Release.gpg
+  At least one invalid signature was encountered.
+Ign:6 http://ppa.launchpad.net/openjdk-r/ppa/ubuntu hirsute Release
+Ign:7 http://ppa.launchpad.net/openjdk-r/ppa/ubuntu hirsute/main all Packages
+Ign:8 http://ppa.launchpad.net/openjdk-r/ppa/ubuntu hirsute/main amd64 Packages
+Ign:7 http://ppa.launchpad.net/openjdk-r/ppa/ubuntu hirsute/main all Packages
+Ign:8 http://ppa.launchpad.net/openjdk-r/ppa/ubuntu hirsute/main amd64 Packages
+Ign:7 http://ppa.launchpad.net/openjdk-r/ppa/ubuntu hirsute/main all Packages
+Ign:8 http://ppa.launchpad.net/openjdk-r/ppa/ubuntu hirsute/main amd64 Packages
+Ign:7 http://ppa.launchpad.net/openjdk-r/ppa/ubuntu hirsute/main all Packages
+Ign:8 http://ppa.launchpad.net/openjdk-r/ppa/ubuntu hirsute/main amd64 Packages
+Ign:7 http://ppa.launchpad.net/openjdk-r/ppa/ubuntu hirsute/main all Packages
+Ign:8 http://ppa.launchpad.net/openjdk-r/ppa/ubuntu hirsute/main amd64 Packages
+Ign:7 http://ppa.launchpad.net/openjdk-r/ppa/ubuntu hirsute/main all Packages
+Err:8 http://ppa.launchpad.net/openjdk-r/ppa/ubuntu hirsute/main amd64 Packages
+  404  Not Found
+Reading package lists...
+W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: http://security.debian.org stretch/updates InRelease: At least one invalid signature was encountered.
+W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: http://httpredir.debian.org/debian stretch Release: At least one invalid signature was encountered.
+W: The repository 'http://ppa.launchpad.net/openjdk-r/ppa/ubuntu hirsute Release' does not have a Release file.
+W: Failed to fetch http://security.debian.org/dists/stretch/updates/InRelease  At least one invalid signature was encountered.
+W: Failed to fetch http://httpredir.debian.org/debian/dists/stretch/Release.gpg  At least one invalid signature was encountered.
+E: Failed to fetch http://ppa.launchpad.net/openjdk-r/ppa/ubuntu/dists/hirsute/main/binary-amd64/Packages  404  Not Found
+W: Some index files failed to download. They have been ignored, or old ones used instead.
+The command '/bin/sh -c add-apt-repository ppa:openjdk-r/ppa 	&& sudo apt-get update 	&& sudo apt-get -y install openjdk-8-jdk 	&& echo java versions: 	&& java -version 	&& javac -version 	&& echo $JAVA_HOME 	&& ls -l /usr/lib/jvm 	&& cd /kb/runtime 	&& rm java 	&& ln -s /usr/lib/jvm/java-8-openjdk-amd64 java 	&& ls -l' returned a non-zero code: 100
+
+####################################################################################################################################################
+
+2. && cd /kb/runtime \
+/bin/sh: 1: cd: can't cd to /kb/runtime
+
+####################################################################################################################################################
+
+3. && . /kb/deployment/user-env.sh \
+	&& make deploy
+Step 25/32 : RUN cd /kb/deployment/lib/jars 	&& . /kb/deployment/user-env.sh 	&& make deploy
+ ---> Running in 6415a5bd661f
+make: *** No rule to make target 'deploy'.  Stop.
+The command '/bin/sh -c cd /kb/deployment/lib/jars 	&& . /kb/deployment/user-env.sh 	&& make deploy' returned a non-zero code: 2
+
+####################################################################################################################################################
+
+4. without updating jars
+Traceback (most recent call last):
+  File "./scripts/prepare_deploy_cfg.py", line 5, in <module>
+    from ConfigParser import ConfigParser
+ModuleNotFoundError: No module named 'ConfigParser'
+Run Tests
+if [ ! -f /kb/module/work/token ]; then echo -e '\nOutside a docker container please run "kb-sdk test" rather than "make test"\n' && exit 1; fi
+bash test/run_tests.sh
+Buildfile: /kb/module/build.xml
+
+test:
+    [junit] Running us.kbase.clusterservice.test.ClusterServiceTest
+    [junit] Testsuite: us.kbase.clusterservice.test.ClusterServiceTest
+    [junit] Tests run: 3, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 9.688 sec
+    [junit] Tests run: 3, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 9.688 sec
+    [junit]
+    [junit] Testcase: pyTest took 0.618 sec
+    [junit] 	Caused an ERROR
+    [junit] Error running service CLI for method 'ClusterServicePy.cluster_k_means' with exit code 1
+    [junit] Errors:
+    [junit]   File "ClusterServicePyServer.py", line 332
+    [junit]     except Exception, e:
+    [junit]                     ^
+    [junit] SyntaxError: invalid syntax
+    [junit]
+    [junit] us.kbase.common.service.JsonClientException: Error running service CLI for method 'ClusterServicePy.cluster_k_means' with exit code 1
+    [junit] Errors:
+    [junit]   File "ClusterServicePyServer.py", line 332
+    [junit]     except Exception, e:
+    [junit]                     ^
+    [junit] SyntaxError: invalid syntax
+    [junit]
+    [junit] 	at us.kbase.common.service.JsonLocalClientCaller.jsonrpcCall(JsonLocalClientCaller.java:115)
+    [junit] 	at us.kbase.clusterservice.ClusterServicePyLocalClient.clusterKMeans(ClusterServicePyLocalClient.java:50)
+    [junit] 	at us.kbase.clusterservice.test.ClusterServiceTest.pyTest(ClusterServiceTest.java:39)
+    [junit]
+    [junit] Testcase: rEstimateKNewTest took 1.683 sec
+    [junit] Testcase: rTest took 7.313 sec
+
+BUILD FAILED
+/kb/module/build.xml:109: Test us.kbase.clusterservice.test.ClusterServiceTest failed
+
+Total time: 10 seconds
+make: *** [Makefile:80: test] Error 1
+Shutting down callback server...
+1616732645.55 - CallbackServer: Shutting down executor service
+
+####################################################################################################################################################
+
+5.  log.py import error
+ File "ClusterServicePyServer.py", line 13, in <module>
+    [junit]     from lib.biokbase import log
+    [junit] ModuleNotFoundError: No module named 'lib'

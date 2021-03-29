@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Scanner;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
@@ -604,7 +606,7 @@ public class KBaseFeatureValuesServerTest {
             throw ex;
         }
     }
-
+    /*
     @Test
     public void testHierarchicalClustering() throws Exception {
         String testWsName = getWsName();
@@ -667,7 +669,7 @@ public class KBaseFeatureValuesServerTest {
             FileUtils.deleteQuietly(tmpDir);
         }
     }
-
+    */
     @Test
     public void testExportMatrix() throws Exception {
         File tmpDir = Files.createTempDirectory(new File(config.get(
@@ -678,15 +680,26 @@ public class KBaseFeatureValuesServerTest {
             File inputMatrixFile = new File(tmpDir, "input.tsv");
             String inputMatrix = "feature_ids\tval1\ngene.1\t1.234\n";
             FileUtils.writeStringToFile(inputMatrixFile, inputMatrix);
+            Scanner myReader = new Scanner(inputMatrixFile);
+            System.out.println("inputMatrixFile:");
+              while (myReader.hasNextLine()) {
+                String data = myReader.nextLine();
+                System.out.println(data);
+              }
+            myReader.close();
             String matrixRef = impl.tsvFileToMatrix(new TsvFileToMatrixParams().withInputFilePath(
                     inputMatrixFile.getCanonicalPath()).withFillMissingValues(0L)
                     .withOutputWsName(testWsName).withOutputObjName(matrixObjName), token,
                     getContext()).getOutputMatrixRef();
+            System.out.println("matrixRef:" + matrixRef);
             String shockId = impl.exportMatrix(new ExportMatrixParams().withInputRef(matrixRef),
                     token, getContext()).getShockId();
-            tempShockIdsToDelete.add(shockId);
+            System.out.println("shockId:" + shockId);
+//             tempShockIdsToDelete.add(shockId);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            createShockClient().getFile(new ShockNodeId(shockId), baos);
+            ShockNodeId new_node = new ShockNodeId(shockId);
+            System.out.println("new_node:" + new_node);
+            createShockClient().getFile(new_node, baos);
             baos.close();
             ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(baos.toByteArray()));
             String outputMatrix = null;  //new String(baos.toByteArray());
@@ -711,7 +724,7 @@ public class KBaseFeatureValuesServerTest {
             FileUtils.deleteQuietly(tmpDir);
         }
     }
-
+    /*
     @Test
     public void testExportClustersTsv() throws Exception {
         File tmpDir = Files.createTempDirectory(new File(config.get(
@@ -813,7 +826,7 @@ public class KBaseFeatureValuesServerTest {
             FileUtils.deleteQuietly(tmpDir);
         }
     }
-
+    */
     private static FloatMatrix2D getSampleMatrix() {
         List<List<Double>> values = new ArrayList<List<Double>>();
         values.add(Arrays.asList(13.0, 2.0, 3.0));

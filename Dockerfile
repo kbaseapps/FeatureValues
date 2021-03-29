@@ -1,4 +1,4 @@
-FROM kbase/sdkbase:latest
+FROM kbase/sdkbase2:latest
 
 MAINTAINER KBase Developer
 # -----------------------------------------
@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y \
   python-numpy \
   python-scipy \
   libatlas-dev \
-  libatlas3gf-base
+  libatlas3-base
 RUN pip install scikit-learn
 RUN pip install scipy
 
@@ -48,25 +48,6 @@ RUN conda install r-flashClust
 RUN R -q -e 'install.packages("fpc", repos="http://cran.r-project.org")'
 
 # -----------------------------------------
-
-
-RUN add-apt-repository ppa:openjdk-r/ppa \
-	&& sudo apt-get update \
-	&& sudo apt-get -y install openjdk-8-jdk \
-	&& echo java versions: \
-	&& java -version \
-	&& javac -version \
-	&& echo $JAVA_HOME \
-	&& ls -l /usr/lib/jvm \
-	&& cd /kb/runtime \
-	&& rm java \
-	&& ln -s /usr/lib/jvm/java-8-openjdk-amd64 java \
-	&& ls -l
-
-ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
-
-#RUN cd /kb/dev_container/modules/jars \
-#	&& git pull
 
 # update jars
 RUN cd /tmp \
@@ -106,7 +87,8 @@ RUN mkdir -p /kb/module/work
 RUN chmod -R a+rw /kb/module
 
 WORKDIR /kb/module
-
+RUN pip install JSONRPCBase
+RUN rm -f /kb/deployment/lib/biokbase/log.py
 RUN make all
 
 ENTRYPOINT [ "./scripts/entrypoint.sh" ]
