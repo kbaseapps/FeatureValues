@@ -866,4 +866,3 @@ public class KBaseFeatureValuesServerTest {
         return res;
     }
 }
-

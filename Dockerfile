@@ -69,10 +69,37 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 #	&& git pull
 
 # update jars
-RUN cd /kb/dev_container/modules/jars \
-	&& git pull \
-	&& . /kb/dev_container/user-env.sh \
-	&& make deploy
+RUN cd /tmp \
+	&& git clone https://github.com/kbase/workspace_deluxe \
+	&& cd workspace_deluxe \
+	&& cp -vr lib/* /kb/deployment/lib/ \
+	&& cd /tmp \
+	&& git clone https://github.com/kbase/auth \
+	&& cd auth \
+	&& cp -vr python-libs/biokbase /kb/deployment/lib/ \
+	&& cp -vr Bio-KBase-Auth/lib/Bio /kb/deployment/lib/ \
+	&& cd /tmp \
+	&& git clone https://github.com/kbase/handle_mngr \
+	&& cd handle_mngr \
+	&& cp -vr lib/* /kb/deployment/lib/ \
+	&& cd ~/src/kb_sdk \
+	&& cp -vr lib/biokbase /kb/deployment/lib/ \
+	&& cp -vr lib/Bio /kb/deployment/lib/ \
+	&& cd /tmp \
+	&& git clone https://github.com/kbase/jars \
+	&& cd /tmp/jars \
+	&& cp -vr lib/jars /kb/deployment/lib/ \
+	&& rm -rf /tmp/* \
+	&& rm -rf /root/.cpanm
+
+# update log.py for Python3
+RUN cd /tmp \
+    && git clone https://github.com/kbase/sdkbase2 \
+    && cd sdkbase2 \
+    && git checkout python \
+    && cp -v log.py /kb/deployment/lib/biokbase/
+    
+RUN pip install JSONRPCBase
 
 COPY ./ /kb/module
 RUN mkdir -p /kb/module/work
