@@ -5,6 +5,15 @@ and visualization of expression values organized as two-
 dimensional matrix and assigned to genome features on one
 dimension and to different sorts conditions on second dimension.
 
+VERSION: 0.0.23
+------------------------------------------
+NEW FEATURES:
+- none
+
+UPDATED FEATURES / MAJOR BUG FIXES:
+- Updated docker image to sdkbase2.
+- Updated to Python3.
+
 VERSION: 0.0.22
 ------------------------------------------
 NEW FEATURES:
