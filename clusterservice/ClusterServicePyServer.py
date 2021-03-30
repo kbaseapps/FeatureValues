@@ -9,7 +9,7 @@ from getopt import getopt, GetoptError
 from jsonrpcbase import JSONRPCService, InvalidParamsError, KeywordError,\
     JSONRPCError, ServerError, InvalidRequestError
 from os import environ
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 from biokbase import log
 import random as _random
 import os
@@ -165,7 +165,7 @@ class JSONRPCServiceCustom(JSONRPCService):
 
     def _handle_request(self, ctx, request):
         """Handles given request and returns its response."""
-        if self.method_data[request['method']].has_key('types'): # @IgnorePep8
+        if 'types' in self.method_data[request['method']]: # @IgnorePep8
             self._validate_params_types(request['method'], request['params'])
 
         result = self._call_method(ctx, request)
@@ -270,16 +270,16 @@ class Application(object):
                              types=[dict, int, int, int, int, int])
         self.rpc_service.add(impl_ClusterServicePy.estimate_k_new,
                              name='ClusterServicePy.estimate_k_new',
-                             types=[dict, int, int, basestring, int, float, int, int])
+                             types=[dict, int, int, str, int, float, int, int])
         self.rpc_service.add(impl_ClusterServicePy.cluster_k_means,
                              name='ClusterServicePy.cluster_k_means',
-                             types=[dict, int, int, int, int, basestring])
+                             types=[dict, int, int, int, int, str])
         self.rpc_service.add(impl_ClusterServicePy.cluster_hierarchical,
                              name='ClusterServicePy.cluster_hierarchical',
-                             types=[dict, basestring, basestring, float, int])
+                             types=[dict, str, str, float, int])
         self.rpc_service.add(impl_ClusterServicePy.clusters_from_dendrogram,
                              name='ClusterServicePy.clusters_from_dendrogram',
-                             types=[dict, basestring, float])
+                             types=[dict, str, float])
         self.rpc_service.add(impl_ClusterServicePy.calc_cluster_qualities,
                              name='ClusterServicePy.calc_cluster_qualities',
                              types=[list])
@@ -329,7 +329,7 @@ class Application(object):
                            }
                     trace = jre.trace if hasattr(jre, 'trace') else None
                     rpc_result = self.process_error(err, ctx, req, trace)
-                except Exception, e:
+                except Exception as e:
                     err = {'error': {'code': 0,
                                      'name': 'Unexpected Server Error',
                                      'message': 'An unexpected server error ' +
@@ -407,7 +407,7 @@ try:
 # a wsgi container that has enabled gevent, such as
 # uwsgi with the --gevent option
     if config is not None and config.get('gevent_monkeypatch_all', False):
-        print "Monkeypatching std libraries for async"
+        print("Monkeypatching std libraries for async")
         from gevent import monkey
         monkey.patch_all()
     uwsgi.applications = {
@@ -433,7 +433,7 @@ def start_server(host='localhost', port=0, newprocess=False):
         raise RuntimeError('server is already running')
     httpd = make_server(host, port, application)
     port = httpd.server_address[1]
-    print "Listening on port %s" % port
+    print("Listening on port %s" % port)
     if newprocess:
         _proc = Process(target=httpd.serve_forever)
         _proc.daemon = True
@@ -470,7 +470,7 @@ def process_async_cli(input_file_path, output_file_path, token):
                           'message': jre.data,
                           'error': trace}
                }
-    except Exception, e:
+    except Exception as e:
         trace = traceback.format_exc()
         resp = {'id': req['id'],
                 'version': req['version'],
@@ -499,7 +499,7 @@ if __name__ == "__main__":
         opts, args = getopt(sys.argv[1:], "", ["port=", "host="])
     except GetoptError as err:
         # print help information and exit:
-        print str(err)  # will print something like "option -a not recognized"
+        print(str(err))  # will print something like "option -a not recognized"
         sys.exit(2)
     port = 9999
     host = 'localhost'
@@ -508,7 +508,7 @@ if __name__ == "__main__":
             port = int(a)
         elif o == '--host':
             host = a
-            print "Host set to %s" % host
+            print("Host set to %s" % host)
         else:
             assert False, "unhandled option"
 
